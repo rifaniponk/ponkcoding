@@ -41,7 +41,7 @@ export interface ArticleProps {
   showToc?: boolean
 }
 
-export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
+export function Article({ accent = '#3157FF', showToc = true }: ArticleProps) {
   const [progress, setProgress] = useState(0)
   const [activeId, setActiveId] = useState('why-static')
   const [copied, setCopied] = useState(false)
@@ -121,9 +121,16 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
           </div>
         </div>
         <div className="art-head__cover">
-          <span className="placeholder-tag">
-            cover image — 21:9, calm photographic or abstract paper texture
-          </span>
+          <div className="art-signal" aria-hidden="true">
+            <span className="art-signal__ring art-signal__ring--outer" />
+            <span className="art-signal__ring art-signal__ring--inner" />
+            <span className="art-signal__line art-signal__line--one" />
+            <span className="art-signal__line art-signal__line--two" />
+            <span className="art-signal__node art-signal__node--md">MD</span>
+            <span className="art-signal__node art-signal__node--react">REACT</span>
+            <span className="art-signal__node art-signal__node--html">HTML</span>
+          </div>
+          <span className="art-head__cover-label">FIELD DIAGRAM 01 / STATIC PUBLISHING LOOP</span>
         </div>
       </section>
 

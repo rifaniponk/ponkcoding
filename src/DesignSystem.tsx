@@ -12,22 +12,22 @@ interface Swatch {
 }
 
 const SWATCHES: Swatch[] = [
-  { chip: '#FDFDFC', name: 'Paper', hex: '#FDFDFC · background', border: true },
-  { chip: '#F8F8F7', name: 'Paper, shaded', hex: '#F8F8F7 · bands, blocks', border: true },
-  { chip: '#211E1A', name: 'Ink', hex: '#211E1A · text, rules' },
-  { chip: '#57534A', name: 'Ink, soft', hex: '#57534A · secondary text' },
-  { chip: '#8B8578', name: 'Ink, faint', hex: '#8B8578 · meta, indices' },
-  { chip: '#EDEDEC', name: 'Hairline', hex: '#EDEDEC · borders' },
-  { chip: '#5F6B4A', name: 'Moss (accent)', hex: '#5F6B4A · links, marks' },
-  { chip: '#4E5F6B', name: 'Slate (accent 2)', hex: '#4E5F6B · sparingly' },
-  { chip: '#232323', name: 'Code ground', hex: '#232323 · code blocks only' },
+  { chip: '#F3F0E8', name: 'Journal paper', hex: '#F3F0E8 · background', border: true },
+  { chip: '#FFFDF8', name: 'Fresh sheet', hex: '#FFFDF8 · cards, reading', border: true },
+  { chip: '#172033', name: 'Night ink', hex: '#172033 · text, dark fields' },
+  { chip: '#5D6170', name: 'Soft ink', hex: '#5D6170 · secondary text' },
+  { chip: '#858894', name: 'Faint ink', hex: '#858894 · meta, indices' },
+  { chip: '#D8D4C9', name: 'Hairline', hex: '#D8D4C9 · borders' },
+  { chip: '#3157FF', name: 'Signal cobalt', hex: '#3157FF · primary accent' },
+  { chip: '#FF6846', name: 'Working coral', hex: '#FF6846 · contrast accent' },
+  { chip: '#DFFF45', name: 'Highlighter', hex: '#DFFF45 · live signals' },
 ]
 
 const PRINCIPLES = [
-  { m: 'a', t: 'Numbered sections + 2px black rules = editorial rhythm' },
-  { m: 'b', t: 'Square “ponk” mark as recurring brand punctuation' },
-  { m: 'c', t: 'Sharp corners everywhere except pills — print, not app' },
-  { m: 'd', t: 'Mono for metadata only; code is quoted, never decorative' },
+  { m: 'a', t: 'Dark signal fields and warm reading surfaces create rhythm' },
+  { m: 'b', t: 'The offset P block is the recurring identity marker' },
+  { m: 'c', t: 'Layered cards use hard shadows like pinned working notes' },
+  { m: 'd', t: 'Mono labels orient; editorial serif carries the voice' },
 ]
 
 export function DesignSystem() {
@@ -40,7 +40,7 @@ export function DesignSystem() {
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
-          <span className="ds-sub">design system · v1</span>
+          <span className="ds-sub">design system · v2</span>
           <nav className="nav">
             <Link to={HOME} className="nav__link">Homepage</Link>
             <Link to={ARTICLE} className="nav__link">Article page</Link>
@@ -53,16 +53,15 @@ export function DesignSystem() {
         <section className="ds-section ds-section--concept">
           <p className="ds-eyebrow">00 — Design concept</p>
           <h1 className="ds-concept__title">
-            The Field Journal — a technical publication that reads like print.
+            Signal Notebook — an editorial system for useful technology.
             <span className="hero__end-dot" style={{ width: '0.3em', height: '0.3em', marginLeft: '0.15em' }} />
           </h1>
           <div className="ds-concept__row">
             <p className="ds-concept__lead">
-              Ponkcoding borrows its DNA from independent print journals, not developer portfolios:
-              warm paper surfaces, one editorial serif doing the talking, thick black rules dividing
-              numbered sections, and a small moss-green square — the “ponk” mark — that ends every
-              article like a tombstone in a magazine. Monospace appears only as wayfinding (dates,
-              indices, labels), which whispers “technical” without ever showing a terminal.
+              Ponkcoding combines an independent field journal with the visual language of signal
+              maps and working diagrams: warm paper for reading, night-ink fields for immersion,
+              cobalt for direction, and highlighter green for live information. Offset blocks and
+              hard shadows make the pages feel assembled rather than flattened into a template.
             </p>
             <ul className="ds-principles">
               {PRINCIPLES.map((p) => (
@@ -362,7 +361,7 @@ export function DesignSystem() {
             <span className="dot" />
           </Link>
           <span className="footer__fine">
-            Design system v1 · “The Field Journal”
+            Design system v2 · “Signal Notebook”
             <span className="dot" />
           </span>
         </div>
