@@ -1,3 +1,5 @@
+import './DesignSystem.css'
+
 const HOME = '/'
 const ARTICLE = '/article'
 

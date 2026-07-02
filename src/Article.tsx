@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import './Article.css'
 
 const HOME = '/'
 

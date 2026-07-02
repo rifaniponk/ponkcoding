@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import './Home.css'
 
 const ARTICLE = '/article'
 const DESIGN_SYSTEM = '/design-system'
