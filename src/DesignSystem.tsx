@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './DesignSystem.css'
 
 const HOME = '/'
@@ -35,14 +36,14 @@ export function DesignSystem() {
       {/* ---------- Header ---------- */}
       <header className="header">
         <div className="header__inner">
-          <a href={HOME} className="brand">
+          <Link to={HOME} className="brand">
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
-          </a>
+          </Link>
           <span className="ds-sub">design system · v1</span>
           <nav className="nav">
-            <a href={HOME} className="nav__link">Homepage</a>
-            <a href={ARTICLE} className="nav__link">Article page</a>
+            <Link to={HOME} className="nav__link">Homepage</Link>
+            <Link to={ARTICLE} className="nav__link">Article page</Link>
           </nav>
         </div>
       </header>
@@ -272,8 +273,8 @@ export function DesignSystem() {
           <p className="ds-note">
             Live specimens of the remaining components — article cards, list items, code / terminal
             / file-tree / Mermaid blocks, TOC, search overlay, footer — are on the{' '}
-            <a href={HOME} className="ds-footlink">homepage</a> and{' '}
-            <a href={ARTICLE} className="ds-footlink">article page</a>.
+            <Link to={HOME} className="ds-footlink">homepage</Link> and{' '}
+            <Link to={ARTICLE} className="ds-footlink">article page</Link>.
           </p>
         </section>
 
@@ -356,10 +357,10 @@ export function DesignSystem() {
 
       <footer className="footer--compact" style={{ marginTop: 72 }}>
         <div className="footer__inner">
-          <a href={HOME} className="brand">
+          <Link to={HOME} className="brand">
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
-          </a>
+          </Link>
           <span className="footer__fine">
             Design system v1 · “The Field Journal”
             <span className="dot" />

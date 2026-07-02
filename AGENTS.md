@@ -95,11 +95,26 @@ into that route's chunk and only ships it when the route loads.
   rules open sections. Mono font is for metadata/labels/code only — never
   headings or body. See the `/design-system` route for the full spec.
 
-## Routing notes
+## Routing rules (SPA navigation is mandatory)
 
-- Cross-page navigation uses plain `<a href="/article">` (full document load),
-  which suits the static/prerender philosophy of the site. In-page jumps use
-  hash anchors (`#notes`). `vite preview` and the dev server serve the SPA
-  fallback so deep links to `/article` and `/design-system` work.
-- If you introduce client-side navigation, switch those `<a>` to router
-  `<Link>` — but keep hash anchors as `<a>`.
+**A full-page reload / redirection on in-app navigation is NOT acceptable.**
+Navigating between `/`, `/article`, and `/design-system` must stay client-side
+(no white flash, no document reload, shared bundle not re-fetched).
+
+- **Cross-route links use react-router `<Link to="...">`, never `<a href>`.**
+  A plain `<a>` to an internal route triggers a full document load — do not
+  use it for `/`, `/article`, `/design-system` (with or without a hash, e.g.
+  `<Link to="/#notes">`). Applies everywhere: nav, cards, footers, tags,
+  mapped lists.
+- **Same-page hash jumps** (e.g. `#notes` while already on `/`) stay as
+  `<a href="#notes">` — native, no reload, no router needed. `#top`
+  back-to-top with an `onClick` handler also stays `<a>`.
+- **Hash scrolling across routes** is handled by `ScrollManager` in
+  `main.tsx` (a `useLocation` effect): on navigation it scrolls to the hash
+  target, else to the top. It retries across frames because the target may
+  not be mounted until the lazy page chunk resolves. Don't add per-page
+  scroll hacks — extend `ScrollManager` if behavior needs to change.
+- Deep links / refreshes on `/article` and `/design-system` rely on SPA
+  fallback (dev server + `vite preview` provide it; configure the host the
+  same way — e.g. Netlify `/* -> /index.html 200`).
+- New page → add a `lazy(...)` route AND link to it with `<Link>`.

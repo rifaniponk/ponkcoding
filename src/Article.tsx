@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Article.css'
 
 const HOME = '/'
@@ -84,15 +85,15 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
       {/* ---------- Header ---------- */}
       <header className="header">
         <div className="header__inner">
-          <a href={HOME} className="brand">
+          <Link to={HOME} className="brand">
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
-          </a>
+          </Link>
           <nav className="nav">
-            <a href={`${HOME}#notes`} className="nav__link">Notes</a>
-            <a href={`${HOME}#topics`} className="nav__link">Topics</a>
-            <a href={`${HOME}#lab`} className="nav__link">Lab</a>
-            <a href={`${HOME}#about`} className="nav__link">About</a>
+            <Link to={`${HOME}#notes`} className="nav__link">Notes</Link>
+            <Link to={`${HOME}#topics`} className="nav__link">Topics</Link>
+            <Link to={`${HOME}#lab`} className="nav__link">Lab</Link>
+            <Link to={`${HOME}#about`} className="nav__link">About</Link>
           </nav>
           <span className="header__kbd">⌘K</span>
         </div>
@@ -102,7 +103,7 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
       <section className="art-head">
         <div className="art-head__inner">
           <div className="art-head__meta-top">
-            <a href={`${HOME}#topics`} className="art-head__cat">Web Development</a>
+            <Link to={`${HOME}#topics`} className="art-head__cat">Web Development</Link>
             <span className="art-head__no">Essay · No. 42</span>
           </div>
           <h1 className="art-head__title">
@@ -284,9 +285,9 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
           <div className="art-tags">
             <span className="art-tags__label">Tags</span>
             {['#react', '#vite', '#static-sites', '#markdown'].map((t) => (
-              <a key={t} href={`${HOME}#topics`} className="art-tag">
+              <Link key={t} to={`${HOME}#topics`} className="art-tag">
                 {t}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -299,7 +300,7 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
                 Ponkcoding one note at a time.
               </p>
             </div>
-            <a href={`${HOME}#about`} className="author__link">About →</a>
+            <Link to={`${HOME}#about`} className="author__link">About →</Link>
           </div>
         </article>
 
@@ -339,13 +340,13 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
           <p className="related__label">Keep reading</p>
           <div className="related__grid">
             {RELATED.map((r) => (
-              <a key={r.title} href={`${HOME}#notes`} className="related-card">
+              <Link key={r.title} to={`${HOME}#notes`} className="related-card">
                 <span className="related-card__cat">{r.cat}</span>
                 <span className="related-card__body">
                   <span className="related-card__title">{r.title}</span>
                   <span className="related-card__meta">{r.meta}</span>
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -354,10 +355,10 @@ export function Article({ accent = '#5F6B4A', showToc = true }: ArticleProps) {
       {/* ---------- Footer (compact) ---------- */}
       <footer className="footer--compact">
         <div className="footer__inner">
-          <a href={HOME} className="brand">
+          <Link to={HOME} className="brand">
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
-          </a>
+          </Link>
           <span className="footer__fine">© 2026 · Built with React, Vite &amp; Markdown · Netlify</span>
         </div>
       </footer>

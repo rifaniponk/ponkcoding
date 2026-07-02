@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Home.css'
 
 const ARTICLE = '/article'
@@ -248,7 +249,7 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
             <p className="eyebrow">01 — Featured essay</p>
             <span className="meta-mono">Jun 2026</span>
           </div>
-          <a href={ARTICLE} className="featured reveal reveal--lg" data-reveal>
+          <Link to={ARTICLE} className="featured reveal reveal--lg" data-reveal>
             <div className="featured__cover">
               <span className="placeholder-tag">cover — featured essay, 3:2</span>
             </div>
@@ -271,7 +272,7 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
               </div>
               <span className="read-more">Read the essay →</span>
             </div>
-          </a>
+          </Link>
         </section>
 
         {/* ---------- Latest notes ---------- */}
@@ -281,9 +282,9 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
             <a href="#notes" className="link-mono">All notes →</a>
           </div>
           {NOTES.map((note, i) => (
-            <a
+            <Link
               key={note.title}
-              href={ARTICLE}
+              to={ARTICLE}
               className="note-row reveal"
               data-reveal
               style={{
@@ -300,7 +301,7 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
                 <span className="note-row__dek">{note.dek}</span>
               </span>
               <time className="note-row__date">{note.date}</time>
-            </a>
+            </Link>
           ))}
         </section>
       </main>
@@ -314,9 +315,9 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
           </div>
           <div className="topics__grid">
             {TOPICS.map((t, i) => (
-              <a
+              <Link
                 key={t.name}
-                href={ARTICLE}
+                to={ARTICLE}
                 className="topic reveal"
                 data-reveal
                 style={{
@@ -330,7 +331,7 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
                   <span className="topic__name">{t.name}</span>
                   <span className="topic__count">{t.count}</span>
                 </span>
-              </a>
+              </Link>
             ))}
             <a
               href="#notes"
@@ -356,9 +357,9 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
         </p>
         <div className="lab__grid">
           {LAB.map((l) => (
-            <a
+            <Link
               key={l.name}
-              href={ARTICLE}
+              to={ARTICLE}
               className="lab-card"
               style={{ ['--status' as string]: l.statusColor }}
             >
@@ -371,7 +372,7 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
                 <span className="lab-card__desc">{l.desc}</span>
                 <span className="lab-card__stack">{l.stack}</span>
               </span>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
@@ -433,8 +434,8 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
           </nav>
           <nav className="footer__nav">
             <span className="footer__nav-head">Meta</span>
-            <a href={ARTICLE} className="footer__link">Article page</a>
-            <a href={DESIGN_SYSTEM} className="footer__link">Design system</a>
+            <Link to={ARTICLE} className="footer__link">Article page</Link>
+            <Link to={DESIGN_SYSTEM} className="footer__link">Design system</Link>
           </nav>
         </div>
         <div className="footer__bar">
@@ -476,10 +477,10 @@ export function Home({ accent = '#5F6B4A', showHeroIndex = true }: HomeProps) {
             <div className="overlay__recent">
               <p className="overlay__recent-label">Recent notes</p>
               {NOTES.slice(0, 3).map((note) => (
-                <a key={note.title} href={ARTICLE} className="recent-item">
+                <Link key={note.title} to={ARTICLE} className="recent-item">
                   <span className="recent-item__title">{note.title}</span>
                   <span className="recent-item__cat">{note.cat}</span>
-                </a>
+                </Link>
               ))}
             </div>
             <div className="overlay__foot">
