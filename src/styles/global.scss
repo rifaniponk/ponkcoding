@@ -1,17 +1,4 @@
-:root {
-  --bg: #f7f8fa;
-  --ink: #172033;
-  --muted: #5d6170;
-  --faint: #858894;
-  --border: #e2e5ea;
-  --shaded: #f1f3f6;
-  --grid-line: #e7e9ed;
-  --accent: #5f6fba;
-
-  --serif: 'Newsreader', Georgia, serif;
-  --sans: 'Instrument Sans', 'Helvetica Neue', sans-serif;
-  --mono: 'IBM Plex Mono', monospace;
-}
+@use './tokens';
 
 * {
   box-sizing: border-box;

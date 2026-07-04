@@ -41,7 +41,8 @@ src/
 ├── main.tsx            # createRoot + BrowserRouter + lazy routes + Suspense
 ├── vite-env.d.ts
 ├── styles/
-│   └── global.scss     # shared: tokens, reset, keyframes, header/footer, …
+│   ├── tokens.scss     # design tokens: :root CSS custom properties
+│   └── global.scss     # @use tokens; reset, keyframes, header/footer, …
 ├── pages/              # one route = one folder (component + co-located SCSS)
 │   ├── Home/Home.tsx + Home.scss + Home.data.ts
 │   ├── Article/Article.tsx + Article.scss
