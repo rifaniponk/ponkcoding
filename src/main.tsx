@@ -1,15 +1,15 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import './index.css'
+import './styles/global.scss'
 
 /* Route-based code splitting: each page is its own chunk, fetched on
    navigation. The initial bundle carries only React, the router, and
    this shell. */
-const Home = lazy(() => import('./Home.tsx').then((m) => ({ default: m.Home })))
-const Article = lazy(() => import('./Article.tsx').then((m) => ({ default: m.Article })))
+const Home = lazy(() => import('./pages/Home/Home.tsx').then((m) => ({ default: m.Home })))
+const Article = lazy(() => import('./pages/Article/Article.tsx').then((m) => ({ default: m.Article })))
 const DesignSystem = lazy(() =>
-  import('./DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
+  import('./pages/DesignSystem/DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
 )
 
 /* On client-side navigation: scroll to the hash target if present, else to
@@ -42,7 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/article" element={<Article />} />
+          <Route path="/articles/:slug" element={<Article />} />
           <Route path="/design-system" element={<DesignSystem />} />
         </Routes>
       </Suspense>

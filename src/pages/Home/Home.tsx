@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import './Home.css'
+import './Home.scss'
+import { ARTICLES } from '../../generated/content-index.ts'
+import { categoryColor } from '../../lib/categories.ts'
+import { formatDateShort } from '../../lib/format.ts'
+import { LAB, PROFILE_FACTS } from './Home.data.ts'
 
-const ARTICLE = '/article'
 const DESIGN_SYSTEM = '/design-system'
 
 export interface HomeProps {
@@ -10,89 +13,22 @@ export interface HomeProps {
   showHeroIndex?: boolean
 }
 
-interface Note {
-  cat: string
-  color: string
-  title: string
-  dek: string
-  date: string
-  read: string
-}
+/* All content below is derived from the generated Markdown index. */
+const FEATURED = ARTICLES.find((a) => a.featured) ?? ARTICLES[0]
+const NOTES = ARTICLES.filter((a) => a.slug !== FEATURED?.slug)
 
-const NOTES: Note[] = [
-  {
-    cat: 'AI Engineering',
-    color: '#5F6FBA',
-    title: 'Designing an AI assistant server that stays out of the way',
-    dek: 'Small, boring architecture beats clever agents. Notes from six months of daily use.',
-    date: 'Jun 26',
-    read: '11 min',
-  },
-  {
-    cat: 'Apple / Local AI',
-    color: '#7557d3',
-    title: 'What Apple Silicon actually changes for local LLM inference',
-    dek: 'Unified memory, thermals, and the honest numbers behind running models on a laptop.',
-    date: 'Jun 19',
-    read: '8 min',
-  },
-  {
-    cat: 'Indie Dev',
-    color: '#e6532f',
-    title: 'Shipping Ayatura: notes from a two-week build',
-    dek: 'A journal of scope cuts, small wins, and the checklist I use for every launch.',
-    date: 'Jun 11',
-    read: '7 min',
-  },
-  {
-    cat: 'Independent Work',
-    color: '#987510',
-    title: 'Pricing freelance projects as a senior engineer',
-    dek: 'Why hourly billing undersells experience, and the fixed-scope structure that works.',
-    date: 'Jun 03',
-    read: '9 min',
-  },
-]
-
-const TOPICS = [
-  { code: '01', name: 'AI engineering', count: '12', color: '#5F6FBA' },
-  { code: '02', name: 'Web systems', count: '18', color: '#e6532f' },
-  { code: '03', name: 'Indie dev', count: '09', color: '#7557d3' },
-  { code: '04', name: 'Apple / local AI', count: '07', color: '#14816f' },
-  { code: '05', name: 'Independent work', count: '06', color: '#987510' },
-  { code: '06', name: 'Field notes', count: '15', color: '#c23758' },
-]
-
-const LAB = [
-  {
-    no: 'L—01',
-    status: 'Live',
-    name: 'Personal AI router',
-    desc: 'One quiet endpoint for the models and workflows I use every day.',
-    stack: 'Node / LLM APIs / SQLite',
-  },
-  {
-    no: 'L—02',
-    status: 'Shipped',
-    name: 'Ayatura',
-    desc: 'A focused reading companion, designed and built in public.',
-    stack: 'Flutter / Dart / Drift',
-  },
-  {
-    no: 'L—03',
-    status: 'Ongoing',
-    name: 'Useful automations',
-    desc: 'Small pipelines that remove repeated work without becoming another system to manage.',
-    stack: 'Shell / Cron / APIs',
-  },
-]
-
-const PROFILE_FACTS = [
-  { label: 'Experience', value: '15+ years' },
-  { label: 'Scope', value: 'End-to-end product engineering' },
-  { label: 'AI systems', value: 'Workflows · Automation · Orchestration' },
-  { label: 'Domains', value: 'Health · Fintech · Logistics' },
-]
+const TOPICS = (() => {
+  const counts = new Map<string, number>()
+  for (const a of ARTICLES) counts.set(a.category, (counts.get(a.category) ?? 0) + 1)
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([name, count], i) => ({
+      code: String(i + 1).padStart(2, '0'),
+      name,
+      count,
+      color: categoryColor(name),
+    }))
+})()
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -228,9 +164,9 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           <div className="section-shell">
             <div className="section-title">
               <div><span>01</span><p>Featured signal</p></div>
-              <p>Long-form / 14 minute read</p>
+              <p>Long-form / {FEATURED?.readingTime ?? 0} minute read</p>
             </div>
-            <Link to={ARTICLE} className="featured" data-reveal>
+            <Link to={`/articles/${FEATURED?.slug}`} className="featured" data-reveal>
               <div className="featured__visual">
                 <div className="signal-map" aria-hidden="true">
                   <span className="signal-map__axis signal-map__axis--x" />
@@ -245,11 +181,11 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 <span className="featured__figure-label">FIG. 01 — THE STATIC PUBLISHING LOOP</span>
               </div>
               <div className="featured__body">
-                <span className="story-label"><i /> Web systems</span>
-                <h2>Prerendering a Markdown blog with React, Vite, and zero client JavaScript</h2>
-                <p>How this site turns a folder of Markdown into fast static pages—and where the simple approach starts to bend.</p>
+                <span className="story-label"><i /> {FEATURED?.category}</span>
+                <h2>{FEATURED?.title}</h2>
+                <p>{FEATURED?.description}</p>
                 <div className="featured__footer">
-                  <span>Jun 12, 2026</span>
+                  <span>{FEATURED ? formatDateShort(FEATURED.date) : ''}</span>
                   <strong>Read the field note <b>↗</b></strong>
                 </div>
               </div>
@@ -266,19 +202,19 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <div className="notes-grid">
               {NOTES.map((note, index) => (
                 <Link
-                  key={note.title}
-                  to={ARTICLE}
+                  key={note.slug}
+                  to={`/articles/${note.slug}`}
                   className={`note-card${index === 0 ? ' note-card--lead' : ''}`}
                   data-reveal
-                  style={{ ['--cat' as string]: note.color, transitionDelay: `${index * 60}ms` }}
+                  style={{ ['--cat' as string]: categoryColor(note.category), transitionDelay: `${index * 60}ms` }}
                 >
                   <div className="note-card__top">
                     <span>{String(index + 1).padStart(2, '0')}</span>
-                    <span>{note.date} / {note.read}</span>
+                    <span>{formatDateShort(note.date)} / {note.readingTime} min</span>
                   </div>
-                  <span className="note-card__cat">{note.cat}</span>
+                  <span className="note-card__cat">{note.category}</span>
                   <h3>{note.title}</h3>
-                  <p>{note.dek}</p>
+                  <p>{note.description}</p>
                   <span className="note-card__arrow">↗</span>
                 </Link>
               ))}
@@ -294,13 +230,13 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <div className="topic-list">
               {TOPICS.map((topic) => (
-                <Link key={topic.name} to={ARTICLE} className="topic-row" style={{ ['--cat' as string]: topic.color }}>
+                <a key={topic.name} href="#notes" className="topic-row" style={{ ['--cat' as string]: topic.color }}>
                   <span className="topic-row__code">{topic.code}</span>
                   <span className="topic-row__dot" />
                   <span className="topic-row__name">{topic.name}</span>
-                  <span className="topic-row__count">{topic.count} notes</span>
+                  <span className="topic-row__count">{topic.count} {topic.count === 1 ? 'note' : 'notes'}</span>
                   <span className="topic-row__arrow">↗</span>
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -318,13 +254,13 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <div className="lab-list">
               {LAB.map((item) => (
-                <Link key={item.name} to={ARTICLE} className="lab-row" data-reveal>
+                <a key={item.name} href="#lab" className="lab-row" data-reveal>
                   <span className="lab-row__no">{item.no}</span>
                   <span className="lab-row__status"><i />{item.status}</span>
                   <span className="lab-row__main"><strong>{item.name}</strong><small>{item.desc}</small></span>
                   <span className="lab-row__stack">{item.stack}</span>
                   <span className="lab-row__arrow">↗</span>
-                </Link>
+                </a>
               ))}
             </div>
           </div>

@@ -1,34 +1,10 @@
 import { Link } from 'react-router-dom'
-import './DesignSystem.css'
+import './DesignSystem.scss'
+import { SWATCHES, PRINCIPLES } from './DesignSystem.data.ts'
+import { Button, TextLink, Pill, Tag, Callout } from '../../components'
 
 const HOME = '/'
-const ARTICLE = '/article'
-
-interface Swatch {
-  chip: string
-  name: string
-  hex: string
-  border?: boolean
-}
-
-const SWATCHES: Swatch[] = [
-  { chip: '#F7F8FA', name: 'Soft canvas', hex: '#F7F8FA · background', border: true },
-  { chip: '#FFFFFF', name: 'Fresh sheet', hex: '#FFFFFF · cards, reading', border: true },
-  { chip: '#172033', name: 'Night ink', hex: '#172033 · text, dark fields' },
-  { chip: '#5D6170', name: 'Soft ink', hex: '#5D6170 · secondary text' },
-  { chip: '#858894', name: 'Faint ink', hex: '#858894 · meta, indices' },
-  { chip: '#E2E5EA', name: 'Hairline', hex: '#E2E5EA · borders' },
-  { chip: '#5F6FBA', name: 'Soft cobalt', hex: '#5F6FBA · primary accent' },
-  { chip: '#D9826E', name: 'Clay coral', hex: '#D9826E · contrast accent' },
-  { chip: '#EADFA8', name: 'Signal sand', hex: '#EADFA8 · live signals' },
-]
-
-const PRINCIPLES = [
-  { m: 'a', t: 'Dark signal fields and warm reading surfaces create rhythm' },
-  { m: 'b', t: 'The offset P block is the recurring identity marker' },
-  { m: 'c', t: 'Soft elevation separates working notes without visual weight' },
-  { m: 'd', t: 'Mono labels orient; editorial serif carries the voice' },
-]
+const ARTICLE = '/articles/prerendering-a-markdown-blog'
 
 export function DesignSystem() {
   return (
@@ -178,11 +154,11 @@ export function DesignSystem() {
             <div className="ds-card">
               <p className="ds-card__head">Buttons · pills · tags</p>
               <div className="ds-card__body">
-                <button className="btn btn--primary">Primary action</button>
-                <button className="btn btn--secondary">Secondary</button>
-                <span className="ds-textlink">Text link →</span>
-                <span className="ds-pill">Category pill</span>
-                <span className="ds-tagpill">#tag-pill</span>
+                <Button variant="primary">Primary action</Button>
+                <Button variant="secondary">Secondary</Button>
+                <TextLink>Text link →</TextLink>
+                <Pill>Category pill</Pill>
+                <Tag>#tag-pill</Tag>
               </div>
             </div>
 
@@ -190,27 +166,9 @@ export function DesignSystem() {
             <div className="ds-card">
               <p className="ds-card__head">Callouts — note · tip · caution</p>
               <div className="ds-card__body ds-card__body--pad">
-                <aside className="callout" style={{ margin: 0 }}>
-                  <p className="callout__label">
-                    <span className="dot" />
-                    <span style={{ color: 'var(--accent)' }}>Note</span>
-                  </p>
-                  <p className="callout__body">Neutral context the reader should not miss.</p>
-                </aside>
-                <aside className="callout" style={{ margin: 0 }}>
-                  <p className="callout__label">
-                    <span className="pill__dot" style={{ background: 'var(--accent)' }} />
-                    <span style={{ color: 'var(--accent)' }}>Tip</span>
-                  </p>
-                  <p className="callout__body">A shortcut worth stealing.</p>
-                </aside>
-                <aside className="callout" style={{ margin: 0 }}>
-                  <p className="callout__label">
-                    <span className="dot" style={{ background: '#4E5F6B', transform: 'rotate(45deg)' }} />
-                    <span style={{ color: '#4E5F6B' }}>Caution</span>
-                  </p>
-                  <p className="callout__body">A trade-off with real costs.</p>
-                </aside>
+                <Callout variant="note">Neutral context the reader should not miss.</Callout>
+                <Callout variant="tip">A shortcut worth stealing.</Callout>
+                <Callout variant="caution">A trade-off with real costs.</Callout>
               </div>
             </div>
 
