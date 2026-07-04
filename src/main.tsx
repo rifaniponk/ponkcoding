@@ -7,7 +7,9 @@ import './styles/global.scss'
    navigation. The initial bundle carries only React, the router, and
    this shell. */
 const Home = lazy(() => import('./pages/Home/Home.tsx').then((m) => ({ default: m.Home })))
-const Article = lazy(() => import('./pages/Article/Article.tsx').then((m) => ({ default: m.Article })))
+const Article = lazy(() =>
+  import('./pages/Article/Article.tsx').then((m) => ({ default: m.Article })),
+)
 const DesignSystem = lazy(() =>
   import('./pages/DesignSystem/DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
 )

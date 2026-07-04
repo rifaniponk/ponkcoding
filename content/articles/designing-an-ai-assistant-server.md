@@ -1,15 +1,15 @@
 ---
-title: "Designing an AI assistant server that stays out of the way"
-slug: "designing-an-ai-assistant-server"
-description: "Small, boring architecture beats clever agents. Notes from six months of daily use."
-date: "2026-06-26"
-category: "AI Engineering"
+title: 'Designing an AI assistant server that stays out of the way'
+slug: 'designing-an-ai-assistant-server'
+description: 'Small, boring architecture beats clever agents. Notes from six months of daily use.'
+date: '2026-06-26'
+category: 'AI Engineering'
 tags:
   - ai
   - architecture
   - automation
-status: "published"
-author: "Rifan Fauzi"
+status: 'published'
+author: 'Rifan Fauzi'
 ---
 
 I built a small server that sits between me and the models I use every day. The goal was never to be clever. The goal was to disappear — to make the assistant feel like part of the tools I already trust.

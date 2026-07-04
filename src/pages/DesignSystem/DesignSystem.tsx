@@ -18,8 +18,12 @@ export function DesignSystem() {
           </Link>
           <span className="ds-sub">design system · v2</span>
           <nav className="nav">
-            <Link to={HOME} className="nav__link">Homepage</Link>
-            <Link to={ARTICLE} className="nav__link">Article page</Link>
+            <Link to={HOME} className="nav__link">
+              Homepage
+            </Link>
+            <Link to={ARTICLE} className="nav__link">
+              Article page
+            </Link>
           </nav>
         </div>
       </header>
@@ -30,7 +34,10 @@ export function DesignSystem() {
           <p className="ds-eyebrow">00 — Design concept</p>
           <h1 className="ds-concept__title">
             Signal Notebook — an editorial system for useful technology.
-            <span className="hero__end-dot" style={{ width: '0.3em', height: '0.3em', marginLeft: '0.15em' }} />
+            <span
+              className="hero__end-dot"
+              style={{ width: '0.3em', height: '0.3em', marginLeft: '0.15em' }}
+            />
           </h1>
           <div className="ds-concept__row">
             <p className="ds-concept__lead">
@@ -58,7 +65,10 @@ export function DesignSystem() {
               <div key={s.name} className="ds-swatch">
                 <div
                   className="ds-swatch__chip"
-                  style={{ background: s.chip, border: s.border ? '1px solid var(--border)' : undefined }}
+                  style={{
+                    background: s.chip,
+                    border: s.border ? '1px solid var(--border)' : undefined,
+                  }}
                 />
                 <p className="ds-swatch__name">{s.name}</p>
                 <p className="ds-swatch__hex">{s.hex}</p>
@@ -137,10 +147,10 @@ export function DesignSystem() {
             <div className="ds-rule-card">
               <p className="ds-rule-card__label">Responsive</p>
               <p className="ds-rule-card__body">
-                <strong>Desktop ≥1024:</strong> asymmetric rows, sticky TOC. <strong>Tablet:</strong>{' '}
-                topic grid drops to 2-up, hero index tucks under headline. <strong>Mobile:</strong>{' '}
-                single column, TOC becomes a collapsible “On this page” above the article, nav
-                collapses to overlay menu.
+                <strong>Desktop ≥1024:</strong> asymmetric rows, sticky TOC.{' '}
+                <strong>Tablet:</strong> topic grid drops to 2-up, hero index tucks under headline.{' '}
+                <strong>Mobile:</strong> single column, TOC becomes a collapsible “On this page”
+                above the article, nav collapses to overlay menu.
               </p>
             </div>
           </div>
@@ -211,7 +221,8 @@ export function DesignSystem() {
                   shaded paper; cards lift 2px + ink border.
                 </li>
                 <li>
-                  <strong>Focus:</strong> 2px moss outline, 2px offset — never removed, never a glow.
+                  <strong>Focus:</strong> 2px moss outline, 2px offset — never removed, never a
+                  glow.
                 </li>
                 <li>
                   <strong>Search:</strong> ⌘K / "/" opens overlay; backdrop blur, 180ms fade + 220ms
@@ -222,7 +233,8 @@ export function DesignSystem() {
                   the active heading with a moss square.
                 </li>
                 <li>
-                  <strong>Never:</strong> parallax, typing effects, scroll-jacking, skeleton shimmer.
+                  <strong>Never:</strong> parallax, typing effects, scroll-jacking, skeleton
+                  shimmer.
                 </li>
               </ul>
             </div>
@@ -230,8 +242,14 @@ export function DesignSystem() {
           <p className="ds-note">
             Live specimens of the remaining components — article cards, list items, code / terminal
             / file-tree / Mermaid blocks, TOC, search overlay, footer — are on the{' '}
-            <Link to={HOME} className="ds-footlink">homepage</Link> and{' '}
-            <Link to={ARTICLE} className="ds-footlink">article page</Link>.
+            <Link to={HOME} className="ds-footlink">
+              homepage
+            </Link>{' '}
+            and{' '}
+            <Link to={ARTICLE} className="ds-footlink">
+              article page
+            </Link>
+            .
           </p>
         </section>
 
@@ -244,7 +262,18 @@ export function DesignSystem() {
                 <span className="block__head-label">component tree</span>
                 <span className="block__head-meta">src/</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px 24px', fontFamily: 'var(--mono)', fontSize: 12.5, lineHeight: 1.8, color: '#33302a', overflowX: 'auto' }}>{`src/
+              <pre
+                style={{
+                  margin: 0,
+                  padding: '20px 24px',
+                  fontFamily: 'var(--mono)',
+                  fontSize: 12.5,
+                  lineHeight: 1.8,
+                  color: '#33302a',
+                  overflowX: 'auto',
+                }}
+              >
+                {`src/
 ├── layout/
 │   ├── SiteHeader.tsx
 │   ├── MobileNav.tsx
@@ -259,30 +288,35 @@ export function DesignSystem() {
 ├── article/
 │   ├── ArticleHeader.tsx
 │   ├── Toc.tsx
-│   ├── Prose.tsx        `}<span style={{ color: 'var(--faint)' }}># md renderer map</span>{`
+│   ├── Prose.tsx        `}
+                <span style={{ color: 'var(--faint)' }}># md renderer map</span>
+                {`
 │   └── RelatedCard.tsx
-└── blocks/              `}<span style={{ color: 'var(--faint)' }}># md fence → component</span>{`
+└── blocks/              `}
+                <span style={{ color: 'var(--faint)' }}># md fence → component</span>
+                {`
     ├── CodeBlock.tsx
     ├── Terminal.tsx
     ├── FileTree.tsx
     ├── Mermaid.tsx
-    └── Callout.tsx`}</pre>
+    └── Callout.tsx`}
+              </pre>
             </div>
             <ul className="ds-impl-list">
               <li>
                 <span className="ds-principles__mark">a</span>
                 <span>
                   <strong>Prose.tsx owns markdown.</strong> Map fenced-block languages (
-                  <code>mermaid</code>, <code>tree</code>, <code>sh</code>) and callout directives to
-                  the <code>blocks/</code> components at build time.
+                  <code>mermaid</code>, <code>tree</code>, <code>sh</code>) and callout directives
+                  to the <code>blocks/</code> components at build time.
                 </span>
               </li>
               <li>
                 <span className="ds-principles__mark">b</span>
                 <span>
                   <strong>Design tokens as CSS custom properties</strong> on <code>:root</code>{' '}
-                  (colors, fonts, measure) — dark mode later becomes one attribute swap, no component
-                  changes.
+                  (colors, fonts, measure) — dark mode later becomes one attribute swap, no
+                  component changes.
                 </span>
               </li>
               <li>

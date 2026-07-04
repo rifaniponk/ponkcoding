@@ -1,15 +1,15 @@
 ---
-title: "What Apple Silicon actually changes for local LLM inference"
-slug: "apple-silicon-local-llm"
-description: "Unified memory, thermals, and the honest numbers behind running models on a laptop."
-date: "2026-06-19"
-category: "Apple / Local AI"
+title: 'What Apple Silicon actually changes for local LLM inference'
+slug: 'apple-silicon-local-llm'
+description: 'Unified memory, thermals, and the honest numbers behind running models on a laptop.'
+date: '2026-06-19'
+category: 'Apple / Local AI'
 tags:
   - apple-silicon
   - local-ai
   - inference
-status: "published"
-author: "Rifan Fauzi"
+status: 'published'
+author: 'Rifan Fauzi'
 ---
 
 Running a capable model on a laptop stopped being a party trick somewhere in the last two years. On Apple Silicon specifically, a few architectural choices matter more than the raw core count.

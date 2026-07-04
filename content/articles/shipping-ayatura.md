@@ -1,15 +1,15 @@
 ---
-title: "Shipping Ayatura: notes from a two-week build"
-slug: "shipping-ayatura"
-description: "A journal of scope cuts, small wins, and the checklist I use for every launch."
-date: "2026-06-11"
-category: "Indie Dev"
+title: 'Shipping Ayatura: notes from a two-week build'
+slug: 'shipping-ayatura'
+description: 'A journal of scope cuts, small wins, and the checklist I use for every launch.'
+date: '2026-06-11'
+category: 'Indie Dev'
 tags:
   - indie-dev
   - flutter
   - shipping
-status: "published"
-author: "Rifan Fauzi"
+status: 'published'
+author: 'Rifan Fauzi'
 ---
 
 Ayatura is a focused reading companion I designed and built in public over two weeks. Two weeks is not enough time to build everything, which is exactly why it worked.

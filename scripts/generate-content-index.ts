@@ -75,7 +75,10 @@ function validate(file: string, data: Record<string, unknown>) {
     fail(file, 'description is required')
   if (typeof data.date !== 'string' || !ISO_DATE.test(data.date))
     fail(file, 'date must be an ISO date (YYYY-MM-DD)')
-  if (data.updated !== undefined && (typeof data.updated !== 'string' || !ISO_DATE.test(data.updated)))
+  if (
+    data.updated !== undefined &&
+    (typeof data.updated !== 'string' || !ISO_DATE.test(data.updated))
+  )
     fail(file, 'updated must be an ISO date (YYYY-MM-DD)')
   if (!data.category || typeof data.category !== 'string') fail(file, 'category is required')
   if (!Array.isArray(data.tags)) fail(file, 'tags must be an array')

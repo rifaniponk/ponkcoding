@@ -1,15 +1,15 @@
 ---
-title: "Pricing freelance projects as a senior engineer"
-slug: "pricing-freelance-projects"
-description: "Why hourly billing undersells experience, and the fixed-scope structure that works."
-date: "2026-06-03"
-category: "Independent Work"
+title: 'Pricing freelance projects as a senior engineer'
+slug: 'pricing-freelance-projects'
+description: 'Why hourly billing undersells experience, and the fixed-scope structure that works.'
+date: '2026-06-03'
+category: 'Independent Work'
 tags:
   - freelance
   - pricing
   - independent-work
-status: "published"
-author: "Rifan Fauzi"
+status: 'published'
+author: 'Rifan Fauzi'
 ---
 
 Hourly billing quietly punishes experience. The faster you solve a problem, the less you earn for solving it — which is exactly backwards from how value works.

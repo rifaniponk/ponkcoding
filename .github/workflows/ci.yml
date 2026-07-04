@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check formatting
+        run: npm run format:check
+
       # `npm run build` = generate content (prebuild) -> tsc type-check -> vite build.
       - name: Build
         run: npm run build
