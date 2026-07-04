@@ -1,12 +1,12 @@
 :root {
-  --bg: #f3f0e8;
+  --bg: #f7f8fa;
   --ink: #172033;
   --muted: #5d6170;
   --faint: #858894;
-  --border: #d8d4c9;
-  --shaded: #ebe7dd;
-  --grid-line: #ded9cd;
-  --accent: #3157ff;
+  --border: #e2e5ea;
+  --shaded: #f1f3f6;
+  --grid-line: #e7e9ed;
+  --accent: #5f6fba;
 
   --serif: 'Newsreader', Georgia, serif;
   --sans: 'Instrument Sans', 'Helvetica Neue', sans-serif;
@@ -68,7 +68,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: rgba(243, 240, 232, 0.92);
+  background: rgba(247, 248, 250, 0.92);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }

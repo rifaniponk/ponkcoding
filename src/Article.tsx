@@ -41,7 +41,7 @@ export interface ArticleProps {
   showToc?: boolean
 }
 
-export function Article({ accent = '#3157FF', showToc = true }: ArticleProps) {
+export function Article({ accent = '#5F6FBA', showToc = true }: ArticleProps) {
   const [progress, setProgress] = useState(0)
   const [activeId, setActiveId] = useState('why-static')
   const [copied, setCopied] = useState(false)

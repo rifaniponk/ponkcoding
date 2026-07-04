@@ -22,7 +22,7 @@ interface Note {
 const NOTES: Note[] = [
   {
     cat: 'AI Engineering',
-    color: '#3157ff',
+    color: '#5F6FBA',
     title: 'Designing an AI assistant server that stays out of the way',
     dek: 'Small, boring architecture beats clever agents. Notes from six months of daily use.',
     date: 'Jun 26',
@@ -55,7 +55,7 @@ const NOTES: Note[] = [
 ]
 
 const TOPICS = [
-  { code: '01', name: 'AI engineering', count: '12', color: '#3157ff' },
+  { code: '01', name: 'AI engineering', count: '12', color: '#5F6FBA' },
   { code: '02', name: 'Web systems', count: '18', color: '#e6532f' },
   { code: '03', name: 'Indie dev', count: '09', color: '#7557d3' },
   { code: '04', name: 'Apple / local AI', count: '07', color: '#14816f' },
@@ -117,7 +117,7 @@ function useReveal() {
   return ref
 }
 
-export function Home({ accent = '#3157ff', showHeroIndex = true }: HomeProps) {
+export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
   const [searchOpen, setSearchOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const revealRef = useReveal()

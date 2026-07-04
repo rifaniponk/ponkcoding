@@ -12,21 +12,21 @@ interface Swatch {
 }
 
 const SWATCHES: Swatch[] = [
-  { chip: '#F3F0E8', name: 'Journal paper', hex: '#F3F0E8 · background', border: true },
-  { chip: '#FFFDF8', name: 'Fresh sheet', hex: '#FFFDF8 · cards, reading', border: true },
+  { chip: '#F7F8FA', name: 'Soft canvas', hex: '#F7F8FA · background', border: true },
+  { chip: '#FFFFFF', name: 'Fresh sheet', hex: '#FFFFFF · cards, reading', border: true },
   { chip: '#172033', name: 'Night ink', hex: '#172033 · text, dark fields' },
   { chip: '#5D6170', name: 'Soft ink', hex: '#5D6170 · secondary text' },
   { chip: '#858894', name: 'Faint ink', hex: '#858894 · meta, indices' },
-  { chip: '#D8D4C9', name: 'Hairline', hex: '#D8D4C9 · borders' },
-  { chip: '#3157FF', name: 'Signal cobalt', hex: '#3157FF · primary accent' },
-  { chip: '#FF6846', name: 'Working coral', hex: '#FF6846 · contrast accent' },
-  { chip: '#DFFF45', name: 'Highlighter', hex: '#DFFF45 · live signals' },
+  { chip: '#E2E5EA', name: 'Hairline', hex: '#E2E5EA · borders' },
+  { chip: '#5F6FBA', name: 'Soft cobalt', hex: '#5F6FBA · primary accent' },
+  { chip: '#D9826E', name: 'Clay coral', hex: '#D9826E · contrast accent' },
+  { chip: '#EADFA8', name: 'Signal sand', hex: '#EADFA8 · live signals' },
 ]
 
 const PRINCIPLES = [
   { m: 'a', t: 'Dark signal fields and warm reading surfaces create rhythm' },
   { m: 'b', t: 'The offset P block is the recurring identity marker' },
-  { m: 'c', t: 'Layered cards use hard shadows like pinned working notes' },
+  { m: 'c', t: 'Soft elevation separates working notes without visual weight' },
   { m: 'd', t: 'Mono labels orient; editorial serif carries the voice' },
 ]
 
