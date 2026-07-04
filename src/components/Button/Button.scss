@@ -9,7 +9,9 @@
     background: var(--ink);
     color: var(--bg);
     border: 1px solid var(--ink);
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
 
     &:hover {
       background: var(--accent);
@@ -21,7 +23,9 @@
     background: transparent;
     color: var(--ink);
     border: 1px solid var(--ink);
-    transition: background 0.15s ease, color 0.15s ease;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
 
     &:hover {
       background: var(--ink);

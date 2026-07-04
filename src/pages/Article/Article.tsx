@@ -71,7 +71,8 @@ export function Article() {
           <div className="art-head__inner">
             <h1 className="art-head__title">Article not found</h1>
             <p className="art-head__lede">
-              This note doesn’t exist or has been unpublished. <Link to={HOME}>Back to the journal →</Link>
+              This note doesn’t exist or has been unpublished.{' '}
+              <Link to={HOME}>Back to the journal →</Link>
             </p>
           </div>
         </section>
@@ -95,10 +96,18 @@ export function Article() {
             <span className="dot" />
           </Link>
           <nav className="nav">
-            <Link to={`${HOME}#notes`} className="nav__link">Notes</Link>
-            <Link to={`${HOME}#topics`} className="nav__link">Topics</Link>
-            <Link to={`${HOME}#lab`} className="nav__link">Lab</Link>
-            <Link to={`${HOME}#about`} className="nav__link">About</Link>
+            <Link to={`${HOME}#notes`} className="nav__link">
+              Notes
+            </Link>
+            <Link to={`${HOME}#topics`} className="nav__link">
+              Topics
+            </Link>
+            <Link to={`${HOME}#lab`} className="nav__link">
+              Lab
+            </Link>
+            <Link to={`${HOME}#about`} className="nav__link">
+              About
+            </Link>
           </nav>
           <span className="header__kbd">⌘K</span>
         </div>
@@ -108,16 +117,24 @@ export function Article() {
       <section className="art-head">
         <div className="art-head__inner">
           <div className="art-head__meta-top">
-            <Link to={`${HOME}#topics`} className="art-head__cat">{meta.category}</Link>
+            <Link to={`${HOME}#topics`} className="art-head__cat">
+              {meta.category}
+            </Link>
             <span className="art-head__no">Field note</span>
           </div>
           <h1 className="art-head__title">{meta.title}</h1>
           <p className="art-head__lede">{meta.description}</p>
           <div className="art-head__byline">
-            <span><span className="label">By</span> {meta.author}</span>
-            <span><span className="label">Published</span> {formatDate(meta.date)}</span>
+            <span>
+              <span className="label">By</span> {meta.author}
+            </span>
+            <span>
+              <span className="label">Published</span> {formatDate(meta.date)}
+            </span>
             {meta.updated && (
-              <span><span className="label">Updated</span> {formatDate(meta.updated)}</span>
+              <span>
+                <span className="label">Updated</span> {formatDate(meta.updated)}
+              </span>
             )}
             <span className="read-time">{meta.readingTime} min read</span>
           </div>
@@ -159,7 +176,9 @@ export function Article() {
                 Ponkcoding one note at a time.
               </p>
             </div>
-            <Link to={`${HOME}#about`} className="author__link">About →</Link>
+            <Link to={`${HOME}#about`} className="author__link">
+              About →
+            </Link>
           </div>
         </article>
 
@@ -191,7 +210,9 @@ export function Article() {
               })}
             </nav>
             <div className="toc__top">
-              <a href="#top" onClick={scrollTop}>↑ Back to top</a>
+              <a href="#top" onClick={scrollTop}>
+                ↑ Back to top
+              </a>
             </div>
           </aside>
         )}
@@ -207,7 +228,9 @@ export function Article() {
                 <span className="related-card__cat">{r.category}</span>
                 <span className="related-card__body">
                   <span className="related-card__title">{r.title}</span>
-                  <span className="related-card__meta">{formatDate(r.date)} · {r.readingTime} min</span>
+                  <span className="related-card__meta">
+                    {formatDate(r.date)} · {r.readingTime} min
+                  </span>
                 </span>
               </Link>
             ))}
@@ -222,7 +245,9 @@ export function Article() {
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
-          <span className="footer__fine">© 2026 · Built with React, Vite &amp; Markdown · Netlify</span>
+          <span className="footer__fine">
+            © 2026 · Built with React, Vite &amp; Markdown · Netlify
+          </span>
         </div>
       </footer>
     </div>

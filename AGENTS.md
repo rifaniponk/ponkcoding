@@ -22,7 +22,13 @@ npm run dev              # generate content, then Vite dev server (HMR)
 npm run build            # generate content (prod), tsc -b, vite build → dist/
 npm run preview          # serve the production build (SPA fallback)
 npm run generate:content # regenerate src/generated/ from content/ Markdown
+npm run format           # Prettier: format the repo
+npm run format:check     # Prettier: verify formatting (CI runs this)
 ```
+
+Formatting is Prettier (config in `.prettierrc.json`: no semicolons, single
+quotes, 100 print width). CI (`.github/workflows/ci.yml`) fails on unformatted
+files, so run `npm run format` before committing.
 
 `predev` / `prebuild` run `generate:content` automatically, so `src/generated/`
 is a build artifact (gitignored) — never edit or commit it. Always run
@@ -67,7 +73,7 @@ Folders by role: `pages/` (one folder per route: component + its CSS), `componen
 role; don't let `src/` go flat again.
 
 One route = one page component = one co-located CSS file. The CSS file is
-imported *inside* the page component (not in `main.tsx`), so Vite bundles it
+imported _inside_ the page component (not in `main.tsx`), so Vite bundles it
 into that route's chunk and only ships it when the route loads.
 
 **Content data split (keep this):** listing surfaces (Home) import
@@ -116,7 +122,7 @@ index.
 - Repeated markup is data-driven: define a typed array (`LAB`, `SWATCHES`,
   `PROFILE_FACTS`, …) and `.map()` it. Don't hand-repeat cards.
 - Reuse the shared UI primitives from `src/components` (`import { Button, Tag,
-  Callout, … } from '../../components'`) instead of hand-writing their
+Callout, … } from '../../components'`) instead of hand-writing their
   className strings. Each component owns its markup **and** its co-located
   `.scss`, so it drops into any page without copying styles. New primitive that
   repeats across pages → add a `components/<Name>/<Name>.tsx` + `.scss` and
@@ -125,7 +131,7 @@ index.
   real components, never re-mocked markup.
 - Static page data lives in a co-located `<Page>.data.ts` (e.g.
   `pages/Home/Home.data.ts`, `pages/DesignSystem/DesignSystem.data.ts`), not
-  inline in the component. Keep *derived* data (computed from `ARTICLES`, e.g.
+  inline in the component. Keep _derived_ data (computed from `ARTICLES`, e.g.
   Home's `FEATURED`/`NOTES`/`TOPICS`) in the component — it's logic, not content.
 - Side effects (scroll listeners, IntersectionObserver, keydown, clipboard)
   go in `useEffect` with cleanup. Passive listeners for scroll.

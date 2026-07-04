@@ -92,12 +92,24 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </span>
           </a>
           <nav className="nav" aria-label="Primary navigation">
-            <a href="#lab" className="nav__link">Work</a>
-            <a href="#notes" className="nav__link">Notes</a>
-            <a href="#topics" className="nav__link">Index</a>
-            <a href="#about" className="nav__link">About</a>
+            <a href="#lab" className="nav__link">
+              Work
+            </a>
+            <a href="#notes" className="nav__link">
+              Notes
+            </a>
+            <a href="#topics" className="nav__link">
+              Index
+            </a>
+            <a href="#about" className="nav__link">
+              About
+            </a>
           </nav>
-          <button className="search-btn" onClick={() => setSearchOpen(true)} aria-label="Open search">
+          <button
+            className="search-btn"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Open search"
+          >
             <span className="search-btn__icon">⌕</span>
             <span>Search</span>
             <span className="kbd">⌘K</span>
@@ -110,7 +122,9 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           <div className="hero__grid" aria-hidden="true" />
           <div className="hero__inner">
             <div className="hero__meta">
-              <span className="live-label"><span /> Bandung, Indonesia / working worldwide</span>
+              <span className="live-label">
+                <span /> Bandung, Indonesia / working worldwide
+              </span>
               <span>Senior software engineer · product & AI systems</span>
             </div>
             <div className="hero__main">
@@ -120,19 +134,28 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                   I build scalable web <span>&amp;</span> mobile products.
                 </h1>
                 <p className="hero__dek">
-                  Senior software engineer with 15+ years of experience designing product architecture,
-                  leading teams, and shipping reliable systems across healthcare, fintech, and logistics,
-                  while also designing AI workflows, automation, and orchestration that make engineering and
-                  everyday operations more effective.
+                  Senior software engineer with 15+ years of experience designing product
+                  architecture, leading teams, and shipping reliable systems across healthcare,
+                  fintech, and logistics, while also designing AI workflows, automation, and
+                  orchestration that make engineering and everyday operations more effective.
                 </p>
                 <div className="hero__expertise" aria-label="Core expertise">
-                  {['Product architecture', 'Full-stack systems', 'Technical leadership', 'AI workflow orchestration'].map((item) => (
+                  {[
+                    'Product architecture',
+                    'Full-stack systems',
+                    'Technical leadership',
+                    'AI workflow orchestration',
+                  ].map((item) => (
                     <span key={item}>{item}</span>
                   ))}
                 </div>
                 <div className="hero__actions">
-                  <a href="#lab" className="hero__action hero__action--primary">Explore selected work <b>↘</b></a>
-                  <a href="#notes" className="hero__action">Read my journal <b>↘</b></a>
+                  <a href="#lab" className="hero__action hero__action--primary">
+                    Explore selected work <b>↘</b>
+                  </a>
+                  <a href="#notes" className="hero__action">
+                    Read my journal <b>↘</b>
+                  </a>
                 </div>
               </div>
               {showHeroIndex && (
@@ -149,13 +172,18 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                       </div>
                     ))}
                   </dl>
-                  <div className="issue-card__foot">Architecture · Delivery · Mentoring · Product engineering</div>
+                  <div className="issue-card__foot">
+                    Architecture · Delivery · Mentoring · Product engineering
+                  </div>
                 </aside>
               )}
             </div>
             <div className="hero__ticker" aria-label="Current areas of interest">
               <span>Core toolkit</span>
-              <div>Angular & TypeScript <i>✦</i> Ionic & Flutter <i>✦</i> React & Go <i>✦</i> AI automation & orchestration</div>
+              <div>
+                Angular & TypeScript <i>✦</i> Ionic & Flutter <i>✦</i> React & Go <i>✦</i> AI
+                automation & orchestration
+              </div>
             </div>
           </div>
         </section>
@@ -163,7 +191,10 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
         <section id="featured" className="home-section featured-section">
           <div className="section-shell">
             <div className="section-title">
-              <div><span>01</span><p>Featured signal</p></div>
+              <div>
+                <span>01</span>
+                <p>Featured signal</p>
+              </div>
               <p>Long-form / {FEATURED?.readingTime ?? 0} minute read</p>
             </div>
             <Link to={`/articles/${FEATURED?.slug}`} className="featured" data-reveal>
@@ -181,12 +212,16 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 <span className="featured__figure-label">FIG. 01 — THE STATIC PUBLISHING LOOP</span>
               </div>
               <div className="featured__body">
-                <span className="story-label"><i /> {FEATURED?.category}</span>
+                <span className="story-label">
+                  <i /> {FEATURED?.category}
+                </span>
                 <h2>{FEATURED?.title}</h2>
                 <p>{FEATURED?.description}</p>
                 <div className="featured__footer">
                   <span>{FEATURED ? formatDateShort(FEATURED.date) : ''}</span>
-                  <strong>Read the field note <b>↗</b></strong>
+                  <strong>
+                    Read the field note <b>↗</b>
+                  </strong>
                 </div>
               </div>
             </Link>
@@ -196,7 +231,10 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
         <section id="notes" className="home-section notes-section">
           <div className="section-shell">
             <div className="section-title section-title--light">
-              <div><span>02</span><p>Fresh notes</p></div>
+              <div>
+                <span>02</span>
+                <p>Fresh notes</p>
+              </div>
               <a href="#notes">View full archive ↗</a>
             </div>
             <div className="notes-grid">
@@ -206,11 +244,16 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                   to={`/articles/${note.slug}`}
                   className={`note-card${index === 0 ? ' note-card--lead' : ''}`}
                   data-reveal
-                  style={{ ['--cat' as string]: categoryColor(note.category), transitionDelay: `${index * 60}ms` }}
+                  style={{
+                    ['--cat' as string]: categoryColor(note.category),
+                    transitionDelay: `${index * 60}ms`,
+                  }}
                 >
                   <div className="note-card__top">
                     <span>{String(index + 1).padStart(2, '0')}</span>
-                    <span>{formatDateShort(note.date)} / {note.readingTime} min</span>
+                    <span>
+                      {formatDateShort(note.date)} / {note.readingTime} min
+                    </span>
                   </div>
                   <span className="note-card__cat">{note.category}</span>
                   <h3>{note.title}</h3>
@@ -225,16 +268,26 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
         <section id="topics" className="topic-band">
           <div className="section-shell">
             <div className="section-title section-title--inverse">
-              <div><span>03</span><p>Field index</p></div>
+              <div>
+                <span>03</span>
+                <p>Field index</p>
+              </div>
               <p>Browse by recurring obsession</p>
             </div>
             <div className="topic-list">
               {TOPICS.map((topic) => (
-                <a key={topic.name} href="#notes" className="topic-row" style={{ ['--cat' as string]: topic.color }}>
+                <a
+                  key={topic.name}
+                  href="#notes"
+                  className="topic-row"
+                  style={{ ['--cat' as string]: topic.color }}
+                >
                   <span className="topic-row__code">{topic.code}</span>
                   <span className="topic-row__dot" />
                   <span className="topic-row__name">{topic.name}</span>
-                  <span className="topic-row__count">{topic.count} {topic.count === 1 ? 'note' : 'notes'}</span>
+                  <span className="topic-row__count">
+                    {topic.count} {topic.count === 1 ? 'note' : 'notes'}
+                  </span>
                   <span className="topic-row__arrow">↗</span>
                 </a>
               ))}
@@ -245,19 +298,35 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
         <section id="lab" className="lab-section">
           <div className="section-shell">
             <div className="section-title section-title--dark">
-              <div><span>04</span><p>Working lab</p></div>
+              <div>
+                <span>04</span>
+                <p>Working lab</p>
+              </div>
               <p>Experiments that escaped the notebook</p>
             </div>
             <div className="lab-intro">
-              <h2>Built to answer a question,<br /><em>kept only if useful.</em></h2>
-              <p>Small products and internal tools. Some ship, some become essays, all leave behind a better mental model.</p>
+              <h2>
+                Built to answer a question,
+                <br />
+                <em>kept only if useful.</em>
+              </h2>
+              <p>
+                Small products and internal tools. Some ship, some become essays, all leave behind a
+                better mental model.
+              </p>
             </div>
             <div className="lab-list">
               {LAB.map((item) => (
                 <a key={item.name} href="#lab" className="lab-row" data-reveal>
                   <span className="lab-row__no">{item.no}</span>
-                  <span className="lab-row__status"><i />{item.status}</span>
-                  <span className="lab-row__main"><strong>{item.name}</strong><small>{item.desc}</small></span>
+                  <span className="lab-row__status">
+                    <i />
+                    {item.status}
+                  </span>
+                  <span className="lab-row__main">
+                    <strong>{item.name}</strong>
+                    <small>{item.desc}</small>
+                  </span>
                   <span className="lab-row__stack">{item.stack}</span>
                   <span className="lab-row__arrow">↗</span>
                 </a>
@@ -275,12 +344,27 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               <span className="about-portrait__caption">Portrait pending / identity present</span>
             </div>
             <div className="about-copy">
-              <span className="story-label"><i /> The person behind the signal</span>
+              <span className="story-label">
+                <i /> The person behind the signal
+              </span>
               <h2>Senior engineer building complete products, from interface to infrastructure.</h2>
-              <p>Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise systems; led engineering teams; and worked across frontend, mobile, backend, cloud, and AI workflow automation and orchestration. Ponkcoding is where I document the useful decisions behind that work.</p>
+              <p>
+                Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise
+                systems; led engineering teams; and worked across frontend, mobile, backend, cloud,
+                and AI workflow automation and orchestration. Ponkcoding is where I document the
+                useful decisions behind that work.
+              </p>
               <div className="about-links">
-                <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">GitHub ↗</a>
-                <a href="https://www.upwork.com/freelancers/rifanmuhamadfauzi" target="_blank" rel="noreferrer">Upwork ↗</a>
+                <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">
+                  GitHub ↗
+                </a>
+                <a
+                  href="https://www.upwork.com/freelancers/rifanmuhamadfauzi"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Upwork ↗
+                </a>
                 <a href="#about">X / Twitter ↗</a>
                 <a href="mailto:rifan.refun@gmail.com">Email ↗</a>
               </div>
@@ -293,7 +377,11 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
         <div className="section-shell home-footer__inner">
           <div>
             <span className="home-footer__mark">P</span>
-            <h2>Stay curious.<br />Build something useful.</h2>
+            <h2>
+              Stay curious.
+              <br />
+              Build something useful.
+            </h2>
           </div>
           <div className="home-footer__nav">
             <a href="#notes">Latest notes</a>
@@ -311,18 +399,30 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
 
       {searchOpen && (
         <div className="overlay" onClick={() => setSearchOpen(false)} role="presentation">
-          <div className="overlay__panel" role="dialog" aria-modal="true" aria-label="Search Ponkcoding" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="overlay__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search Ponkcoding"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="overlay__head">
               <span>Search the field journal</span>
               <button onClick={() => setSearchOpen(false)}>ESC</button>
             </div>
             <div className="overlay__search">
               <span>⌕</span>
-              <input ref={inputRef} placeholder="Try “local AI” or “shipping”…" aria-label="Search query" />
+              <input
+                ref={inputRef}
+                placeholder="Try “local AI” or “shipping”…"
+                aria-label="Search query"
+              />
             </div>
             <p className="overlay__hint">POPULAR SIGNALS</p>
             <div className="overlay__tags">
-              {['local models', 'static publishing', 'indie dev', 'pricing'].map((tag) => <button key={tag}>{tag} ↗</button>)}
+              {['local models', 'static publishing', 'indie dev', 'pricing'].map((tag) => (
+                <button key={tag}>{tag} ↗</button>
+              ))}
             </div>
           </div>
         </div>

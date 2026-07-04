@@ -7,5 +7,4 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'Independent Work': '#987510',
 }
 
-export const categoryColor = (category: string): string =>
-  CATEGORY_COLORS[category] ?? '#5F6FBA'
+export const categoryColor = (category: string): string => CATEGORY_COLORS[category] ?? '#5F6FBA'

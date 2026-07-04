@@ -1,17 +1,17 @@
 ---
-title: "Prerendering a Markdown blog with React, Vite, and zero client JavaScript"
-slug: "prerendering-a-markdown-blog"
-description: "How this site turns a folder of Markdown files into fast static pages — the build pipeline, the trade-offs, and what I would do differently."
-date: "2026-06-12"
-updated: "2026-06-28"
-category: "Web Development"
+title: 'Prerendering a Markdown blog with React, Vite, and zero client JavaScript'
+slug: 'prerendering-a-markdown-blog'
+description: 'How this site turns a folder of Markdown files into fast static pages — the build pipeline, the trade-offs, and what I would do differently.'
+date: '2026-06-12'
+updated: '2026-06-28'
+category: 'Web Development'
 tags:
   - react
   - vite
   - static-sites
   - markdown
-status: "published"
-author: "Rifan Fauzi"
+status: 'published'
+author: 'Rifan Fauzi'
 featured: true
 ---
 
