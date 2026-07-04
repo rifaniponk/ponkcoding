@@ -9,8 +9,10 @@ bundle must stay as small as possible, and every page is lazy-loaded.**
 
 - React 18, TypeScript (strict), Vite 5
 - Routing: `react-router-dom` v6
-- Styling: plain CSS with design tokens as CSS custom properties on `:root`.
-  No CSS framework, no CSS-in-JS runtime.
+- Styling: SCSS (Vite built-in, `sass` dart-sass) with design tokens as CSS
+  custom properties on `:root`. No CSS framework, no CSS-in-JS runtime. Keep
+  runtime theming in CSS variables; use SCSS for nesting/vars/mixins at authoring
+  time only.
 - No state library, no data layer — content is static.
 
 ## Commands
@@ -39,11 +41,11 @@ src/
 ├── main.tsx            # createRoot + BrowserRouter + lazy routes + Suspense
 ├── vite-env.d.ts
 ├── styles/
-│   └── global.css      # shared: tokens, reset, keyframes, header/footer, …
-├── pages/              # one route = one folder (component + co-located CSS)
-│   ├── Home/Home.tsx + Home.css
-│   ├── Article/Article.tsx + Article.css
-│   └── DesignSystem/DesignSystem.tsx + DesignSystem.css
+│   └── global.scss     # shared: tokens, reset, keyframes, header/footer, …
+├── pages/              # one route = one folder (component + co-located SCSS)
+│   ├── Home/Home.tsx + Home.scss + Home.data.ts
+│   ├── Article/Article.tsx + Article.scss
+│   └── DesignSystem/DesignSystem.tsx + DesignSystem.scss + DesignSystem.data.ts
 ├── components/
 │   └── MarkdownContent.tsx     # renders trusted build-time HTML
 ├── lib/                # shared non-UI helpers
@@ -78,13 +80,13 @@ index.
    `import` of a page component — that pulls it into the initial bundle.
    New page → add a `lazy(...)` route, same pattern.
 
-2. **Per-route CSS.** Page-specific styles live in that page's own `.css`,
-   imported from the page component. Only put a rule in `styles/global.css` when
+2. **Per-route SCSS.** Page-specific styles live in that page's own `.scss`,
+   imported from the page component. Only put a rule in `styles/global.scss` when
    2+ pages genuinely share it. When something stops being shared, move it out.
 
 3. **Keep the initial bundle minimal.** After `npm run build`, the initial
-   critical path for `/` is: `index.js` (React + router + shell) +
-   `global.css` + the `Home` chunk + `Home.css`. Article/DesignSystem JS+CSS
+   critical path for `/` is: `index.js` (React + router + shell) + `global`
+   CSS + the `Home` chunk + `Home` CSS. Article/DesignSystem JS+CSS
    must NOT appear on that path. If a change makes them load eagerly, fix it.
 
    Rough current baseline (gzip): shared JS ~52 KB, shared CSS ~1.4 KB, each

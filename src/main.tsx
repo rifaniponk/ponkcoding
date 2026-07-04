@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import './styles/global.css'
+import './styles/global.scss'
 
 /* Route-based code splitting: each page is its own chunk, fetched on
    navigation. The initial bundle carries only React, the router, and

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import './DesignSystem.css'
+import './DesignSystem.scss'
 import { SWATCHES, PRINCIPLES } from './DesignSystem.data.ts'
 
 const HOME = '/'

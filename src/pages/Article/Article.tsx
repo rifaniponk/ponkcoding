@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import './Article.css'
+import './Article.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
 import { categoryColor } from '../../lib/categories.ts'
 import { MarkdownContent } from '../../components/MarkdownContent.tsx'
