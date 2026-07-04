@@ -42,7 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/article" element={<Article />} />
+          <Route path="/articles/:slug" element={<Article />} />
           <Route path="/design-system" element={<DesignSystem />} />
         </Routes>
       </Suspense>

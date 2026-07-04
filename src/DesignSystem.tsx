@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import './DesignSystem.css'
 
 const HOME = '/'
-const ARTICLE = '/article'
+const ARTICLE = '/articles/prerendering-a-markdown-blog'
 
 interface Swatch {
   chip: string

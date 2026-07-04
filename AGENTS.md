@@ -16,22 +16,35 @@ bundle must stay as small as possible, and every page is lazy-loaded.**
 ## Commands
 
 ```
-npm run dev        # Vite dev server (HMR)
-npm run build      # tsc -b type-check, then vite build → dist/
-npm run preview    # serve the production build (SPA fallback)
+npm run dev              # generate content, then Vite dev server (HMR)
+npm run build            # generate content (prod), tsc -b, vite build → dist/
+npm run preview          # serve the production build (SPA fallback)
+npm run generate:content # regenerate src/generated/ from content/ Markdown
 ```
 
-Always run `npm run build` before committing UI changes — it type-checks and
-prints the per-chunk size table. Read that table (see Performance below).
+`predev` / `prebuild` run `generate:content` automatically, so `src/generated/`
+is a build artifact (gitignored) — never edit or commit it. Always run
+`npm run build` before committing UI changes — it type-checks and prints the
+per-chunk size table. Read that table (see Performance below).
 
 ## Project structure
 
 ```
-index.html          # single entry; Google Fonts <link> lives here
+content/
+└── articles/*.md       # source of truth: one Markdown file per article
+scripts/
+└── generate-content-index.ts   # md → validate → html → generated TS
+index.html              # single entry; Google Fonts <link> lives here
 src/
-├── main.tsx         # createRoot + BrowserRouter + lazy routes + Suspense
-├── index.css        # shared: tokens, reset, keyframes, header/footer,
-│                    #   pill, callout, block — anything used by 2+ pages
+├── main.tsx            # createRoot + BrowserRouter + lazy routes + Suspense
+├── index.css           # shared: tokens, reset, keyframes, header/footer, …
+├── content-types.ts    # ArticleMeta / ArticleBody / Heading types
+├── categories.ts       # category → accent-color map
+├── format.ts           # date helpers
+├── MarkdownContent.tsx # renders trusted build-time HTML
+├── generated/          # BUILD ARTIFACT (gitignored) — do not edit
+│   ├── content-index.ts        # ARTICLES: metadata only, no HTML
+│   └── articles/<slug>.ts       # per-article { html, headings } body chunk
 ├── Home.tsx / Home.css
 ├── Article.tsx / Article.css
 └── DesignSystem.tsx / DesignSystem.css
@@ -40,6 +53,13 @@ src/
 One route = one page component = one co-located CSS file. The CSS file is
 imported *inside* the page component (not in `main.tsx`), so Vite bundles it
 into that route's chunk and only ships it when the route loads.
+
+**Content data split (keep this):** listing surfaces (Home) import
+`content-index.ts` — metadata only, so no article HTML ever lands in the Home
+chunk. Article bodies load lazily, one chunk per slug, via
+`import.meta.glob('./generated/articles/*.ts')` in `Article.tsx`. Never import a
+`generated/articles/*` module statically, and never add `html` to the metadata
+index.
 
 ## Performance rules (do not regress these)
 
@@ -98,12 +118,12 @@ into that route's chunk and only ships it when the route loads.
 ## Routing rules (SPA navigation is mandatory)
 
 **A full-page reload / redirection on in-app navigation is NOT acceptable.**
-Navigating between `/`, `/article`, and `/design-system` must stay client-side
-(no white flash, no document reload, shared bundle not re-fetched).
+Navigating between `/`, `/articles/:slug`, and `/design-system` must stay
+client-side (no white flash, no document reload, shared bundle not re-fetched).
 
 - **Cross-route links use react-router `<Link to="...">`, never `<a href>`.**
   A plain `<a>` to an internal route triggers a full document load — do not
-  use it for `/`, `/article`, `/design-system` (with or without a hash, e.g.
+  use it for `/`, `/articles/:slug`, `/design-system` (with or without a hash, e.g.
   `<Link to="/#notes">`). Applies everywhere: nav, cards, footers, tags,
   mapped lists.
 - **Same-page hash jumps** (e.g. `#notes` while already on `/`) stay as
@@ -114,7 +134,85 @@ Navigating between `/`, `/article`, and `/design-system` must stay client-side
   target, else to the top. It retries across frames because the target may
   not be mounted until the lazy page chunk resolves. Don't add per-page
   scroll hacks — extend `ScrollManager` if behavior needs to change.
-- Deep links / refreshes on `/article` and `/design-system` rely on SPA
+- Deep links / refreshes on `/articles/:slug` and `/design-system` rely on SPA
   fallback (dev server + `vite preview` provide it; configure the host the
-  same way — e.g. Netlify `/* -> /index.html 200`).
+  same way — e.g. Netlify `/* -> /index.html 200`, currently in
+  `public/_redirects`).
 - New page → add a `lazy(...)` route AND link to it with `<Link>`.
+
+## Design direction
+
+The site is a personal publication — "The Field Journal" — and should read like
+a serious editorial publication by a technical person, **not** a stereotypical
+programmer site. Aim for: calm, premium, editorial, content-first, readable,
+distinctive.
+
+Avoid the clichés — do not make it look like a generic dev portfolio, a
+terminal-themed coding blog, a SaaS landing page, a hacker/cyberpunk site, a
+Tailwind template clone, or a rendered GitHub README. Specifically avoid: matrix
+rain, terminal/fake-code backgrounds, neon-green-on-black, cyberpunk effects,
+excessive gradients, overused glassmorphism, generic dashboard layouts.
+
+Prefer: warm off-white/paper background, charcoal text, muted accents, tasteful
+typography, strong spacing, subtle dividers, calm transitions. The
+`/design-system` route is the reference for the full visual spec.
+
+## Content language & tone
+
+All site content and UI copy is **English** — articles, notes, headings, labels,
+and marketing/brand copy. The audience is global ("working worldwide"). Keep the
+tone credible, direct, and practical; avoid over-complication. Repository docs
+and code comments are English too.
+
+## Non-goals (don't add without an explicit request)
+
+Keep this static and dependency-light. Do not introduce a backend server,
+database, CMS, hosted search service (e.g. Algolia), auth, comments system, or
+request-time SSR. Do not migrate to Next.js, Astro, Gatsby, or Remix. Reading
+content must never require an API. When in doubt, prefer build-time work and a
+few lines of code over a new runtime service or heavy dependency.
+
+## Content pipeline (built)
+
+Markdown is the source of truth for articles. `scripts/generate-content-index.ts`
+runs at build time (via `predev`/`prebuild`):
+
+1. Read `content/articles/*.md`, parse frontmatter (`gray-matter`).
+2. Validate frontmatter (see model below); fail the build on any error.
+3. Exclude `status: draft` when `NODE_ENV=production`.
+4. Convert Markdown → HTML with `unified` (remark-parse, remark-gfm,
+   remark-rehype, rehype-slug, rehype-autolink-headings, rehype-stringify),
+   collecting h2/h3 headings for the TOC.
+5. Emit `src/generated/content-index.ts` (metadata) + one
+   `src/generated/articles/<slug>.ts` body chunk each.
+
+The whole remark/rehype stack is a **devDependency** — it runs at build time and
+never ships to the browser. `MarkdownContent.tsx` renders the pre-built HTML with
+`dangerouslySetInnerHTML`; this is safe because the author owns the Markdown. If
+user-generated content is ever added, sanitize before rendering.
+
+**Frontmatter model** (required unless noted): `title`, `slug` (unique),
+`description`, `date` (ISO `YYYY-MM-DD`), `category`, `tags` (array),
+`status` (`draft` | `published`), `author`; optional `updated` (ISO),
+`cover` (absolute `/…` path), `featured` (bool — picks the Home hero).
+
+To add an article: drop a `.md` file in `content/articles/`. Home listings,
+topic counts, related links, and the `/articles/:slug` page all derive from it —
+no code edits, no hardcoded content.
+
+## Direction / not yet built
+
+Remaining pieces of the static publishing engine:
+
+- **Prerendering** — each route to its own static `index.html` (currently a
+  client-rendered SPA with `_redirects` fallback).
+- **Pagefind** static search — lazy-loaded, never in the initial bundle.
+- **`sitemap.xml` / `rss.xml`** generation.
+- **Custom Markdown blocks** — callout, terminal, file tree, Mermaid (today they
+  degrade to standard Markdown: blockquotes and plain code fences).
+- **Syntax highlighting** for code blocks (rehype-highlight or shiki).
+- **Projects (`LAB`) and static pages** are still hardcoded in `Home.tsx` —
+  move them to a content type when they need real detail pages.
+
+Keep the static-first and small-initial-bundle rules above as these land, and
+update this doc so it stays honest about what's real.
