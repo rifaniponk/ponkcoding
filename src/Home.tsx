@@ -87,11 +87,11 @@ const LAB = [
   },
 ]
 
-const HERO_INDEX = [
-  { num: '01', label: 'Selected work', href: '#lab' },
-  { num: '02', label: 'Writing & notes', href: '#notes' },
-  { num: '03', label: 'What I explore', href: '#topics' },
-  { num: '04', label: 'More about me', href: '#about' },
+const PROFILE_FACTS = [
+  { label: 'Experience', value: '15+ years' },
+  { label: 'Scope', value: 'End-to-end product engineering' },
+  { label: 'AI systems', value: 'Workflows · Automation · Orchestration' },
+  { label: 'Domains', value: 'Health · Fintech · Logistics' },
 ]
 
 function useReveal() {
@@ -174,19 +174,26 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           <div className="hero__grid" aria-hidden="true" />
           <div className="hero__inner">
             <div className="hero__meta">
-              <span className="live-label"><span /> Based in Indonesia / working worldwide</span>
-              <span>Software engineer · indie builder · writer</span>
+              <span className="live-label"><span /> Bandung, Indonesia / working worldwide</span>
+              <span>Senior software engineer · product & AI systems</span>
             </div>
             <div className="hero__main">
               <div className="hero__copy">
-                <p className="hero__kicker">Hello, I’m Rifan Fauzi.</p>
+                <p className="hero__kicker">Rifan Muhamad Fauzi</p>
                 <h1 className="hero__title">
-                  I build useful software <span>&amp;</span> share what I learn.
+                  I build scalable web <span>&amp;</span> mobile products.
                 </h1>
                 <p className="hero__dek">
-                  I’m a software engineer and independent maker turning complex ideas into focused,
-                  reliable products. This is where I collect the work, decisions, and lessons behind them.
+                  Senior software engineer with 15+ years of experience designing product architecture,
+                  leading teams, and shipping reliable systems across healthcare, fintech, and logistics,
+                  while also designing AI workflows, automation, and orchestration that make engineering and
+                  everyday operations more effective.
                 </p>
+                <div className="hero__expertise" aria-label="Core expertise">
+                  {['Product architecture', 'Full-stack systems', 'Technical leadership', 'AI workflow orchestration'].map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
                 <div className="hero__actions">
                   <a href="#lab" className="hero__action hero__action--primary">Explore selected work <b>↘</b></a>
                   <a href="#notes" className="hero__action">Read my journal <b>↘</b></a>
@@ -195,25 +202,24 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               {showHeroIndex && (
                 <aside className="issue-card">
                   <div className="issue-card__head">
-                    <span>Profile / Rifan Fauzi</span>
+                    <span>Profile snapshot</span>
                     <span className="issue-card__stamp">RF</span>
                   </div>
-                  <nav className="issue-card__list" aria-label="On this page">
-                    {HERO_INDEX.map((item) => (
-                      <a key={item.num} href={item.href}>
-                        <span>{item.num}</span>
-                        {item.label}
-                        <b>↘</b>
-                      </a>
+                  <dl className="issue-card__facts">
+                    {PROFILE_FACTS.map((item) => (
+                      <div key={item.label}>
+                        <dt>{item.label}</dt>
+                        <dd>{item.value}</dd>
+                      </div>
                     ))}
-                  </nav>
-                  <div className="issue-card__foot">Building software · learning in public · open to collaboration</div>
+                  </dl>
+                  <div className="issue-card__foot">Architecture · Delivery · Mentoring · Product engineering</div>
                 </aside>
               )}
             </div>
             <div className="hero__ticker" aria-label="Current areas of interest">
-              <span>I work across</span>
-              <div>Product engineering <i>✦</i> Mobile & web <i>✦</i> Applied AI <i>✦</i> Independent products</div>
+              <span>Core toolkit</span>
+              <div>Angular & TypeScript <i>✦</i> Ionic & Flutter <i>✦</i> React & Go <i>✦</i> AI automation & orchestration</div>
             </div>
           </div>
         </section>
@@ -334,13 +340,13 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <div className="about-copy">
               <span className="story-label"><i /> The person behind the signal</span>
-              <h2>I’m Rifan. I build software, write to understand it, and share the useful parts.</h2>
-              <p>Ponkcoding is a public working notebook for engineering decisions, AI workflows, independent products, and the systems that make creative work sustainable.</p>
+              <h2>Senior engineer building complete products, from interface to infrastructure.</h2>
+              <p>Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise systems; led engineering teams; and worked across frontend, mobile, backend, cloud, and AI workflow automation and orchestration. Ponkcoding is where I document the useful decisions behind that work.</p>
               <div className="about-links">
-                <a href="#about">GitHub ↗</a>
+                <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">GitHub ↗</a>
+                <a href="https://www.upwork.com/freelancers/rifanmuhamadfauzi" target="_blank" rel="noreferrer">Upwork ↗</a>
                 <a href="#about">X / Twitter ↗</a>
-                <a href="#about">Email ↗</a>
-                <a href="#about">RSS ↗</a>
+                <a href="mailto:rifan.refun@gmail.com">Email ↗</a>
               </div>
             </div>
           </div>
