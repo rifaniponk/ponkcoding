@@ -107,8 +107,12 @@ index.
 - Props are typed via an exported interface (`HomeProps`, `ArticleProps`) with
   sensible defaults in the signature — mirrors the design's configurable props
   (e.g. `accent`, `showHeroIndex`, `showToc`).
-- Repeated markup is data-driven: define a typed array (`NOTES`, `TOPICS`,
-  `LAB`, `HEADINGS`, …) and `.map()` it. Don't hand-repeat cards.
+- Repeated markup is data-driven: define a typed array (`LAB`, `SWATCHES`,
+  `PROFILE_FACTS`, …) and `.map()` it. Don't hand-repeat cards.
+- Static page data lives in a co-located `<Page>.data.ts` (e.g.
+  `pages/Home/Home.data.ts`, `pages/DesignSystem/DesignSystem.data.ts`), not
+  inline in the component. Keep *derived* data (computed from `ARTICLES`, e.g.
+  Home's `FEATURED`/`NOTES`/`TOPICS`) in the component — it's logic, not content.
 - Side effects (scroll listeners, IntersectionObserver, keydown, clipboard)
   go in `useEffect` with cleanup. Passive listeners for scroll.
 - Respect `prefers-reduced-motion` (already handled for `.reveal`).
