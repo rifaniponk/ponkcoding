@@ -6,10 +6,10 @@ import './styles/global.css'
 /* Route-based code splitting: each page is its own chunk, fetched on
    navigation. The initial bundle carries only React, the router, and
    this shell. */
-const Home = lazy(() => import('./pages/Home.tsx').then((m) => ({ default: m.Home })))
-const Article = lazy(() => import('./pages/Article.tsx').then((m) => ({ default: m.Article })))
+const Home = lazy(() => import('./pages/Home/Home.tsx').then((m) => ({ default: m.Home })))
+const Article = lazy(() => import('./pages/Article/Article.tsx').then((m) => ({ default: m.Article })))
 const DesignSystem = lazy(() =>
-  import('./pages/DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
+  import('./pages/DesignSystem/DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
 )
 
 /* On client-side navigation: scroll to the hash target if present, else to

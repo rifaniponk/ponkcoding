@@ -40,10 +40,10 @@ src/
 ├── vite-env.d.ts
 ├── styles/
 │   └── global.css      # shared: tokens, reset, keyframes, header/footer, …
-├── pages/              # one route = one component + co-located CSS
-│   ├── Home.tsx / Home.css
-│   ├── Article.tsx / Article.css
-│   └── DesignSystem.tsx / DesignSystem.css
+├── pages/              # one route = one folder (component + co-located CSS)
+│   ├── Home/Home.tsx + Home.css
+│   ├── Article/Article.tsx + Article.css
+│   └── DesignSystem/DesignSystem.tsx + DesignSystem.css
 ├── components/
 │   └── MarkdownContent.tsx     # renders trusted build-time HTML
 ├── lib/                # shared non-UI helpers
@@ -55,7 +55,7 @@ src/
     └── articles/<slug>.ts       # per-article { html, headings } body chunk
 ```
 
-Folders by role: `pages/` (route components + their CSS), `components/`
+Folders by role: `pages/` (one folder per route: component + its CSS), `components/`
 (reusable UI), `lib/` (types, config, helpers — no JSX), `styles/` (shared CSS),
 `generated/` (build output). Keep new files in the folder that matches their
 role; don't let `src/` go flat again.
@@ -67,7 +67,7 @@ into that route's chunk and only ships it when the route loads.
 **Content data split (keep this):** listing surfaces (Home) import
 `content-index.ts` — metadata only, so no article HTML ever lands in the Home
 chunk. Article bodies load lazily, one chunk per slug, via
-`import.meta.glob('../generated/articles/*.ts')` in `pages/Article.tsx`. Never import a
+`import.meta.glob('../../generated/articles/*.ts')` in `pages/Article/Article.tsx`. Never import a
 `generated/articles/*` module statically, and never add `html` to the metadata
 index.
 

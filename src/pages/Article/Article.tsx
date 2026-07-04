@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import './Article.css'
-import { ARTICLES } from '../generated/content-index.ts'
-import { categoryColor } from '../lib/categories.ts'
-import { MarkdownContent } from '../components/MarkdownContent.tsx'
-import { formatDate } from '../lib/format.ts'
-import type { ArticleBody } from '../lib/content-types.ts'
+import { ARTICLES } from '../../generated/content-index.ts'
+import { categoryColor } from '../../lib/categories.ts'
+import { MarkdownContent } from '../../components/MarkdownContent.tsx'
+import { formatDate } from '../../lib/format.ts'
+import type { ArticleBody } from '../../lib/content-types.ts'
 
 const HOME = '/'
 
 /* One lazy chunk per article body — only the requested slug is fetched. */
-const bodyLoaders = import.meta.glob<{ body: ArticleBody }>('../generated/articles/*.ts')
+const bodyLoaders = import.meta.glob<{ body: ArticleBody }>('../../generated/articles/*.ts')
 
 export function Article() {
   const { slug } = useParams<{ slug: string }>()
@@ -23,7 +23,7 @@ export function Article() {
   useEffect(() => {
     setBody(null)
     if (!slug) return
-    const load = bodyLoaders[`../generated/articles/${slug}.ts`]
+    const load = bodyLoaders[`../../generated/articles/${slug}.ts`]
     if (!load) return
     let alive = true
     load().then((mod) => {

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.css'
-import { ARTICLES } from '../generated/content-index.ts'
-import { categoryColor } from '../lib/categories.ts'
-import { formatDateShort } from '../lib/format.ts'
+import { ARTICLES } from '../../generated/content-index.ts'
+import { categoryColor } from '../../lib/categories.ts'
+import { formatDateShort } from '../../lib/format.ts'
 
 const DESIGN_SYSTEM = '/design-system'
 
