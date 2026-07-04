@@ -37,18 +37,28 @@ scripts/
 index.html              # single entry; Google Fonts <link> lives here
 src/
 ├── main.tsx            # createRoot + BrowserRouter + lazy routes + Suspense
-├── index.css           # shared: tokens, reset, keyframes, header/footer, …
-├── content-types.ts    # ArticleMeta / ArticleBody / Heading types
-├── categories.ts       # category → accent-color map
-├── format.ts           # date helpers
-├── MarkdownContent.tsx # renders trusted build-time HTML
-├── generated/          # BUILD ARTIFACT (gitignored) — do not edit
-│   ├── content-index.ts        # ARTICLES: metadata only, no HTML
-│   └── articles/<slug>.ts       # per-article { html, headings } body chunk
-├── Home.tsx / Home.css
-├── Article.tsx / Article.css
-└── DesignSystem.tsx / DesignSystem.css
+├── vite-env.d.ts
+├── styles/
+│   └── global.css      # shared: tokens, reset, keyframes, header/footer, …
+├── pages/              # one route = one component + co-located CSS
+│   ├── Home.tsx / Home.css
+│   ├── Article.tsx / Article.css
+│   └── DesignSystem.tsx / DesignSystem.css
+├── components/
+│   └── MarkdownContent.tsx     # renders trusted build-time HTML
+├── lib/                # shared non-UI helpers
+│   ├── content-types.ts        # ArticleMeta / ArticleBody / Heading
+│   ├── categories.ts           # category → accent-color map
+│   └── format.ts               # date helpers
+└── generated/          # BUILD ARTIFACT (gitignored) — do not edit
+    ├── content-index.ts        # ARTICLES: metadata only, no HTML
+    └── articles/<slug>.ts       # per-article { html, headings } body chunk
 ```
+
+Folders by role: `pages/` (route components + their CSS), `components/`
+(reusable UI), `lib/` (types, config, helpers — no JSX), `styles/` (shared CSS),
+`generated/` (build output). Keep new files in the folder that matches their
+role; don't let `src/` go flat again.
 
 One route = one page component = one co-located CSS file. The CSS file is
 imported *inside* the page component (not in `main.tsx`), so Vite bundles it
@@ -57,7 +67,7 @@ into that route's chunk and only ships it when the route loads.
 **Content data split (keep this):** listing surfaces (Home) import
 `content-index.ts` — metadata only, so no article HTML ever lands in the Home
 chunk. Article bodies load lazily, one chunk per slug, via
-`import.meta.glob('./generated/articles/*.ts')` in `Article.tsx`. Never import a
+`import.meta.glob('../generated/articles/*.ts')` in `pages/Article.tsx`. Never import a
 `generated/articles/*` module statically, and never add `html` to the metadata
 index.
 
@@ -69,12 +79,12 @@ index.
    New page → add a `lazy(...)` route, same pattern.
 
 2. **Per-route CSS.** Page-specific styles live in that page's own `.css`,
-   imported from the page component. Only put a rule in `index.css` when 2+
-   pages genuinely share it. When something stops being shared, move it out.
+   imported from the page component. Only put a rule in `styles/global.css` when
+   2+ pages genuinely share it. When something stops being shared, move it out.
 
 3. **Keep the initial bundle minimal.** After `npm run build`, the initial
    critical path for `/` is: `index.js` (React + router + shell) +
-   `index.css` + the `Home` chunk + `Home.css`. Article/DesignSystem JS+CSS
+   `global.css` + the `Home` chunk + `Home.css`. Article/DesignSystem JS+CSS
    must NOT appear on that path. If a change makes them load eagerly, fix it.
 
    Rough current baseline (gzip): shared JS ~52 KB, shared CSS ~1.4 KB, each
