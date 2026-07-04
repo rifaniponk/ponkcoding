@@ -179,34 +179,7 @@ a {
   }
 }
 
-/* ---------- Callout (article + design system) ---------- */
-.callout {
-  margin: 32px 0;
-  border: 1px solid var(--border);
-  background: #fafaf9;
-  padding: 18px 22px 20px;
-
-  &__label {
-    margin: 0 0 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    span:last-child {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-  }
-
-  &__body {
-    margin: 0;
-    font-size: 15.5px;
-    line-height: 1.65;
-    color: #33302a;
-  }
-}
+/* Callout now lives in src/components/Callout */
 
 /* ---------- Block: file-tree / terminal (article + design system) ---------- */
 .block {

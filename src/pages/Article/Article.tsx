@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import './Article.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
 import { categoryColor } from '../../lib/categories.ts'
-import { MarkdownContent } from '../../components/MarkdownContent.tsx'
+import { MarkdownContent, Tag } from '../../components'
 import { formatDate } from '../../lib/format.ts'
 import type { ArticleBody } from '../../lib/content-types.ts'
 
@@ -144,9 +144,9 @@ export function Article() {
           <div className="art-tags">
             <span className="art-tags__label">Tags</span>
             {meta.tags.map((t) => (
-              <Link key={t} to={`${HOME}#topics`} className="art-tag">
+              <Tag key={t} to={`${HOME}#topics`}>
                 #{t}
-              </Link>
+              </Tag>
             ))}
           </div>
 

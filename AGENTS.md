@@ -47,7 +47,10 @@ src/
 │   ├── Home/Home.tsx + Home.scss + Home.data.ts
 │   ├── Article/Article.tsx + Article.scss
 │   └── DesignSystem/DesignSystem.tsx + DesignSystem.scss + DesignSystem.data.ts
-├── components/
+├── components/         # reusable UI library — import from the barrel
+│   ├── index.ts        # barrel: Button, Pill, Tag, TextLink, Callout, Dot, …
+│   ├── Button/Button.tsx + Button.scss
+│   ├── Pill/…  Tag/…  TextLink/…  Callout/…  Dot/…
 │   └── MarkdownContent.tsx     # renders trusted build-time HTML
 ├── lib/                # shared non-UI helpers
 │   ├── content-types.ts        # ArticleMeta / ArticleBody / Heading
@@ -112,6 +115,14 @@ index.
   (e.g. `accent`, `showHeroIndex`, `showToc`).
 - Repeated markup is data-driven: define a typed array (`LAB`, `SWATCHES`,
   `PROFILE_FACTS`, …) and `.map()` it. Don't hand-repeat cards.
+- Reuse the shared UI primitives from `src/components` (`import { Button, Tag,
+  Callout, … } from '../../components'`) instead of hand-writing their
+  className strings. Each component owns its markup **and** its co-located
+  `.scss`, so it drops into any page without copying styles. New primitive that
+  repeats across pages → add a `components/<Name>/<Name>.tsx` + `.scss` and
+  export it from the barrel; don't scatter the CSS into page files. The
+  `/design-system` route is the living showcase — render specimens there via the
+  real components, never re-mocked markup.
 - Static page data lives in a co-located `<Page>.data.ts` (e.g.
   `pages/Home/Home.data.ts`, `pages/DesignSystem/DesignSystem.data.ts`), not
   inline in the component. Keep *derived* data (computed from `ARTICLES`, e.g.

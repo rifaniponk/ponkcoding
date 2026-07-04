@@ -1,0 +1,50 @@
+.callout {
+  --callout-accent: var(--accent);
+  margin: 32px 0;
+  border: 1px solid var(--border);
+  background: #fafaf9;
+  padding: 18px 22px 20px;
+
+  &__label {
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--callout-accent);
+
+    span:last-child {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__marker {
+    width: 7px;
+    height: 7px;
+    background: var(--callout-accent);
+    display: inline-block;
+  }
+
+  &__body {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: #33302a;
+  }
+
+  &--tip &__marker {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+  }
+
+  &--caution {
+    --callout-accent: #4e5f6b;
+
+    .callout__marker {
+      transform: rotate(45deg);
+    }
+  }
+}
