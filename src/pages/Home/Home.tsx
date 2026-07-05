@@ -355,6 +355,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 useful decisions behind that work.
               </p>
               <div className="about-links">
+                <Link to="/profile">Full profile →</Link>
                 <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">
                   GitHub ↗
                 </a>

@@ -13,6 +13,9 @@ const Article = lazy(() =>
 const DesignSystem = lazy(() =>
   import('./pages/DesignSystem/DesignSystem.tsx').then((m) => ({ default: m.DesignSystem })),
 )
+const Profile = lazy(() =>
+  import('./pages/Profile/Profile.tsx').then((m) => ({ default: m.Profile })),
+)
 
 /* On client-side navigation: scroll to the hash target if present, else to
    the top. The target may not exist yet on the first frame when a lazy page
@@ -45,6 +48,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/articles/:slug" element={<Article />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/design-system" element={<DesignSystem />} />
         </Routes>
       </Suspense>
