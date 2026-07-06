@@ -31,7 +31,7 @@ export function Profile() {
       <main className="profile">
         {/* ---------- Hero ---------- */}
         <section className="profile-hero">
-          <p className="profile-hero__eyebrow">Profile / Curriculum Vitae</p>
+          <p className="profile-hero__eyebrow">Profile / Overview</p>
           <h1 className="profile-hero__name">{PROFILE.name}</h1>
           <p className="profile-hero__title">{PROFILE.title}</p>
           <ul className="profile-hero__meta">
@@ -86,22 +86,18 @@ export function Profile() {
           </div>
         </section>
 
-        {/* ---------- Experience ---------- */}
+        {/* ---------- Experience (overview only) ---------- */}
         <section className="profile-section">
           <div className="profile-section__head">
             <span className="profile-section__no">03</span>
-            <h2>Experience</h2>
+            <h2>Experience overview</h2>
           </div>
           <ol className="profile-timeline">
             {EXPERIENCE.map((job) => (
-              <li key={`${job.company}-${job.period}`} className="profile-job">
-                <div className="profile-job__meta">
-                  <span className="profile-job__period">{job.period}</span>
-                </div>
+              <li key={`${job.role}-${job.domain}`} className="profile-job">
                 <div className="profile-job__body">
                   <h3 className="profile-job__role">{job.role}</h3>
-                  <p className="profile-job__company">{job.company}</p>
-                  {job.blurb && <p className="profile-job__blurb">{job.blurb}</p>}
+                  <p className="profile-job__domain">{job.domain}</p>
                   <ul className="profile-job__points">
                     {job.points.map((point, i) => (
                       <li key={i}>{point}</li>

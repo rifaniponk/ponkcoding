@@ -140,20 +140,11 @@
 }
 
 .profile-job {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 28px;
   padding: 26px 0;
   border-top: 1px solid var(--border);
 
   &:last-child {
     border-bottom: 1px solid var(--border);
-  }
-
-  &__period {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--faint);
   }
 
   &__role {
@@ -164,19 +155,12 @@
     color: var(--ink);
   }
 
-  &__company {
+  &__domain {
     margin: 2px 0 0;
     font-family: var(--mono);
     font-size: 13px;
     letter-spacing: 0.02em;
     color: var(--accent);
-  }
-
-  &__blurb {
-    margin: 14px 0 0;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--muted);
   }
 
   &__points {
@@ -242,10 +226,5 @@
   .profile-expertise,
   .profile-split {
     grid-template-columns: 1fr;
-  }
-
-  .profile-job {
-    grid-template-columns: 1fr;
-    gap: 10px;
   }
 }
