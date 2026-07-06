@@ -369,7 +369,6 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 <a href="https://x.com/rifaniponk" target="_blank" rel="noreferrer">
                   X / Twitter ↗
                 </a>
-                <a href="mailto:rifan.refun@gmail.com">Email ↗</a>
               </div>
             </div>
           </div>

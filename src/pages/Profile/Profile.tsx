@@ -37,9 +37,6 @@ export function Profile() {
           <ul className="profile-hero__meta">
             <li>{PROFILE.location}</li>
             <li>
-              <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
-            </li>
-            <li>
               <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer">
                 GitHub @{PROFILE.github}
               </a>
@@ -51,9 +48,11 @@ export function Profile() {
             </li>
           </ul>
           <div className="profile-hero__actions">
-            <Button href={`mailto:${PROFILE.email}`}>Get in touch</Button>
-            <Button variant="secondary" href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
+            <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
               Hire on Upwork ↗
+            </Button>
+            <Button variant="secondary" href={PROFILE.xUrl} target="_blank" rel="noreferrer">
+              Message on X ↗
             </Button>
           </div>
         </section>
