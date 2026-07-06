@@ -73,31 +73,27 @@ export const EXPERTISE: ExpertiseGroup[] = [
 
 export interface Experience {
   role: string
+  company: string
   domain: string
   points: string[]
 }
 
-// High-level overview only — no employers or dates (kept intentionally private).
+// Overview only — company names included, no start/end dates.
 export const EXPERIENCE: Experience[] = [
   {
-    role: 'Frontend Tech Lead',
+    role: 'Senior Frontend Engineer → Frontend Tech Lead',
+    company: 'WeGuide Health',
     domain: 'Healthcare · cross-platform',
     points: [
-      'Led and mentored a frontend team, establishing engineering standards and development workflows for a regulatory-approved patient management platform across web and mobile.',
-      'Delivered cross-platform healthcare apps in Angular and Ionic, including Garmin wearable SDK, Apple HealthKit, and Google Fit integrations.',
+      'Led and mentored the frontend team, establishing engineering standards and development workflows for a regulatory-approved patient management platform across web and mobile.',
+      'Built scalable cross-platform architecture (PWA, iOS, Android) in Angular and Ionic, with reusable UI systems and reactive data flows.',
+      'Integrated Garmin wearable SDK, Apple HealthKit, and Google Fit for health and wellness tracking.',
       'Drove major framework upgrades, large-scale refactors, and performance optimization; maintained CI/CD pipelines and internal developer tooling.',
     ],
   },
   {
-    role: 'Senior Frontend Engineer',
-    domain: 'Healthcare · cross-platform',
-    points: [
-      'Built scalable frontend architecture for PWA, iOS, and Android using Angular and Ionic.',
-      'Implemented reusable UI systems and reactive data flows, and optimized mobile performance.',
-    ],
-  },
-  {
     role: 'Full Stack Developer',
+    company: 'Mayar.id',
     domain: 'Fintech · payments',
     points: [
       'Built payment platform applications with React and GraphQL and integrated payment gateway services.',
@@ -106,6 +102,7 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: 'Senior Software Engineer',
+    company: 'Software Integrators',
     domain: 'Enterprise logistics',
     points: [
       'Built and maintained enterprise logistics applications using Go, PHP, and Angular.',
@@ -114,6 +111,7 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: 'Analyst Programmer → Senior',
+    company: 'Mitrais',
     domain: 'Enterprise · medical & logistics',
     points: [
       'Delivered enterprise software projects for international clients using .NET, PHP, Angular, and enterprise backend systems.',
@@ -122,9 +120,10 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: 'Software Engineer',
-    domain: 'Startups · web systems',
+    company: 'e-resto · Telkom Indonesia',
+    domain: 'Early career · startups & web',
     points: [
-      'Built product features and backend services across early-stage startups (POS, web applications) using PHP, MySQL, and JavaScript.',
+      'Built product features and backend services at an early-stage POS startup using PHP, MySQL, and JavaScript.',
       'Started professional career maintaining and extending web applications at a large enterprise.',
     ],
   },

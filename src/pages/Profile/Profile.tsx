@@ -98,9 +98,10 @@ export function Profile() {
           </div>
           <ol className="profile-timeline">
             {EXPERIENCE.map((job) => (
-              <li key={`${job.role}-${job.domain}`} className="profile-job">
+              <li key={`${job.company}-${job.role}`} className="profile-job">
                 <div className="profile-job__body">
                   <h3 className="profile-job__role">{job.role}</h3>
+                  <p className="profile-job__company">{job.company}</p>
                   <p className="profile-job__domain">{job.domain}</p>
                   <ul className="profile-job__points">
                     {job.points.map((point, i) => (
