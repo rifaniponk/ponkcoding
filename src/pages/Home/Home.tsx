@@ -360,13 +360,15 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                   GitHub ↗
                 </a>
                 <a
-                  href="https://www.upwork.com/freelancers/rifanmuhamadfauzi"
+                  href="https://www.upwork.com/freelancers/rifanfauzi"
                   target="_blank"
                   rel="noreferrer"
                 >
                   Upwork ↗
                 </a>
-                <a href="#about">X / Twitter ↗</a>
+                <a href="https://x.com/rifaniponk" target="_blank" rel="noreferrer">
+                  X / Twitter ↗
+                </a>
                 <a href="mailto:rifan.refun@gmail.com">Email ↗</a>
               </div>
             </div>

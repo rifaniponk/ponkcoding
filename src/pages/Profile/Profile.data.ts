@@ -5,7 +5,9 @@ export const PROFILE = {
   email: 'rifan.refun@gmail.com',
   github: 'rifaniponk',
   githubUrl: 'https://github.com/rifaniponk',
-  upworkUrl: 'https://www.upwork.com/freelancers/rifanmuhamadfauzi',
+  x: 'rifaniponk',
+  xUrl: 'https://x.com/rifaniponk',
+  upworkUrl: 'https://www.upwork.com/freelancers/rifanfauzi',
 }
 
 export const SUMMARY: string[] = [

@@ -44,6 +44,11 @@ export function Profile() {
                 GitHub @{PROFILE.github}
               </a>
             </li>
+            <li>
+              <a href={PROFILE.xUrl} target="_blank" rel="noreferrer">
+                X @{PROFILE.x}
+              </a>
+            </li>
           </ul>
           <div className="profile-hero__actions">
             <Button href={`mailto:${PROFILE.email}`}>Get in touch</Button>
