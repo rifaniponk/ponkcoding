@@ -94,6 +94,18 @@ export function MarkdownContent({ html }: { html: string }) {
       })
     })
 
+    root.querySelectorAll('table').forEach((table) => {
+      if (table.parentElement?.classList.contains('markdown__table-scroll')) return
+
+      const wrapper = document.createElement('div')
+      wrapper.className = 'markdown__table-scroll'
+      wrapper.tabIndex = 0
+      wrapper.setAttribute('role', 'region')
+      wrapper.setAttribute('aria-label', 'Scrollable table')
+      table.before(wrapper)
+      wrapper.append(table)
+    })
+
     return () => cleanups.forEach((cleanup) => cleanup())
   }, [html])
 
