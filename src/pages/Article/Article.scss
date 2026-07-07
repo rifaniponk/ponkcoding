@@ -322,10 +322,10 @@
     top: 10px;
     right: 10px;
     padding: 5px 9px;
-    background: rgba(250, 250, 249, 0.92);
-    border: 1px solid #d7d7d3;
+    background: rgba(35, 35, 34, 0.92);
+    border: 1px solid #555552;
     border-radius: 4px;
-    color: var(--muted);
+    color: #c9c9c5;
     font-family: var(--mono);
     font-size: 11px;
     line-height: 1.3;
@@ -337,9 +337,9 @@
       background 0.15s ease;
 
     &:hover {
-      color: var(--ink);
-      border-color: var(--faint);
-      background: #fff;
+      color: #fff;
+      border-color: #858580;
+      background: #30302e;
     }
 
     &:focus-visible {
@@ -352,13 +352,13 @@
     margin: 0 0 28px;
     padding: 48px 22px 20px;
     overflow-x: auto;
-    background: #fafaf9;
-    border: 1px solid var(--border);
+    background: #20211f;
+    border: 1px solid #20211f;
     border-radius: 6px;
     font-family: var(--mono);
     font-size: 13.5px;
     line-height: 1.7;
-    color: var(--ink);
+    color: #e6e6e1;
 
     code {
       background: none;
@@ -375,7 +375,7 @@
   /* Build-time syntax highlighting from rehype-highlight/highlight.js. */
   .hljs-comment,
   .hljs-quote {
-    color: #777773;
+    color: #96968f;
     font-style: italic;
   }
 
@@ -384,7 +384,7 @@
   .hljs-literal,
   .hljs-section,
   .hljs-link {
-    color: #8f3f71;
+    color: #e296c2;
   }
 
   .hljs-string,
@@ -398,7 +398,7 @@
   .hljs-variable,
   .hljs-template-tag,
   .hljs-template-variable {
-    color: #39746a;
+    color: #8ecdbd;
   }
 
   .hljs-number,
@@ -406,19 +406,19 @@
   .hljs-built_in,
   .hljs-builtin-name,
   .hljs-params {
-    color: #9a542d;
+    color: #e0aa79;
   }
 
   .hljs-title.function_,
   .hljs-title.class_,
   .hljs-selector-id,
   .hljs-selector-class {
-    color: #4f5f9f;
+    color: #aebcff;
   }
 
   .hljs-regexp,
   .hljs-deletion {
-    color: #a64242;
+    color: #f08d8d;
   }
 
   .hljs-emphasis {
