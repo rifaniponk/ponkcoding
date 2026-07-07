@@ -64,7 +64,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <span className="brand__mark">P</span>
             <span className="brand__lockup">
               <span className="brand__name">Ponkcoding</span>
-              <span className="brand__edition">Rifan Fauzi / Personal studio</span>
+              <span className="brand__edition">Rifan's engineering journal</span>
             </span>
           </a>
           <nav className="nav" aria-label="Primary navigation">
