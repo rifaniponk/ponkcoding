@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
@@ -54,31 +54,7 @@ function useReveal() {
 }
 
 export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
-  const [searchOpen, setSearchOpen] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
   const revealRef = useReveal()
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null
-      const typing = !!target && ['INPUT', 'TEXTAREA'].includes(target.tagName)
-      if (event.key === 'Escape') setSearchOpen(false)
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault()
-        setSearchOpen(true)
-      }
-      if (event.key === '/' && !typing) {
-        event.preventDefault()
-        setSearchOpen(true)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
-
-  useEffect(() => {
-    if (searchOpen) inputRef.current?.focus()
-  }, [searchOpen])
 
   return (
     <div className="page home-page" style={{ ['--accent' as string]: accent }} ref={revealRef}>
@@ -105,15 +81,6 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               About
             </a>
           </nav>
-          <button
-            className="search-btn"
-            onClick={() => setSearchOpen(true)}
-            aria-label="Open search"
-          >
-            <span className="search-btn__icon">⌕</span>
-            <span>Search</span>
-            <span className="kbd">⌘K</span>
-          </button>
         </div>
       </header>
 
@@ -409,37 +376,6 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           </div>
         </div>
       </footer>
-
-      {searchOpen && (
-        <div className="overlay" onClick={() => setSearchOpen(false)} role="presentation">
-          <div
-            className="overlay__panel"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Search Ponkcoding"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="overlay__head">
-              <span>Search the field journal</span>
-              <button onClick={() => setSearchOpen(false)}>ESC</button>
-            </div>
-            <div className="overlay__search">
-              <span>⌕</span>
-              <input
-                ref={inputRef}
-                placeholder="Try “local AI” or “shipping”…"
-                aria-label="Search query"
-              />
-            </div>
-            <p className="overlay__hint">POPULAR SIGNALS</p>
-            <div className="overlay__tags">
-              {['local models', 'static publishing', 'indie dev', 'pricing'].map((tag) => (
-                <button key={tag}>{tag} ↗</button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
