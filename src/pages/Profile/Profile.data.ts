@@ -169,4 +169,5 @@ export const INTERESTS: string[] = [
   'Mobile-first product development',
   'Developer productivity tooling',
   'Cross-platform application development',
+  'Application performance tuning',
 ]
