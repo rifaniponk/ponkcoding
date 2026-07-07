@@ -152,12 +152,12 @@ Callout, … } from '../../components'`) instead of hand-writing their
 ## Routing rules (SPA navigation is mandatory)
 
 **A full-page reload / redirection on in-app navigation is NOT acceptable.**
-Navigating between `/`, `/articles/:slug`, and `/design-system` must stay
-client-side (no white flash, no document reload, shared bundle not re-fetched).
+Navigating between `/`, `/articles/:slug`, `/profile`, and `/design-system` must
+stay client-side (no white flash, no document reload, shared bundle not re-fetched).
 
 - **Cross-route links use react-router `<Link to="...">`, never `<a href>`.**
   A plain `<a>` to an internal route triggers a full document load — do not
-  use it for `/`, `/articles/:slug`, `/design-system` (with or without a hash, e.g.
+  use it for `/`, `/articles/:slug`, `/profile`, `/design-system` (with or without a hash, e.g.
   `<Link to="/#notes">`). Applies everywhere: nav, cards, footers, tags,
   mapped lists.
 - **Same-page hash jumps** (e.g. `#notes` while already on `/`) stay as
@@ -168,7 +168,7 @@ client-side (no white flash, no document reload, shared bundle not re-fetched).
   target, else to the top. It retries across frames because the target may
   not be mounted until the lazy page chunk resolves. Don't add per-page
   scroll hacks — extend `ScrollManager` if behavior needs to change.
-- Deep links / refreshes on `/articles/:slug` and `/design-system` rely on SPA
+- Deep links / refreshes on `/articles/:slug`, `/profile`, and `/design-system` rely on SPA
   fallback (dev server + `vite preview` provide it; configure the host the
   same way — e.g. Netlify `/* -> /index.html 200`, currently in
   `public/_redirects`).

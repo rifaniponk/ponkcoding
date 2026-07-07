@@ -355,18 +355,20 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 useful decisions behind that work.
               </p>
               <div className="about-links">
+                <Link to="/profile">Full profile →</Link>
                 <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">
                   GitHub ↗
                 </a>
                 <a
-                  href="https://www.upwork.com/freelancers/rifanmuhamadfauzi"
+                  href="https://www.upwork.com/freelancers/rifanfauzi"
                   target="_blank"
                   rel="noreferrer"
                 >
                   Upwork ↗
                 </a>
-                <a href="#about">X / Twitter ↗</a>
-                <a href="mailto:rifan.refun@gmail.com">Email ↗</a>
+                <a href="https://x.com/rifaniponk" target="_blank" rel="noreferrer">
+                  X / Twitter ↗
+                </a>
               </div>
             </div>
           </div>
