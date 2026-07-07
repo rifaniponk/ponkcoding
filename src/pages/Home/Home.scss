@@ -19,7 +19,9 @@
   border-bottom-color: rgba(23, 32, 51, 0.14);
 
   .header__inner {
-    max-width: 1320px;
+    width: min(1320px, calc(100% - clamp(40px, 8vw, 112px)));
+    max-width: none;
+    padding: 0;
     height: 76px;
   }
 
@@ -1114,7 +1116,8 @@
     width: min(100% - 32px, 1320px);
   }
   .home-header .header__inner {
-    padding: 0 16px;
+    width: min(100% - 32px, 1320px);
+    padding: 0;
     height: 66px;
   }
   .brand__mark {
