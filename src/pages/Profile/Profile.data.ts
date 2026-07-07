@@ -130,11 +130,30 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: 'Software Engineer',
-    company: 'e-resto · Telkom Indonesia',
-    domain: 'Early career · startups & web',
+    company: 'e-resto (Newbee Corp)',
+    domain: 'Startup · restaurant POS & discovery',
     points: [
-      'Built product features and backend services at an early-stage POS startup using PHP, MySQL, and JavaScript.',
-      'Started professional career maintaining and extending web applications at a large enterprise.',
+      'Participated in requirement analysis and system design for a restaurant POS and discovery startup using PHP, MySQL, HTML, JavaScript, and jQuery.',
+      'Built product features and backend services, working closely with stakeholders in a fast-moving startup environment.',
+      'Won the Indonesia ICT Award (INAICTA) 2013 in the SME Application category.',
+    ],
+  },
+  {
+    role: 'PHP Programmer',
+    company: 'Torche Indonesia',
+    domain: 'Web · short-term projects',
+    points: [
+      'Developed short-term PHP projects using the Yii Framework and MySQL.',
+      'Delivered custom web application features and integrations.',
+    ],
+  },
+  {
+    role: 'Web Developer',
+    company: 'Telkom Indonesia',
+    domain: 'Enterprise · web',
+    points: [
+      "Started professional career at Indonesia's leading digital transformation company.",
+      'Maintained legacy PHP applications; developed new features and fixed production issues on internal apps.',
     ],
   },
 ]
