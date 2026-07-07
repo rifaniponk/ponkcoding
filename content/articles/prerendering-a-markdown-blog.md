@@ -26,45 +26,9 @@ This article documents the implementation that is running now, including where J
 
 The system has two separate lifecycles. Publishing turns author-owned Markdown into JavaScript assets. Reading loads only the assets needed for the current route and article.
 
-```text
-AUTHORING AND BUILD
+![An editorial diagram showing Markdown documents flowing through code and modular content processing into a finished web publication.](/images/articles/prerendering-markdown-blog-cover.jpg)
 
-content/articles/*.md
-        │
-        ▼
-gray-matter ── validate frontmatter ── exclude production drafts
-        │
-        ▼
-remark-parse + remark-gfm
-        │
-        ▼
-remark-rehype + rehype-slug + autolink headings
-        │
-        ├──► src/generated/content-index.ts
-        │      metadata only: title, slug, dates, tags, reading time
-        │
-        └──► src/generated/articles/<slug>.ts
-               one { html, headings } module per article
-                       │
-                       ▼
-                  tsc + Vite
-                       │
-                       ▼
-                  dist/ assets
-
-READING
-
-request /articles/:slug
-        │
-        ▼
-index.html + shared React/router shell
-        │
-        ▼
-lazy Article page JS + Article CSS
-        │
-        ├──► metadata index
-        └──► requested article body chunk only
-```
+_Markdown enters from the left, passes through validation and build-time transformation, and becomes the modular publication loaded by the browser._
 
 The generated directory is disposable. It is ignored by Git and rebuilt before development and production builds, so the Markdown files remain the only content that an author edits.
 

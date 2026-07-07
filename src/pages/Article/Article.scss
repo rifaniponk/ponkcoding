@@ -300,6 +300,19 @@
     }
   }
 
+  .markdown > p > img:only-child {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 32px 0 10px;
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 40px rgba(23, 32, 51, 0.1);
+  }
+
+  .markdown > p:has(> img:only-child) {
+    margin: 0;
+  }
+
   /* Rendered-Markdown output (autolinked headings, code blocks, lists) */
   h2 a,
   h3 a {
