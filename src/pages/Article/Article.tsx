@@ -109,7 +109,6 @@ export function Article() {
               About
             </Link>
           </nav>
-          <span className="header__kbd">⌘K</span>
         </div>
       </header>
 

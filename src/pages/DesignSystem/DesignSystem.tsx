@@ -207,7 +207,6 @@ export function DesignSystem() {
                       </span>
                     ))}
                   </nav>
-                  <div className="ds-mobile__foot">Search ⌘K</div>
                 </div>
               </div>
             </div>
@@ -225,10 +224,6 @@ export function DesignSystem() {
                   glow.
                 </li>
                 <li>
-                  <strong>Search:</strong> ⌘K / "/" opens overlay; backdrop blur, 180ms fade + 220ms
-                  rise; Esc closes.
-                </li>
-                <li>
                   <strong>Article:</strong> 2px reading-progress bar in accent; TOC scrollspy marks
                   the active heading with a moss square.
                 </li>
@@ -241,7 +236,7 @@ export function DesignSystem() {
           </div>
           <p className="ds-note">
             Live specimens of the remaining components — article cards, list items, code / terminal
-            / file-tree / Mermaid blocks, TOC, search overlay, footer — are on the{' '}
+            / file-tree / Mermaid blocks, TOC, and footer — are on the{' '}
             <Link to={HOME} className="ds-footlink">
               homepage
             </Link>{' '}
@@ -277,8 +272,7 @@ export function DesignSystem() {
 ├── layout/
 │   ├── SiteHeader.tsx
 │   ├── MobileNav.tsx
-│   ├── SiteFooter.tsx
-│   └── SearchOverlay.tsx
+│   └── SiteFooter.tsx
 ├── home/
 │   ├── Hero.tsx
 │   ├── FeaturedCard.tsx
@@ -322,20 +316,12 @@ export function DesignSystem() {
               <li>
                 <span className="ds-principles__mark">c</span>
                 <span>
-                  <strong>Everything prerenders;</strong> only SearchOverlay, MobileNav, Toc
-                  scrollspy, and the copy button hydrate — as tiny islands, not a page-level app.
+                  <strong>Everything prerenders;</strong> only MobileNav, Toc scrollspy, and the
+                  copy button hydrate — as tiny islands, not a page-level app.
                 </span>
               </li>
               <li>
                 <span className="ds-principles__mark">d</span>
-                <span>
-                  <strong>Search index is a build artifact:</strong> emit{' '}
-                  <code>search-index.json</code> (title, category, tags, excerpt) and filter
-                  client-side in the overlay.
-                </span>
-              </li>
-              <li>
-                <span className="ds-principles__mark">e</span>
                 <span>
                   <strong>Fonts self-hosted</strong> with <code>font-display: swap</code> and
                   preloaded WOFF2 — the serif is the brand; it must not flash.
