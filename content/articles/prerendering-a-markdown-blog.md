@@ -18,6 +18,12 @@ featured: true
 
 Ponkcoding is a static publication built with React 18, TypeScript, and Vite. Markdown is the source of truth, but the browser does not fetch or parse Markdown. A build-time script validates every article, converts its body to HTML, and emits typed TypeScript modules that Vite can split into small chunks.
 
+I built it this way around three practical goals. First, a personal site should be extremely cheap to operate: static files can live on simple hosting without a database, application server, or request-time compute. Second, it should feel immediate. That means keeping the initial bundle deliberately small and loading page code and article bodies only when a reader needs them. Performance is an architectural constraint here, not a cleanup task for later.
+
+Third, most content creation will be assisted by AI, and Markdown is a good interface for that workflow. Models produce it reliably, the files remain readable without special tooling, and I can review a focused content diff instead of auditing a large block of generated markup.
+
+I could ask AI to generate the final HTML directly, but that would make the output itself the source of truth. HTML is noisier to review, allows presentation details to drift between articles, and couples each document to the current design. Markdown keeps authorship separate from presentation: one small, durable source file describes the content, while a single controlled pipeline applies consistent headings, links, tables, code blocks, and future formatting changes across the entire publication.
+
 There is an important distinction in that description: this site is **not prerendered yet**. The server returns the same application shell for every route, then React renders the requested page in the browser. What is static today is the content source and the build output—not one complete HTML document per article.
 
 This article documents the implementation that is running now, including where JavaScript is used, what is loaded on each route, and where prerendering fits next.
