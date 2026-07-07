@@ -12,6 +12,7 @@ tags:
   - markdown
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/prerendering-markdown-blog-cover.jpg'
 featured: true
 ---
 
