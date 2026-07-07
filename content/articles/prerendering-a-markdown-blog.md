@@ -26,7 +26,7 @@ This article documents the implementation that is running now, including where J
 
 The system has two separate lifecycles. Publishing turns author-owned Markdown into JavaScript assets. Reading loads only the assets needed for the current route and article.
 
-![An editorial diagram showing Markdown documents flowing through code and modular content processing into a finished web publication.](/images/articles/prerendering-markdown-blog-cover.jpg)
+![Architecture diagram with separate authoring and reading lanes. Markdown is validated and converted to HTML, split into a metadata index and article modules, then built by Vite. A browser request loads React Router, the Article page, and one requested body.](/images/articles/prerendering-markdown-blog-architecture.jpg)
 
 _Markdown enters from the left, passes through validation and build-time transformation, and becomes the modular publication loaded by the browser._
 
