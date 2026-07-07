@@ -166,8 +166,7 @@ export const EDUCATION = {
 export const INTERESTS: string[] = [
   'End-to-end software development',
   'AI-assisted engineering workflows',
-  'Flutter application development',
   'Mobile-first product development',
   'Developer productivity tooling',
-  'Cross-platform architecture patterns',
+  'Cross-platform application development',
 ]
