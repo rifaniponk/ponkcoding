@@ -101,6 +101,16 @@ export const EXPERIENCE: Experience[] = [
     ],
   },
   {
+    role: 'Full Stack Engineer',
+    company: 'Blink',
+    domain: 'Logistics · booking automation',
+    points: [
+      'Built Go microservices powering the platform backend.',
+      'Developed the frontend dashboard.',
+      'Built a PDF parser that automates booking creation.',
+    ],
+  },
+  {
     role: 'Full Stack Developer',
     company: 'Mayar.id',
     domain: 'Fintech · payments',
