@@ -11,6 +11,7 @@ tags:
   - quran
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/verifying-quran-recitation-cover.jpg'
 ---
 
 Ayatura's Next Verse practice mode currently records self-assessment. The app shows a prompt, the user recites the continuation, reveals the answer, and marks whether they got it right. That was a deliberate limit: the app records what the user reports, not a claim that a speech model can judge Quran recitation.
