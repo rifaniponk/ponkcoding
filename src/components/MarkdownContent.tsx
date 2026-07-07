@@ -65,17 +65,20 @@ export function MarkdownContent({ html }: { html: string }) {
       const copy = async () => {
         const copied = await copyToClipboard(code.textContent ?? '')
         if (copied) {
-          button.textContent = 'Copied'
+          button.textContent = 'Copied!'
+          button.dataset.state = 'success'
           button.setAttribute('aria-label', 'Code copied to clipboard')
         } else {
           button.textContent = 'Copy failed'
+          button.dataset.state = 'error'
         }
 
         window.clearTimeout(resetTimer)
         resetTimer = window.setTimeout(() => {
           button.textContent = 'Copy'
+          delete button.dataset.state
           button.setAttribute('aria-label', 'Copy code to clipboard')
-        }, 2000)
+        }, 2500)
       }
 
       button.addEventListener('click', copy)
