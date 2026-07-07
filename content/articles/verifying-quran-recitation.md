@@ -15,7 +15,7 @@ author: 'Rifan Fauzi'
 
 Ayatura's Next Verse practice mode currently records self-assessment. The app shows a prompt, the user recites the continuation, reveals the answer, and marks whether they got it right. That was a deliberate limit: the app records what the user reports, not a claim that a speech model can judge Quran recitation.
 
-The obvious next question is whether that limit can move. Can the app listen to a recitation and decide, on its own, whether the user continued with the correct ayah? In Indonesian this practice is called _sambung ayat_ — "connect the verse." Before writing any feature code, I ran a research pass to find out what is actually feasible in 2026 and where the honest boundaries are.
+The obvious next question is whether that limit can move. Can the app listen to a recitation and decide, on its own, whether the user continued with the correct ayah? In Indonesian this practice is called _sambung ayat_ ("connect the verse"). Before writing any feature code, I ran a research pass to find out what is actually feasible in 2026 and where the honest boundaries are.
 
 This article is about that research: what the problem really is, what the literature and open-source ecosystem support today, and the architecture I would ship first. It is not an announcement that the feature is live. It is the reasoning that decides whether it should be.
 
@@ -29,7 +29,7 @@ First, **the target text is closed.** The Quran in the Hafs reading is a finite,
 
 Second, **the acoustic style is unusual.** Recitation has long vowels (madd), distinctive prosody, ghunna, qalqala, and pause rules that do not appear in modern standard Arabic news audio. Models trained on conversational or broadcast Arabic mis-transcribe even fluent recitation. This is precisely why Quran-finetuned models beat stock ones on this task.
 
-Third, **the output I need is a decision, not a transcript.** The feature has to answer "did the user recite the expected continuation correctly?" — a correct-or-not flag with optional word-level hints. That is a much easier problem than producing perfectly diacritized Arabic from scratch.
+Third, **the output I need is a decision, not a transcript.** The feature has to answer "did the user recite the expected continuation correctly?": a correct-or-not flag with optional word-level hints. That is a much easier problem than producing perfectly diacritized Arabic from scratch.
 
 ## Being precise about capability levels
 
@@ -42,7 +42,7 @@ It is easy to promise more than a model can deliver here, so I separated the spa
 | L3    | Pronunciation error detection (wrong makhraj, etc.)  | Experimental      |
 | L4    | Tajweed grading (madd, ghunna, qalqala, ikhfa…)      | Research-only     |
 
-Open Quran-finetuned models already reach under 10% word error rate on clean Hafs audio, which makes L1 practical. Word-level alignment (L2) is demonstrated in open repositories. But L3 and L4 are not solved problems on real users. The strongest published tajweed numbers — accuracies in the 95–99% range — come from a three-rule classification task on a small corpus, not from open-vocabulary grading across accents and beginners.
+Open Quran-finetuned models already reach under 10% word error rate on clean Hafs audio, which makes L1 practical. Word-level alignment (L2) is demonstrated in open repositories. But L3 and L4 are not solved problems on real users. The strongest published tajweed numbers (accuracies in the 95–99% range) come from a three-rule classification task on a small corpus, not from open-vocabulary grading across accents and beginners.
 
 That distinction is the whole point of the research. Ayatura should target L1 with optional L2 hints and refuse to make L3 or L4 claims until the data and models exist. The product copy has to match: "recitation recognized / not yet recognized," never "your tajweed is wrong."
 
@@ -51,7 +51,7 @@ That distinction is the whole point of the research. Ayatura should target L1 wi
 A useful surprise: I do not have to build the core model. Quran recitation recognition is a narrow, well-studied subdomain, and much of the ecosystem is permissively licensed.
 
 - A Quran-finetuned Whisper model, `tarteel-ai/whisper-base-ar-quran` (Apache 2.0), reports around 5.75% word error rate on its evaluation set. It is roughly 74M parameters and runs acceptably on CPU.
-- An open-source pipeline, the Real-Time Quran Recitation Tracker (MIT), already combines Whisper-class recognition with Arabic text normalization, Levenshtein distance, and sequence alignment to do word-level tracking — essentially a blueprint for this feature.
+- An open-source pipeline, the Real-Time Quran Recitation Tracker (MIT), already combines Whisper-class recognition with Arabic text normalization, Levenshtein distance, and sequence alignment to do word-level tracking, essentially a blueprint for this feature.
 - The Tarteel EveryAyah dataset (~932 hours, 36 reciters, full Quran, MIT) and Tanzil's Quran text (CC BY 3.0) make a Hafs-only version feasible without collecting any data myself.
 - A commercial product, Tarteel, already ships this at scale for 15M+ users, which is both a proof of feasibility and a signal about positioning.
 
@@ -86,14 +86,14 @@ FastAPI service (CPU)
    └─ Response: { status, similarity, recognized_text, word_diff }
 ```
 
-The client records short segments with the `record` package, uploads only the expected ayah IDs — never the client's own copy of the text — and the server fetches the canonical text from bundled Tanzil data. Audio is processed in memory and discarded; only an anonymized correctness flag is logged. The matching layer normalizes both sides identically, computes a word-sequence similarity, then applies conservative confidence bands:
+The client records short segments with the `record` package, uploads only the expected ayah IDs (never the client's own copy of the text), and the server fetches the canonical text from bundled Tanzil data. Audio is processed in memory and discarded; only an anonymized correctness flag is logged. The matching layer normalizes both sides identically, computes a word-sequence similarity, then applies conservative confidence bands:
 
 - High similarity → correct.
 - Middle band with strong model confidence → partial, showing missing words only when the diff is small.
 - Low similarity with strong confidence → wrong.
 - Weak model confidence or almost no speech → low confidence, never asserted as wrong.
 
-That last band matters more than the others. The religiously sensitive failure mode is a **false accept** — marking a wrong continuation as correct. So the design prefers an honest "not recognized with confidence, please try again" over false certainty in either direction. For verses that resemble others (the mutashabihat), the plan also scores against the nearest similar candidates and downgrades to low confidence when they are too close to separate.
+That last band matters more than the others. The religiously sensitive failure mode is a **false accept**: marking a wrong continuation as correct. So the design prefers an honest "not recognized with confidence, please try again" over false certainty in either direction. For verses that resemble others (the mutashabihat), the plan also scores against the nearest similar candidates and downgrades to low confidence when they are too close to separate.
 
 ## The risks worth naming out loud
 
@@ -107,9 +107,9 @@ The research surfaced three risks I want to hold onto rather than discover in pr
 
 ## What this means for the feature
 
-Nothing about this replaces the current design overnight. Next Verse stays honest self-assessment until a prototype proves the numbers hold on Ayatura's actual users. The value of the research is that it converts a vague ambition — "add voice recognition" — into a bounded, testable plan: a specific model, a specific matching method, explicit confidence bands, a concrete test protocol, and a clear list of things the MVP must _not_ claim.
+Nothing about this replaces the current design overnight. Next Verse stays honest self-assessment until a prototype proves the numbers hold on Ayatura's actual users. The value of the research is that it converts a vague ambition ("add voice recognition") into a bounded, testable plan: a specific model, a specific matching method, explicit confidence bands, a concrete test protocol, and a clear list of things the MVP must _not_ claim.
 
-If the proof of concept clears its false-accept target on Indonesian volunteers, verification becomes an optional layer on top of Next Verse, framed as an automated software check that can be wrong — not a religious verdict. If it does not, self-assessment remains the honest answer, and that is an acceptable outcome too.
+If the proof of concept clears its false-accept target on Indonesian volunteers, verification becomes an optional layer on top of Next Verse, framed as an automated software check that can be wrong, not a religious verdict. If it does not, self-assessment remains the honest answer, and that is an acceptable outcome too.
 
 The through-line with the rest of Ayatura is the same principle that shaped its offline-first, account-free design: keep the core value dependable, add capability only where it can be trusted, and never let a feature promise more than it can prove.
 
