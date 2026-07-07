@@ -315,11 +315,14 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
 
         <section id="about" className="about-section">
           <div className="section-shell about-shell">
-            <div className="about-portrait" aria-label="Abstract portrait placeholder">
-              <span className="about-portrait__sun" />
-              <span className="about-portrait__grid" />
-              <span className="about-portrait__initials">RF</span>
-              <span className="about-portrait__caption">Portrait pending / identity present</span>
+            <div className="about-portrait">
+              <img
+                src="/images/rifan-profile.jpg"
+                alt="Rifan Fauzi standing in an office"
+                width="1086"
+                height="1448"
+                loading="lazy"
+              />
             </div>
             <div className="about-copy">
               <span className="story-label">

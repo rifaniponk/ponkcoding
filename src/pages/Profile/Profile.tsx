@@ -31,29 +31,40 @@ export function Profile() {
       <main className="profile">
         {/* ---------- Hero ---------- */}
         <section className="profile-hero">
-          <p className="profile-hero__eyebrow">Profile / Overview</p>
-          <h1 className="profile-hero__name">{PROFILE.name}</h1>
-          <p className="profile-hero__title">{PROFILE.title}</p>
-          <ul className="profile-hero__meta">
-            <li>{PROFILE.location}</li>
-            <li>
-              <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer">
-                GitHub @{PROFILE.github}
-              </a>
-            </li>
-            <li>
-              <a href={PROFILE.xUrl} target="_blank" rel="noreferrer">
-                X @{PROFILE.x}
-              </a>
-            </li>
-          </ul>
-          <div className="profile-hero__actions">
-            <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
-              Hire on Upwork ↗
-            </Button>
-            <Button variant="secondary" href={PROFILE.xUrl} target="_blank" rel="noreferrer">
-              Message on X ↗
-            </Button>
+          <div className="profile-hero__layout">
+            <div>
+              <p className="profile-hero__eyebrow">Profile / Overview</p>
+              <h1 className="profile-hero__name">{PROFILE.name}</h1>
+              <p className="profile-hero__title">{PROFILE.title}</p>
+              <ul className="profile-hero__meta">
+                <li>{PROFILE.location}</li>
+                <li>
+                  <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer">
+                    GitHub @{PROFILE.github}
+                  </a>
+                </li>
+                <li>
+                  <a href={PROFILE.xUrl} target="_blank" rel="noreferrer">
+                    X @{PROFILE.x}
+                  </a>
+                </li>
+              </ul>
+              <div className="profile-hero__actions">
+                <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
+                  Hire on Upwork ↗
+                </Button>
+                <Button variant="secondary" href={PROFILE.xUrl} target="_blank" rel="noreferrer">
+                  Message on X ↗
+                </Button>
+              </div>
+            </div>
+            <img
+              className="profile-hero__portrait"
+              src="/images/rifan-profile.jpg"
+              alt="Rifan Fauzi standing in an office"
+              width="1086"
+              height="1448"
+            />
           </div>
         </section>
 
