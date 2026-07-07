@@ -58,13 +58,15 @@ export function Profile() {
                 </Button>
               </div>
             </div>
-            <img
-              className="profile-hero__portrait"
-              src="/images/rifan-profile.jpg"
-              alt="Rifan Fauzi standing in an office"
-              width="1086"
-              height="1448"
-            />
+            <div className="profile-hero__portrait-frame">
+              <img
+                className="profile-hero__portrait"
+                src="/images/rifan-profile.jpg"
+                alt="Rifan Fauzi standing in an office"
+                width="1086"
+                height="1448"
+              />
+            </div>
           </div>
         </section>
 
