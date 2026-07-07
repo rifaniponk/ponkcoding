@@ -82,18 +82,19 @@ Create a production build:
 npm run build
 ```
 
-The build regenerates production content, type-checks with TypeScript, and writes optimized assets to `dist/`.
+The build regenerates production content, type-checks with TypeScript, writes assets to `dist/`, and recompresses raster images in the output. Original files in `public/` are never modified.
 
 ## Commands
 
-| Command                    | Purpose                                                    |
-| -------------------------- | ---------------------------------------------------------- |
-| `npm run dev`              | Generate content and start the Vite development server     |
-| `npm run build`            | Generate production content, type-check, and build `dist/` |
-| `npm run preview`          | Serve the production build locally with SPA fallback       |
-| `npm run generate:content` | Regenerate `src/generated/` from Markdown                  |
-| `npm run format`           | Format the repository with Prettier                        |
-| `npm run format:check`     | Verify formatting without modifying files                  |
+| Command                    | Purpose                                                        |
+| -------------------------- | -------------------------------------------------------------- |
+| `npm run dev`              | Generate content and start the Vite development server         |
+| `npm run build`            | Generate content, type-check, build, and optimize `dist/`      |
+| `npm run preview`          | Serve the production build locally with SPA fallback           |
+| `npm run generate:content` | Regenerate `src/generated/` from Markdown                      |
+| `npm run optimize:images`  | Recompress supported raster images already copied into `dist/` |
+| `npm run format`           | Format the repository with Prettier                            |
+| `npm run format:check`     | Verify formatting without modifying files                      |
 
 ## Writing an article
 
