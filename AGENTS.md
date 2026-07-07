@@ -215,15 +215,17 @@ runs at build time (via `predev`/`prebuild`):
 2. Validate frontmatter (see model below); fail the build on any error.
 3. Exclude `status: draft` when `NODE_ENV=production`.
 4. Convert Markdown → HTML with `unified` (remark-parse, remark-gfm,
-   remark-rehype, rehype-slug, rehype-autolink-headings, rehype-stringify),
-   collecting h2/h3 headings for the TOC.
+   remark-rehype, rehype-slug, rehype-autolink-headings, rehype-highlight,
+   rehype-stringify), collecting h2/h3 headings for the TOC and highlighting
+   fenced code according to its language tag.
 5. Emit `src/generated/content-index.ts` (metadata) + one
    `src/generated/articles/<slug>.ts` body chunk each.
 
 The whole remark/rehype stack is a **devDependency** — it runs at build time and
 never ships to the browser. `MarkdownContent.tsx` renders the pre-built HTML with
-`dangerouslySetInnerHTML`; this is safe because the author owns the Markdown. If
-user-generated content is ever added, sanitize before rendering.
+`dangerouslySetInnerHTML` and adds the interactive copy buttons; this is safe
+because the author owns the Markdown. If user-generated content is ever added,
+sanitize before rendering.
 
 **Frontmatter model** (required unless noted): `title`, `slug` (unique),
 `description`, `date` (ISO `YYYY-MM-DD`), `category`, `tags` (array),
@@ -244,7 +246,6 @@ Remaining pieces of the static publishing engine:
 - **`sitemap.xml` / `rss.xml`** generation.
 - **Custom Markdown blocks** — callout, terminal, file tree, Mermaid (today they
   degrade to standard Markdown: blockquotes and plain code fences).
-- **Syntax highlighting** for code blocks (rehype-highlight or shiki).
 - **Projects (`LAB`) and static pages** are still hardcoded in `Home.tsx` —
   move them to a content type when they need real detail pages.
 

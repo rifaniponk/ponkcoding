@@ -199,16 +199,27 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <Link to={`/articles/${FEATURED?.slug}`} className="featured" data-reveal>
               <div className="featured__visual">
-                <div className="signal-map" aria-hidden="true">
-                  <span className="signal-map__axis signal-map__axis--x" />
-                  <span className="signal-map__axis signal-map__axis--y" />
-                  <span className="signal-map__orbit signal-map__orbit--one" />
-                  <span className="signal-map__orbit signal-map__orbit--two" />
-                  <span className="signal-map__node signal-map__node--a">MD</span>
-                  <span className="signal-map__node signal-map__node--b">VITE</span>
-                  <span className="signal-map__node signal-map__node--c">HTML</span>
-                  <span className="signal-map__pulse" />
-                </div>
+                {FEATURED?.cover ? (
+                  <img
+                    className="featured__cover"
+                    src={FEATURED.cover}
+                    alt=""
+                    width="1672"
+                    height="941"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="signal-map" aria-hidden="true">
+                    <span className="signal-map__axis signal-map__axis--x" />
+                    <span className="signal-map__axis signal-map__axis--y" />
+                    <span className="signal-map__orbit signal-map__orbit--one" />
+                    <span className="signal-map__orbit signal-map__orbit--two" />
+                    <span className="signal-map__node signal-map__node--a">MD</span>
+                    <span className="signal-map__node signal-map__node--b">VITE</span>
+                    <span className="signal-map__node signal-map__node--c">HTML</span>
+                    <span className="signal-map__pulse" />
+                  </div>
+                )}
                 <span className="featured__figure-label">FIG. 01 — THE STATIC PUBLISHING LOOP</span>
               </div>
               <div className="featured__body">
