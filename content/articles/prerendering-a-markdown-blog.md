@@ -22,6 +22,8 @@ There is an important distinction in that description: this site is **not preren
 
 This article documents the implementation that is running now, including where JavaScript is used, what is loaded on each route, and where prerendering fits next.
 
+The complete source is public on GitHub: [github.com/rifaniponk/ponkcoding](https://github.com/rifaniponk/ponkcoding).
+
 ## The architecture in one diagram
 
 The system has two separate lifecycles. Publishing turns author-owned Markdown into JavaScript assets. Reading loads only the assets needed for the current route and article.
