@@ -81,6 +81,15 @@ export interface Experience {
 // Overview only — company names included, no start/end dates.
 export const EXPERIENCE: Experience[] = [
   {
+    role: 'Senior Software Engineer',
+    company: 'Software Integrators',
+    domain: 'Enterprise logistics',
+    points: [
+      'Built and maintained enterprise logistics applications using Go, PHP, and Angular.',
+      'Worked on microservices and API integrations, and on cloud infrastructure with PostgreSQL, AWS, Azure, Docker, and Kubernetes.',
+    ],
+  },
+  {
     role: 'Senior Frontend Engineer → Frontend Tech Lead',
     company: 'WeGuide Health',
     domain: 'Healthcare · cross-platform',
@@ -98,15 +107,6 @@ export const EXPERIENCE: Experience[] = [
     points: [
       'Built payment platform applications with React and GraphQL and integrated payment gateway services.',
       'Contributed to product architecture and rapid feature delivery across frontend, backend, and payment layers.',
-    ],
-  },
-  {
-    role: 'Senior Software Engineer',
-    company: 'Software Integrators',
-    domain: 'Enterprise logistics',
-    points: [
-      'Built and maintained enterprise logistics applications using Go, PHP, and Angular.',
-      'Worked on microservices and API integrations, and on cloud infrastructure with PostgreSQL, AWS, Azure, Docker, and Kubernetes.',
     ],
   },
   {
