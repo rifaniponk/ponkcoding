@@ -22,6 +22,7 @@ npm run dev              # generate content, then Vite dev server (HMR)
 npm run build            # generate content (prod), tsc -b, vite build → dist/
 npm run preview          # serve the production build (SPA fallback)
 npm run generate:content # regenerate src/generated/ from content/ Markdown
+npm run optimize:images  # recompress dist/ raster images; preserve public/ originals
 npm run format           # Prettier: format the repo
 npm run format:check     # Prettier: verify formatting (CI runs this)
 ```
@@ -33,7 +34,9 @@ files, so run `npm run format` before committing.
 `predev` / `prebuild` run `generate:content` automatically, so `src/generated/`
 is a build artifact (gitignored) — never edit or commit it. Always run
 `npm run build` before committing UI changes — it type-checks and prints the
-per-chunk size table. Read that table (see Performance below).
+per-chunk size table, then recompresses supported raster images in `dist/`.
+Source images in `public/` are never modified. Read the size output (see
+Performance below).
 
 ## Project structure
 
