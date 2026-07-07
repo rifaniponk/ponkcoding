@@ -18,6 +18,7 @@ import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 import { visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
@@ -53,6 +54,7 @@ async function markdownToHtml(md: string, headings: Heading[]): Promise<string> 
     .use(remarkRehype)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+    .use(rehypeHighlight, { plainText: ['text'] })
     .use(collectHeadings(headings))
     .use(rehypeStringify)
     .process(md)

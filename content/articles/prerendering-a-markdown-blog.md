@@ -125,12 +125,13 @@ const file = await unified()
   .use(remarkRehype)
   .use(rehypeSlug)
   .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+  .use(rehypeHighlight, { plainText: ['text'] })
   .use(collectHeadings(headings))
   .use(rehypeStringify)
   .process(markdown)
 ```
 
-`remark-gfm` adds tables, task lists, strikethrough, and other GitHub-flavored Markdown syntax. `remark-rehype` crosses from the Markdown syntax tree to an HTML syntax tree. The rehype plugins assign stable IDs to headings and wrap them with anchor links.
+`remark-gfm` adds tables, task lists, strikethrough, and other GitHub-flavored Markdown syntax. `remark-rehype` crosses from the Markdown syntax tree to an HTML syntax tree. The rehype plugins assign stable IDs to headings, wrap them with anchor links, and highlight fenced code from its language tag. The generated token classes are styled by the lazy Article stylesheet, while `MarkdownContent` adds the copy control after rendering; the highlighter itself never ships to readers.
 
 After the IDs exist, `collectHeadings` walks every `h2` and `h3` and records its depth, ID, and text. That one pass produces both the article HTML and the data needed by the sticky table of contents.
 
@@ -288,7 +289,7 @@ Other planned additions follow the same constraint:
 
 - Pagefind can build a static search index and load its UI only when search opens.
 - `sitemap.xml` and `rss.xml` can be generated from the same validated metadata index.
-- Syntax highlighting and custom blocks can run in the build pipeline instead of shipping parsers.
+- Custom blocks can run in the build pipeline instead of shipping parsers.
 - Mermaid can become build-time SVG output; today Mermaid fences are only ordinary code blocks.
 
 That last point corrects an easy misconception: a static content source does not automatically mean static HTML pages, and build-time Markdown does not automatically mean build-time diagrams. Each capability needs an explicit stage in the pipeline.
