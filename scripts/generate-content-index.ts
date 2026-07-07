@@ -47,6 +47,26 @@ function collectHeadings(out: Heading[]) {
   }
 }
 
+/**
+ * highlight.js treats an opening JSX attribute-expression brace as a string
+ * but leaves the closing brace unclassified. Normalize the opening brace to
+ * punctuation so pairs such as element={<Article />} use one color.
+ */
+function normalizeHighlightedJsxBraces() {
+  return () => (tree: unknown) => {
+    visit(tree as never, 'element', (node: any) => {
+      if (node.tagName !== 'span' || hastToString(node) !== '{') return
+
+      const classes = Array.isArray(node.properties?.className) ? node.properties.className : []
+      if (!classes.includes('hljs-string')) return
+
+      node.properties.className = classes
+        .filter((className: string) => className !== 'hljs-string')
+        .concat('hljs-punctuation')
+    })
+  }
+}
+
 async function markdownToHtml(md: string, headings: Heading[]): Promise<string> {
   const file = await unified()
     .use(remarkParse)
@@ -55,6 +75,7 @@ async function markdownToHtml(md: string, headings: Heading[]): Promise<string> 
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
     .use(rehypeHighlight, { plainText: ['text'] })
+    .use(normalizeHighlightedJsxBraces())
     .use(collectHeadings(headings))
     .use(rehypeStringify)
     .process(md)
