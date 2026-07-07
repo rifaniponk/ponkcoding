@@ -49,17 +49,23 @@ export function MarkdownContent({ html }: { html: string }) {
       const code = pre.querySelector('code')
       if (!code) return
 
-      const wrapper = document.createElement('div')
-      wrapper.className = 'markdown__code-block'
-      pre.before(wrapper)
-      wrapper.append(pre)
+      let wrapper = pre.parentElement
+      if (!wrapper?.classList.contains('markdown__code-block')) {
+        wrapper = document.createElement('div')
+        wrapper.className = 'markdown__code-block'
+        pre.before(wrapper)
+        wrapper.append(pre)
+      }
 
-      const button = document.createElement('button')
-      button.type = 'button'
-      button.className = 'markdown__copy'
-      button.textContent = 'Copy'
-      button.setAttribute('aria-label', 'Copy code to clipboard')
-      wrapper.append(button)
+      let button = wrapper.querySelector<HTMLButtonElement>(':scope > .markdown__copy')
+      if (!button) {
+        button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'markdown__copy'
+        button.textContent = 'Copy'
+        button.setAttribute('aria-label', 'Copy code to clipboard')
+        wrapper.append(button)
+      }
 
       let resetTimer = 0
       const copy = async () => {

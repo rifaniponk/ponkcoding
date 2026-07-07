@@ -147,7 +147,6 @@ export function Article() {
               alt=""
               width="1672"
               height="941"
-              fetchPriority="high"
             />
           ) : (
             <div className="art-signal" aria-hidden="true">
