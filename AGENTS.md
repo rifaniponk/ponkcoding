@@ -201,6 +201,11 @@ and marketing/brand copy. The audience is global ("working worldwide"). Keep the
 tone credible, direct, and practical; avoid over-complication. Repository docs
 and code comments are English too.
 
+**Never use the em dash (—) in article prose.** It reads as AI-generated. Rewrite
+with a comma, colon, parentheses, or two sentences instead. This applies to
+article body copy in `content/articles/*.md`; it does not restrict this AGENTS doc
+or code.
+
 ## Non-goals (don't add without an explicit request)
 
 Keep this static and dependency-light. Do not introduce a backend server,
