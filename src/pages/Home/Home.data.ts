@@ -33,8 +33,8 @@ export const LAB: LabEntry[] = [
 export const NOW_PERIOD = 'July 2026'
 
 export const NOW: { label: string; value: string }[] = [
-  { label: 'Building', value: 'Ayatura — a Quran memorization planner' },
-  { label: 'Writing', value: 'Voice verification for recitation practice' },
-  { label: 'Exploring', value: 'On-device Whisper · Flutter' },
-  { label: 'Reading', value: 'Papers on Arabic speech recognition' },
+  { label: 'Role', value: 'Senior engineer · enterprise logistics system' },
+  { label: 'Building', value: 'Ayatura · an IHSG trading-signal bot' },
+  { label: 'Exploring', value: 'AI automation & workflows for development' },
+  { label: 'Writing', value: 'Field notes, right here on this site' },
 ]
