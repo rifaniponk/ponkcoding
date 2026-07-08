@@ -4,7 +4,7 @@ import './Home.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
 import { categoryColor } from '../../lib/categories.ts'
 import { formatDateShort } from '../../lib/format.ts'
-import { LAB, PROFILE_FACTS } from './Home.data.ts'
+import { LAB, NOW, NOW_PERIOD } from './Home.data.ts'
 
 const DESIGN_SYSTEM = '/design-system'
 
@@ -128,20 +128,31 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               {showHeroIndex && (
                 <aside className="issue-card">
                   <div className="issue-card__head">
-                    <span>Profile snapshot</span>
+                    <span className="issue-card__title">
+                      Now
+                      <span className="issue-card__period">{NOW_PERIOD}</span>
+                    </span>
                     <span className="issue-card__stamp">RF</span>
                   </div>
                   <dl className="issue-card__facts">
-                    {PROFILE_FACTS.map((item) => (
+                    {NOW.map((item) => (
                       <div key={item.label}>
                         <dt>{item.label}</dt>
-                        <dd>{item.value}</dd>
+                        {Array.isArray(item.value) ? (
+                          <dd>
+                            <ol className="issue-card__list">
+                              {item.value.map((v) => (
+                                <li key={v}>{v}</li>
+                              ))}
+                            </ol>
+                          </dd>
+                        ) : (
+                          <dd>{item.value}</dd>
+                        )}
                       </div>
                     ))}
                   </dl>
-                  <div className="issue-card__foot">
-                    Architecture · Delivery · Mentoring · Product engineering
-                  </div>
+                  <div className="issue-card__foot">A living snapshot · updated monthly</div>
                 </aside>
               )}
             </div>

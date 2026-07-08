@@ -30,9 +30,11 @@ export const LAB: LabEntry[] = [
   },
 ]
 
-export const PROFILE_FACTS: { label: string; value: string }[] = [
-  { label: 'Experience', value: '15+ years' },
-  { label: 'Scope', value: 'End-to-end product engineering' },
-  { label: 'AI systems', value: 'Workflows · Automation · Orchestration' },
-  { label: 'Domains', value: 'Health · Fintech · Logistics' },
+export const NOW_PERIOD = 'July 2026'
+
+export const NOW: { label: string; value: string | string[] }[] = [
+  { label: 'Role', value: 'Senior engineer · enterprise logistics system' },
+  { label: 'Building', value: ['Ayatura', 'An IHSG trading-signal bot'] },
+  { label: 'Exploring', value: 'AI automation & workflows for development' },
+  { label: 'Writing', value: 'Field notes, right here on this site' },
 ]

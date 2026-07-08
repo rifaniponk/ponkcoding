@@ -307,6 +307,15 @@
     text-transform: uppercase;
   }
 
+  &__title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  &__period {
+    opacity: 0.5;
+  }
+
   &__stamp {
     font-family: var(--serif);
     font-size: 46px;
@@ -335,6 +344,19 @@
     }
     dd {
       margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    li {
       font-size: 13px;
       font-weight: 500;
     }
