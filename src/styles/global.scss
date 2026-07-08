@@ -130,6 +130,12 @@ a {
       color: var(--ink);
     }
   }
+
+  /* The nav items are hash links into the Home sections; on mobile they
+     crowd the header and add little value, so the header stays brand-only. */
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
 /* ---------- Shared section chrome ---------- */

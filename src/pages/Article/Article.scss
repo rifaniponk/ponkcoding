@@ -754,13 +754,35 @@
   border-top: 2px solid var(--ink);
   padding-top: 16px;
 
-  &__label {
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin: 0 0 12px;
+  }
+
+  &__label {
+    margin: 0;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--faint);
+  }
+
+  &__close {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--faint);
+    cursor: pointer;
+    padding: 0 4px;
+
+    &:hover {
+      color: var(--ink);
+    }
   }
 
   &__nav {
@@ -806,6 +828,102 @@
         color: var(--ink);
       }
     }
+  }
+
+  /* Mobile: off-canvas right drawer, opened from the header button */
+  @media (max-width: 900px) {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 120;
+    width: min(320px, 85vw);
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    padding: 20px 22px calc(20px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg);
+    border-top: none;
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+
+    &.toc--open {
+      transform: translateX(0);
+      box-shadow: -24px 0 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .toc__bar {
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc__close {
+      display: block;
+    }
+
+    .toc__item {
+      padding: 10px 0;
+      font-size: 15px;
+    }
+  }
+}
+
+/* Backdrop behind the mobile TOC drawer */
+.toc-overlay {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(23, 32, 51, 0.42);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+
+    &--open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+/* Header button that opens the TOC drawer (mobile only) */
+.toc-trigger {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding: 8px 12px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  &__lines {
+    width: 15px;
+    height: 9px;
+    flex: none;
+    background-image: linear-gradient(
+      var(--accent) 0 1.5px,
+      transparent 1.5px 3.75px,
+      var(--accent) 3.75px 5.25px,
+      transparent 5.25px 7.5px,
+      var(--accent) 7.5px 9px
+    );
   }
 }
 
