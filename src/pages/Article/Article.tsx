@@ -19,6 +19,7 @@ export function Article() {
   const [body, setBody] = useState<ArticleBody | null>(null)
   const [progress, setProgress] = useState(0)
   const [activeId, setActiveId] = useState('')
+  const [tocOpen, setTocOpen] = useState(false)
 
   useEffect(() => {
     setBody(null)
@@ -191,37 +192,50 @@ export function Article() {
           </div>
         </article>
 
-        {/* ---------- Sticky TOC ---------- */}
+        {/* ---------- Sticky TOC (collapsible on mobile) ---------- */}
         {headings.length > 0 && (
-          <aside className="toc">
-            <p className="toc__label">On this page</p>
-            <nav className="toc__nav">
-              {headings.map((h) => {
-                const active = h.id === activeId
-                return (
-                  <a
-                    key={h.id}
-                    href={`#${h.id}`}
-                    className="toc__item"
-                    style={{
-                      color: active ? 'var(--ink)' : 'var(--faint)',
-                      fontWeight: active ? 600 : 400,
-                      paddingLeft: h.depth > 2 ? 14 : 0,
-                    }}
-                  >
-                    <span
-                      className="toc__marker"
-                      style={{ background: active ? 'var(--accent)' : 'transparent' }}
-                    />
-                    {h.label}
-                  </a>
-                )
-              })}
-            </nav>
-            <div className="toc__top">
-              <a href="#top" onClick={scrollTop}>
-                ↑ Back to top
-              </a>
+          <aside className={`toc${tocOpen ? ' toc--open' : ''}`}>
+            <button
+              type="button"
+              className="toc__toggle"
+              aria-expanded={tocOpen}
+              onClick={() => setTocOpen((o) => !o)}
+            >
+              <span className="toc__label">On this page</span>
+              <span className="toc__chevron" aria-hidden="true">
+                ⌄
+              </span>
+            </button>
+            <div className="toc__panel">
+              <nav className="toc__nav">
+                {headings.map((h) => {
+                  const active = h.id === activeId
+                  return (
+                    <a
+                      key={h.id}
+                      href={`#${h.id}`}
+                      className="toc__item"
+                      onClick={() => setTocOpen(false)}
+                      style={{
+                        color: active ? 'var(--ink)' : 'var(--faint)',
+                        fontWeight: active ? 600 : 400,
+                        paddingLeft: h.depth > 2 ? 14 : 0,
+                      }}
+                    >
+                      <span
+                        className="toc__marker"
+                        style={{ background: active ? 'var(--accent)' : 'transparent' }}
+                      />
+                      {h.label}
+                    </a>
+                  )
+                })}
+              </nav>
+              <div className="toc__top">
+                <a href="#top" onClick={scrollTop}>
+                  ↑ Back to top
+                </a>
+              </div>
             </div>
           </aside>
         )}

@@ -754,13 +754,34 @@
   border-top: 2px solid var(--ink);
   padding-top: 16px;
 
-  &__label {
+  &__toggle {
+    width: 100%;
     margin: 0 0 12px;
+    padding: 0;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+    color: inherit;
+  }
+
+  &__label {
+    margin: 0;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--faint);
+  }
+
+  &__chevron {
+    display: none;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--faint);
+    transition: transform 0.2s ease;
   }
 
   &__nav {
@@ -804,6 +825,49 @@
 
       &:hover {
         color: var(--ink);
+      }
+    }
+  }
+
+  /* Mobile: move above the article and collapse behind a toggle */
+  @media (max-width: 900px) {
+    order: -1;
+    flex-basis: 100%;
+    max-width: none;
+    width: 100%;
+    position: static;
+    top: auto;
+    margin-bottom: 8px;
+    padding-top: 12px;
+
+    .toc__toggle {
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    .toc__chevron {
+      display: block;
+    }
+
+    .toc__panel {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition:
+        max-height 0.25s ease,
+        opacity 0.2s ease;
+    }
+
+    &.toc--open {
+      .toc__panel {
+        max-height: 70vh;
+        opacity: 1;
+        overflow-y: auto;
+        margin-top: 12px;
+      }
+
+      .toc__chevron {
+        transform: rotate(180deg);
       }
     }
   }
