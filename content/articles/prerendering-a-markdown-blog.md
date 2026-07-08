@@ -128,9 +128,9 @@ Instead, the generator creates a metadata index and a body module for each slug:
 src/generated/
 ├── content-index.ts
 └── articles/
-    ├── apple-silicon-local-llm.ts
     ├── designing-an-ai-assistant-server.ts
-    └── prerendering-a-markdown-blog.ts
+    ├── prerendering-a-markdown-blog.ts
+    └── shipping-ayatura.ts
 ```
 
 `content-index.ts` contains `ArticleMeta[]`: title, slug, description, dates, category, tags, author, status, featured state, and reading time. It contains no article HTML. Home can import this small index to derive the featured story, note list, and topic counts.
