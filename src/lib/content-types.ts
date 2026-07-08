@@ -20,6 +20,7 @@ export interface ArticleMeta {
   author: string
   featured: boolean
   readingTime: number
+  shortId: string
 }
 
 /** Per-article body — loaded lazily, one chunk per article. */
