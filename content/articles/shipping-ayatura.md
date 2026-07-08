@@ -11,6 +11,7 @@ tags:
   - quran
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/ayatura/feature-graphic.png'
 ---
 
 Memorizing part of the Quran creates a second responsibility: keeping it available in memory. A passage can feel secure after focused repetition and still become harder to recall when it is not revisited consistently.
