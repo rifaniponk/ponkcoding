@@ -52,6 +52,20 @@ export function Article() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [body])
 
+  useEffect(() => {
+    if (!tocOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setTocOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [tocOpen])
+
   const scrollTop = (e: React.MouseEvent) => {
     e.preventDefault()
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -110,6 +124,18 @@ export function Article() {
               About
             </Link>
           </nav>
+          {headings.length > 0 && (
+            <button
+              type="button"
+              className="toc-trigger"
+              aria-expanded={tocOpen}
+              aria-label="On this page"
+              onClick={() => setTocOpen((o) => !o)}
+            >
+              <span className="toc-trigger__lines" aria-hidden="true" />
+              <span className="toc-trigger__text">Contents</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -192,21 +218,26 @@ export function Article() {
           </div>
         </article>
 
-        {/* ---------- Sticky TOC (collapsible on mobile) ---------- */}
+        {/* ---------- TOC: sticky sidebar on desktop, right drawer on mobile ---------- */}
         {headings.length > 0 && (
-          <aside className={`toc${tocOpen ? ' toc--open' : ''}`}>
-            <button
-              type="button"
-              className="toc__toggle"
-              aria-expanded={tocOpen}
-              onClick={() => setTocOpen((o) => !o)}
-            >
-              <span className="toc__label">On this page</span>
-              <span className="toc__chevron" aria-hidden="true">
-                ⌄
-              </span>
-            </button>
-            <div className="toc__panel">
+          <>
+            <div
+              className={`toc-overlay${tocOpen ? ' toc-overlay--open' : ''}`}
+              onClick={() => setTocOpen(false)}
+              aria-hidden="true"
+            />
+            <aside className={`toc${tocOpen ? ' toc--open' : ''}`}>
+              <div className="toc__bar">
+                <p className="toc__label">On this page</p>
+                <button
+                  type="button"
+                  className="toc__close"
+                  aria-label="Close"
+                  onClick={() => setTocOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
               <nav className="toc__nav">
                 {headings.map((h) => {
                   const active = h.id === activeId
@@ -236,8 +267,8 @@ export function Article() {
                   ↑ Back to top
                 </a>
               </div>
-            </div>
-          </aside>
+            </aside>
+          </>
         )}
       </div>
 
