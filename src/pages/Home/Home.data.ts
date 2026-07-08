@@ -32,9 +32,9 @@ export const LAB: LabEntry[] = [
 
 export const NOW_PERIOD = 'July 2026'
 
-export const NOW: { label: string; value: string }[] = [
+export const NOW: { label: string; value: string | string[] }[] = [
   { label: 'Role', value: 'Senior engineer · enterprise logistics system' },
-  { label: 'Building', value: 'Ayatura · an IHSG trading-signal bot' },
+  { label: 'Building', value: ['Ayatura', 'An IHSG trading-signal bot'] },
   { label: 'Exploring', value: 'AI automation & workflows for development' },
   { label: 'Writing', value: 'Field notes, right here on this site' },
 ]

@@ -349,6 +349,19 @@
     }
   }
 
+  &__list {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    li {
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+
   &__foot {
     padding: 15px 20px;
     font-family: var(--mono);

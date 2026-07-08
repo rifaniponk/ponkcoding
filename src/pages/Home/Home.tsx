@@ -138,7 +138,17 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                     {NOW.map((item) => (
                       <div key={item.label}>
                         <dt>{item.label}</dt>
-                        <dd>{item.value}</dd>
+                        {Array.isArray(item.value) ? (
+                          <dd>
+                            <ol className="issue-card__list">
+                              {item.value.map((v) => (
+                                <li key={v}>{v}</li>
+                              ))}
+                            </ol>
+                          </dd>
+                        ) : (
+                          <dd>{item.value}</dd>
+                        )}
                       </div>
                     ))}
                   </dl>
