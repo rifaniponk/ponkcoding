@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
 import './styles/global.scss'
 
 /* Route-based code splitting: each page is its own chunk, fetched on
@@ -40,6 +40,24 @@ function ScrollManager() {
   return null
 }
 
+/* Short URL redirect: /s/:shortId -> /articles/:slug */
+function ShortUrlRedirect() {
+  const { shortId } = useParams<{ shortId: string }>()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!shortId) return
+    import('./generated/content-index.ts').then(({ ARTICLES }) => {
+      const article = ARTICLES.find((a) => a.shortId === shortId)
+      if (article) {
+        navigate(`/articles/${article.slug}`, { replace: true })
+      }
+    })
+  }, [shortId, navigate])
+
+  return null
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -48,6 +66,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/articles/:slug" element={<Article />} />
+          <Route path="/s/:shortId" element={<ShortUrlRedirect />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/design-system" element={<DesignSystem />} />
         </Routes>
