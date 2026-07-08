@@ -838,15 +838,21 @@
     position: static;
     top: auto;
     margin-bottom: 8px;
-    padding-top: 12px;
+    padding-top: 0;
+    border-top: none;
 
     .toc__toggle {
       margin-bottom: 0;
       cursor: pointer;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
     }
 
     .toc__chevron {
       display: block;
+      font-size: 18px;
+      color: var(--accent);
     }
 
     .toc__panel {
