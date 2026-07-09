@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation, useParams, Navigate } from 'react-router-dom'
 import './styles/global.scss'
 import { ARTICLES } from './generated/content-index.ts'
+import { PageSkeleton } from './components'
 
 /* Route-based code splitting: each page is its own chunk, fetched on
    navigation. The initial bundle carries only React, the router, and
@@ -52,7 +53,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <ScrollManager />
-      <Suspense fallback={null}>
+      <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/articles/:slug" element={<Article />} />
