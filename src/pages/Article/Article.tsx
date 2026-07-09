@@ -117,9 +117,9 @@ export function Article() {
             <Link to={`${HOME}#topics`} className="nav__link">
               Topics
             </Link>
-            <Link to={`${HOME}#lab`} className="nav__link">
+            {/*<Link to={`${HOME}#lab`} className="nav__link">
               Lab
-            </Link>
+            </Link>*/}
             <Link to={`${HOME}#about`} className="nav__link">
               About
             </Link>

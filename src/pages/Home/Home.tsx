@@ -122,9 +122,9 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </span>
           </a>
           <nav className="nav" aria-label="Primary navigation">
-            <a href="#lab" className="nav__link">
+            {/*<a href="#lab" className="nav__link">
               Work
-            </a>
+            </a>*/}
             <a href="#notes" className="nav__link">
               Notes
             </a>
@@ -424,7 +424,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           <div className="home-footer__nav">
             <a href="#notes">Latest notes</a>
             <a href="#topics">Field index</a>
-            <a href="#lab">The lab</a>
+            {/*<a href="#lab">The lab</a>*/}
             <Link to={DESIGN_SYSTEM}>Design system</Link>
           </div>
           <div className="home-footer__fine">
