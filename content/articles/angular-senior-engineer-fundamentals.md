@@ -37,12 +37,15 @@ Angular's default change detection runs **bottom-up** from the component where a
   changeDetection: ChangeDetectionStrategy.Default, // explicit
 })
 export class AppComponent {
-  counter = 0;
-  increment() { this.counter++; } // triggers full tree check
+  counter = 0
+  increment() {
+    this.counter++
+  } // triggers full tree check
 }
 ```
 
 **What triggers a check:**
+
 - Any async event (click, timer, HTTP, Promise, Observable)
 - `setTimeout`, `setInterval`, `requestAnimationFrame`
 - `zone.js` monkey-patches all async APIs
@@ -54,6 +57,7 @@ export class AppComponent {
 ### OnPush Strategy
 
 `ChangeDetectionStrategy.OnPush` restricts checks to when:
+
 1. `@Input()` reference changes
 2. Event handler in the component or its children fires
 3. `markForCheck()` is called explicitly
@@ -66,13 +70,13 @@ export class AppComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserCard {
-  @Input() user = signal<User>({ name: '', email: '' });
-  
+  @Input() user = signal<User>({ name: '', email: '' })
+
   // Or with signals (Angular 17+)
-  user = input.required<User>();
-  
+  user = input.required<User>()
+
   // Or with async pipe
-  @Input() user$!: Observable<User>;
+  @Input() user$!: Observable<User>
 }
 ```
 
@@ -80,12 +84,12 @@ export class UserCard {
 
 ```typescript
 // ❌ Won't trigger OnPush detection
-user.name = 'New Name';
+user.name = 'New Name'
 
 // ✅ Will trigger (new reference)
-this.user = { ...this.user, name: 'New Name' };
+this.user = { ...this.user, name: 'New Name' }
 // or with signals:
-this.user.update(u => ({ ...u, name: 'New Name' }));
+this.user.update((u) => ({ ...u, name: 'New Name' }))
 ```
 
 ---
@@ -98,18 +102,19 @@ this.user.update(u => ({ ...u, name: 'New Name' }));
 
 ```typescript
 // main.ts — Zoneless bootstrap (Angular 18+)
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser'
+import { provideExperimentalZonelessChangeDetection } from '@angular/core'
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideExperimentalZonelessChangeDetection(),
     // other providers
   ],
-});
+})
 ```
 
 **Migration impact:**
+
 - `NgZone.run()` → unnecessary (but kept for compatibility)
 - `NgZone.runOutsideAngular()` → unnecessary
 - `async` pipe still works (uses `markForCheck` internally)
@@ -125,21 +130,24 @@ Signals are **synchronous**, **glitch-free**, and **lazy**. They track reads and
 ### Core Signal Types
 
 ```typescript
-import { signal, computed, effect, Signal, WritableSignal } from '@angular/core';
+import { signal, computed, effect, Signal, WritableSignal } from '@angular/core'
 
 // Writable signal — mutable source
-const count = signal(0);
-count.set(5);
-count.update(v => v + 1);
-count.mutate(arr => arr.push(1)); // for arrays/objects
+const count = signal(0)
+count.set(5)
+count.update((v) => v + 1)
+count.mutate((arr) => arr.push(1)) // for arrays/objects
 
 // Computed signal — derived, read-only, memoized
-const double = computed(() => count() * 2);
+const double = computed(() => count() * 2)
 
 // Effect — side effects, runs after render
-effect(() => {
-  console.log('Count changed:', count());
-}, { allowSignalWrites: true }); // needed for writes in effect
+effect(
+  () => {
+    console.log('Count changed:', count())
+  },
+  { allowSignalWrites: true },
+) // needed for writes in effect
 ```
 
 ### Signals in Components
@@ -148,20 +156,20 @@ effect(() => {
 @Component({
   selector: 'app-counter',
   template: `
-    <button (click)="count.update(c => c + 1)">+</button>
+    <button (click)="count.update((c) => c + 1)">+</button>
     <span>{{ count() }}</span>
     <span>{{ double() }}</span>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CounterComponent {
-  count = signal(0);
-  double = computed(() => this.count() * 2);
-  
+  count = signal(0)
+  double = computed(() => this.count() * 2)
+
   // Effect for side effects (logging, persisting, etc.)
   private logEffect = effect(() => {
-    console.log('Count:', this.count());
-  });
+    console.log('Count:', this.count())
+  })
 }
 ```
 
@@ -175,23 +183,24 @@ export class CounterComponent {
 })
 export class UserCard {
   // Required signal input
-  user = input.required<User>();
-  
+  user = input.required<User>()
+
   // Optional with default
-  variant = input<'card' | 'list'>('card');
-  
+  variant = input<'card' | 'list'>('card')
+
   // Transform input (coerce, validate)
-  limit = input(10, { transform: v => Math.max(1, Number(v)) });
-  
+  limit = input(10, { transform: (v) => Math.max(1, Number(v)) })
+
   // Signal-based output
-  select = output<User>();
-  
+  select = output<User>()
+
   // Computed from input
-  displayName = computed(() => this.user().name.toUpperCase());
+  displayName = computed(() => this.user().name.toUpperCase())
 }
 ```
 
 **Migration from `@Input()`/`@Output()`:**
+
 ```typescript
 // Old
 @Input() user!: User;
@@ -285,7 +294,7 @@ private parentSvc = inject(ParentService, { skipSelf: true });
 export class HighlightDirective {
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
-  
+
   @HostListener('mouseenter') onEnter() {
     this.renderer.setStyle(this.el.nativeElement, 'background', 'yellow');
   }
@@ -303,43 +312,41 @@ user = computed(() => this.userService.currentUser());
 ### Converting Between Signals and Observables
 
 ```typescript
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { Observable, of, fromEvent, interval } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop'
+import { Observable, of, fromEvent, interval } from 'rxjs'
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 // Observable → Signal (with initial value)
-user$ = this.http.get<User>('/api/user').pipe(
-  catchError(() => of(null))
-);
-user = toSignal(this.user$, { initialValue: null });
+user$ = this.http.get<User>('/api/user').pipe(catchError(() => of(null)))
+user = toSignal(this.user$, { initialValue: null })
 
 // Signal → Observable
-count = signal(0);
-count$ = toObservable(this.count);
+count = signal(0)
+count$ = toObservable(this.count)
 
 // Event → Signal
 clicks = toSignal(
   fromEvent(button, 'click').pipe(
     debounceTime(300),
-    map(() => this.inputRef.nativeElement.value)
+    map(() => this.inputRef.nativeElement.value),
   ),
-  { initialValue: '' }
-);
+  { initialValue: '' },
+)
 ```
 
 ### `toSignal` Options
 
 ```typescript
 // initialValue — required for synchronous reads before first emission
-user = toSignal(user$, { initialValue: null });
+user = toSignal(user$, { initialValue: null })
 
 // requireSync — throw if first value isn't synchronous (SSR safety)
-data = toSignal(asyncData$, { requireSync: true });
+data = toSignal(asyncData$, { requireSync: true })
 
 // equal — custom equality for change detection
-items = toSignal(items$, { 
-  equal: (a, b) => a.id === b.id 
-});
+items = toSignal(items$, {
+  equal: (a, b) => a.id === b.id,
+})
 ```
 
 ---
@@ -406,15 +413,13 @@ data$.pipe(takeUntil(this.destroy$)).subscribe();
   `,
 })
 export class ListComponent {
-  items = signal<Item[]>([]);
-  
-  trackById = (index: number, item: Item) => item.id;
-  
+  items = signal<Item[]>([])
+
+  trackById = (index: number, item: Item) => item.id
+
   // Or with computed for derived arrays
-  filteredItems = computed(() => 
-    this.items().filter(i => i.active)
-  );
-  trackById = (_: number, item: Item) => item.id;
+  filteredItems = computed(() => this.items().filter((i) => i.active))
+  trackById = (_: number, item: Item) => item.id
 }
 ```
 
@@ -429,27 +434,27 @@ export class ListComponent {
 @Component({ changeDetection: ChangeDetectionStrategy.OnPush })
 export class HeavyComponent {
   constructor(private cdr: ChangeDetectorRef) {}
-  
+
   // After async operation outside Angular zone
   loadData() {
-    this.externalLib.onData(data => {
-      this.data = data;
-      this.cdr.markForCheck(); // mark this component + ancestors
-    });
+    this.externalLib.onData((data) => {
+      this.data = data
+      this.cdr.markForCheck() // mark this component + ancestors
+    })
   }
-  
+
   // Force check this component and children
   forceCheck() {
-    this.cdr.detectChanges(); // runs CD on this subtree
+    this.cdr.detectChanges() // runs CD on this subtree
   }
-  
+
   // Detach from CD tree (manual control)
   detach() {
-    this.cdr.detach();
+    this.cdr.detach()
   }
   reattach() {
-    this.cdr.reattach();
-    this.cdr.detectChanges();
+    this.cdr.reattach()
+    this.cdr.detectChanges()
   }
 }
 ```
@@ -463,14 +468,14 @@ export class HeavyComponent {
 const routes: Routes = [
   {
     path: 'admin',
-    loadChildren: () => import('./admin/admin.routes').then(r => r.ADMIN_ROUTES),
+    loadChildren: () => import('./admin/admin.routes').then((r) => r.ADMIN_ROUTES),
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard.component')
-      .then(m => m.DashboardComponent),
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
-];
+]
 
 // Component-level lazy loading (Angular 17+)
 @Component({
@@ -482,11 +487,11 @@ const routes: Routes = [
   `,
 })
 export class HostComponent {
-  heavyComponent = signal<Type<HeavyComponent> | null>(null);
-  
+  heavyComponent = signal<Type<HeavyComponent> | null>(null)
+
   async loadHeavy() {
-    const { HeavyComponent } = await import('./heavy/heavy.component');
-    this.heavyComponent.set(HeavyComponent);
+    const { HeavyComponent } = await import('./heavy/heavy.component')
+    this.heavyComponent.set(HeavyComponent)
   }
 }
 ```
@@ -496,7 +501,7 @@ export class HostComponent {
 ### 4. Virtual Scrolling (CDK)
 
 ```typescript
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling'
 
 @Component({
   imports: [ScrollingModule],
@@ -507,14 +512,22 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
       </div>
     </cdk-virtual-scroll-viewport>
   `,
-  styles: [`
-    .viewport { height: 400px; width: 100%; }
-    .item { padding: 8px; border-bottom: 1px solid #eee; }
-  `],
+  styles: [
+    `
+      .viewport {
+        height: 400px;
+        width: 100%;
+      }
+      .item {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+      }
+    `,
+  ],
 })
 export class VirtualListComponent {
-  items = signal<Item[]>(Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `Item ${i}` })));
-  trackById = (_: number, item: Item) => item.id;
+  items = signal<Item[]>(Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `Item ${i}` })))
+  trackById = (_: number, item: Item) => item.id
 }
 ```
 
@@ -527,7 +540,13 @@ export class VirtualListComponent {
   selector: 'app-data-grid',
   template: `
     <table>
-      <thead><tr><th>ID</th><th>Name</th><th>Status</th></tr></thead>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
       <tbody>
         @for (row of displayedRows(); track row.id) {
           <tr [class.highlight]="row.id === highlightedId()">
@@ -544,17 +563,16 @@ export class VirtualListComponent {
 })
 export class DataGridComponent {
   // Input as signal
-  rows = input.required<Row[]>();
-  highlightedId = input<number | null>(null);
-  
+  rows = input.required<Row[]>()
+  highlightedId = input<number | null>(null)
+
   // Derived — only recomputes when rows() or highlightedId() changes
-  displayedRows = computed(() => 
-    this.rows().filter(r => r.visible)
-  );
+  displayedRows = computed(() => this.rows().filter((r) => r.visible))
 }
 ```
 
 **Why this is fast:**
+
 - `OnPush` = no CD unless input reference changes
 - Signals = fine-grained reactivity, no dirty checking
 - `computed` = memoized, only re-runs when dependencies change
@@ -574,7 +592,7 @@ export class UserService {
   private http = inject(HttpClient);
   private _user = signal<User | null>(null);
   readonly user = this._user.asReadonly();
-  
+
   loadUser(id: string) {
     return this.http.get<User>(`/api/users/${id}`).pipe(
       tap(user => this._user.set(user))
@@ -600,17 +618,17 @@ export class ProfileComponent {
 @Component({...})
 export class FormComponent {
   #pendingChanges = signal<Partial<FormData>>({});
-  
+
   // Batch updates — single CD cycle
   updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     this.#pendingChanges.update(current => ({ ...current, [key]: value }));
   }
-  
+
   // Flush on blur or submit
   @HostListener('blur') onBlur() {
     this.#flushChanges();
   }
-  
+
   #flushChanges() {
     const changes = this.#pendingChanges();
     if (Object.keys(changes).length) {
@@ -627,57 +645,55 @@ export class FormComponent {
 
 ```typescript
 // store/todo.store.ts
-import { signal, computed, effect } from '@angular/core';
-import { inject } from '@angular/core';
-import { TodoApiService } from './todo.api';
+import { signal, computed, effect } from '@angular/core'
+import { inject } from '@angular/core'
+import { TodoApiService } from './todo.api'
 
 export class TodoStore {
-  private api = inject(TodoApiService);
-  
-  #todos = signal<Todo[]>([]);
-  #filter = signal<'all' | 'active' | 'completed'>('all');
-  #loading = signal(false);
-  
-  readonly todos = this.#todos.asReadonly();
-  readonly filter = this.#filter.asReadonly();
-  readonly loading = this.#loading.asReadonly();
-  
+  private api = inject(TodoApiService)
+
+  #todos = signal<Todo[]>([])
+  #filter = signal<'all' | 'active' | 'completed'>('all')
+  #loading = signal(false)
+
+  readonly todos = this.#todos.asReadonly()
+  readonly filter = this.#filter.asReadonly()
+  readonly loading = this.#loading.asReadonly()
+
   readonly filteredTodos = computed(() => {
-    const filter = this.#filter();
-    const todos = this.#todos();
-    if (filter === 'all') return todos;
-    return todos.filter(t => filter === 'active' ? !t.done : t.done);
-  });
-  
-  readonly activeCount = computed(() => 
-    this.#todos().filter(t => !t.done).length
-  );
-  
+    const filter = this.#filter()
+    const todos = this.#todos()
+    if (filter === 'all') return todos
+    return todos.filter((t) => (filter === 'active' ? !t.done : t.done))
+  })
+
+  readonly activeCount = computed(() => this.#todos().filter((t) => !t.done).length)
+
   async load() {
-    this.#loading.set(true);
+    this.#loading.set(true)
     try {
-      const todos = await this.api.getAll().toPromise();
-      this.#todos.set(todos ?? []);
+      const todos = await this.api.getAll().toPromise()
+      this.#todos.set(todos ?? [])
     } finally {
-      this.#loading.set(false);
+      this.#loading.set(false)
     }
   }
-  
+
   add(title: string) {
-    const optimistic: Todo = { id: crypto.randomUUID(), title, done: false };
-    this.#todos.update(t => [...t, optimistic]);
+    const optimistic: Todo = { id: crypto.randomUUID(), title, done: false }
+    this.#todos.update((t) => [...t, optimistic])
     this.api.create(title).subscribe({
-      next: real => this.#todos.update(t => t.map(x => x.id === optimistic.id ? real : x)),
-      error: () => this.#todos.update(t => t.filter(x => x.id !== optimistic.id)),
-    });
+      next: (real) => this.#todos.update((t) => t.map((x) => (x.id === optimistic.id ? real : x))),
+      error: () => this.#todos.update((t) => t.filter((x) => x.id !== optimistic.id)),
+    })
   }
-  
+
   toggle(id: string) {
-    this.#todos.update(t => t.map(x => x.id === id ? { ...x, done: !x.done } : x));
+    this.#todos.update((t) => t.map((x) => (x.id === id ? { ...x, done: !x.done } : x)))
   }
-  
+
   setFilter(filter: 'all' | 'active' | 'completed') {
-    this.#filter.set(filter);
+    this.#filter.set(filter)
   }
 }
 
@@ -687,7 +703,7 @@ export class TodoStore {
   template: `...`,
 })
 export class TodoComponent {
-  store = inject(TodoStore);
+  store = inject(TodoStore)
   // use store.todos(), store.filteredTodos(), etc.
 }
 ```
@@ -714,7 +730,7 @@ export function createApiCall<T>(url: string): Observable<T> {
 @Component({...})
 export class MyComponent {
   private injector = inject(EnvironmentInjector);
-  
+
   loadData() {
     runInInjectionContext(this.injector, () => {
       const http = inject(HttpClient); // ✅ works
@@ -730,40 +746,40 @@ export class MyComponent {
 
 ```typescript
 // component.spec.ts
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { provideExperimentalZonelessChangeDetection } from '@angular/core'
 
 describe('CounterComponent', () => {
-  let fixture: ComponentFixture<CounterComponent>;
-  let component: CounterComponent;
-  
+  let fixture: ComponentFixture<CounterComponent>
+  let component: CounterComponent
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CounterComponent],
       providers: [
         provideExperimentalZonelessChangeDetection(), // for zoneless tests
       ],
-    });
-    fixture = TestBed.createComponent(CounterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges(); // manual CD trigger
-  });
-  
+    })
+    fixture = TestBed.createComponent(CounterComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges() // manual CD trigger
+  })
+
   it('should update signal and reflect in template', () => {
-    expect(fixture.nativeElement.textContent).toContain('0');
-    
-    component.count.set(5);
-    fixture.detectChanges(); // required in zoneless tests
-    
-    expect(fixture.nativeElement.textContent).toContain('5');
-  });
-  
+    expect(fixture.nativeElement.textContent).toContain('0')
+
+    component.count.set(5)
+    fixture.detectChanges() // required in zoneless tests
+
+    expect(fixture.nativeElement.textContent).toContain('5')
+  })
+
   it('should compute derived signal', () => {
-    component.count.set(10);
-    fixture.detectChanges();
-    expect(component.double()).toBe(20);
-  });
-});
+    component.count.set(10)
+    fixture.detectChanges()
+    expect(component.double()).toBe(20)
+  })
+})
 ```
 
 ---
@@ -774,12 +790,12 @@ describe('CounterComponent', () => {
 @Component({...})
 export class SearchComponent {
   query = signal('');
-  
+
   // Side effect: debounced search
   private searchEffect = effect(() => {
     const q = this.query();
     if (!q) return;
-    
+
     // Use toObservable for async work
     const sub = toObservable(this.query).pipe(
       debounceTime(300),
@@ -789,13 +805,13 @@ export class SearchComponent {
       this.results.set(results);
       this.cdr.markForCheck(); // needed in zoneless
     });
-    
+
     // Cleanup on effect re-run or destroy
     return () => sub.unsubscribe();
   }, { allowSignalWrites: true });
-  
+
   results = signal<Result[]>([]);
-  
+
   constructor(
     private api: SearchApiService,
     private cdr: ChangeDetectorRef
@@ -807,16 +823,16 @@ export class SearchComponent {
 
 ## Migration Checklist: Zone.js → Zoneless + Signals
 
-| Legacy Pattern | Modern Replacement |
-|----------------|-------------------|
-| `@Input()` / `@Output()` | `input()` / `output()` signals |
-| `ChangeDetectorRef.detectChanges()` | Signals auto-trigger; `markForCheck()` only for interop |
-| `NgZone.runOutsideAngular()` | Unnecessary (no zone) |
-| `async` pipe | `toSignal(observable, { initialValue })` |
-| `BehaviorSubject` in service | `signal()` + `computed()` |
-| `takeUntil(destroy$)` | Effect cleanup / `DestroyRef` (Angular 16+) |
-| `providedIn: 'root'` | Still valid, or `provideIn: 'root'` in `inject()` options |
-| `constructor(private svc: Svc)` | `private svc = inject(Svc)` (field injection) |
+| Legacy Pattern                      | Modern Replacement                                        |
+| ----------------------------------- | --------------------------------------------------------- |
+| `@Input()` / `@Output()`            | `input()` / `output()` signals                            |
+| `ChangeDetectorRef.detectChanges()` | Signals auto-trigger; `markForCheck()` only for interop   |
+| `NgZone.runOutsideAngular()`        | Unnecessary (no zone)                                     |
+| `async` pipe                        | `toSignal(observable, { initialValue })`                  |
+| `BehaviorSubject` in service        | `signal()` + `computed()`                                 |
+| `takeUntil(destroy$)`               | Effect cleanup / `DestroyRef` (Angular 16+)               |
+| `providedIn: 'root'`                | Still valid, or `provideIn: 'root'` in `inject()` options |
+| `constructor(private svc: Svc)`     | `private svc = inject(Svc)` (field injection)             |
 
 ### `DestroyRef` (Angular 16+) — Cleanup Without `ngOnDestroy`
 
@@ -826,11 +842,11 @@ import { DestroyRef, inject, takeUntilDestroyed } from '@angular/core';
 @Component({...})
 export class MyComponent {
   private destroyRef = inject(DestroyRef);
-  
+
   constructor() {
     // Auto-unsubscribes when component destroyed
     this.data$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    
+
     // Or for manual cleanup
     this.destroyRef.onDestroy(() => {
       this.cleanup();
@@ -843,18 +859,18 @@ export class MyComponent {
 
 ## Quick Reference: Signal API
 
-| Function | Purpose | Returns |
-|----------|---------|---------|
-| `signal(initial)` | Create writable signal | `WritableSignal<T>` |
-| `computed(() => ...)` | Derived read-only signal | `Signal<T>` |
-| `effect(() => ...)` | Side effect, runs on signal read | `EffectRef` |
-| `input()` / `input.required()` | Component input as signal | `InputSignal<T>` |
-| `output()` | Component output as signal emitter | `OutputEmitterRef<T>` |
-| `model()` | Two-way binding signal | `ModelSignal<T>` |
-| `toSignal(obs, opts)` | Observable → Signal | `Signal<T>` |
-| `toObservable(sig)` | Signal → Observable | `Observable<T>` |
-| `linkedSignal(() => ...)` | Signal that resets when source changes | `WritableSignal<T>` |
-| `untracked(() => ...)` | Read signals without tracking | `T` |
+| Function                       | Purpose                                | Returns               |
+| ------------------------------ | -------------------------------------- | --------------------- |
+| `signal(initial)`              | Create writable signal                 | `WritableSignal<T>`   |
+| `computed(() => ...)`          | Derived read-only signal               | `Signal<T>`           |
+| `effect(() => ...)`            | Side effect, runs on signal read       | `EffectRef`           |
+| `input()` / `input.required()` | Component input as signal              | `InputSignal<T>`      |
+| `output()`                     | Component output as signal emitter     | `OutputEmitterRef<T>` |
+| `model()`                      | Two-way binding signal                 | `ModelSignal<T>`      |
+| `toSignal(obs, opts)`          | Observable → Signal                    | `Signal<T>`           |
+| `toObservable(sig)`            | Signal → Observable                    | `Observable<T>`       |
+| `linkedSignal(() => ...)`      | Signal that resets when source changes | `WritableSignal<T>`   |
+| `untracked(() => ...)`         | Read signals without tracking          | `T`                   |
 
 ---
 
@@ -888,4 +904,4 @@ export class MyComponent {
 
 ---
 
-*This reference lives in `content/articles/angular-senior-engineer-fundamentals.md`. Update it when Angular ships new primitives.*
+_This reference lives in `content/articles/angular-senior-engineer-fundamentals.md`. Update it when Angular ships new primitives._
