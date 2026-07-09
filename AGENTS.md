@@ -29,7 +29,8 @@ npm run format:check     # Prettier: verify formatting (CI runs this)
 
 Formatting is Prettier (config in `.prettierrc.json`: no semicolons, single
 quotes, 100 print width). CI (`.github/workflows/ci.yml`) fails on unformatted
-files, so run `npm run format` before committing.
+files, so **always run `npm run format` before committing.** This applies to
+Markdown files too — Prettier reformats tables, lists, and long lines.
 
 `predev` / `prebuild` run `generate:content` automatically, so `src/generated/`
 is a build artifact (gitignored) — never edit or commit it. Always run
@@ -240,9 +241,11 @@ sanitize before rendering.
 `status` (`draft` | `published`), `author`; optional `updated` (ISO),
 `cover` (absolute `/…` path), `featured` (bool — picks the Home hero).
 
-To add an article: drop a `.md` file in `content/articles/`. Home listings,
-topic counts, related links, and the `/articles/:slug` page all derive from it —
-no code edits, no hardcoded content.
+To add an article: drop a `.md` file in `content/articles/`, then run
+`npm run generate:content` (or `npm run dev` which does it automatically) and
+**`npm run format` before committing.** Home listings, topic counts, related
+links, and the `/articles/:slug` page all derive from it — no code edits, no
+hardcoded content.
 
 ## Direction / not yet built
 
