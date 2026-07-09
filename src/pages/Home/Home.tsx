@@ -210,8 +210,11 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <div className="hero__ticker" aria-label="Current areas of interest">
               <span>Core toolkit</span>
               <div>
-                Angular & TypeScript <i>✦</i> Ionic & Flutter <i>✦</i> React & Go <i>✦</i> AI
-                automation & orchestration
+                TypeScript &amp; Go on the backend.
+                <br />
+                Angular, React &amp; Flutter on the client.
+                <br />
+                AI agents in between.
               </div>
             </div>
           </div>
