@@ -36,7 +36,7 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 function generateShortId(slug: string): string {
   let hash = 0
   for (let i = 0; i < slug.length; i++) {
-    hash = ((hash << 5) - hash) + slug.charCodeAt(i)
+    hash = (hash << 5) - hash + slug.charCodeAt(i)
     hash |= 0
   }
   return Math.abs(hash).toString(36).padStart(6, '0')

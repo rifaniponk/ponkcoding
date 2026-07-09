@@ -19,14 +19,14 @@ Most developers have an old laptop gathering dust. Mine was a 2013-era machine �
 
 ## The actual hardware
 
-| Component | Spec |
-|-----------|------|
-| CPU | Intel Core i7-4500U @ 1.80GHz (2C/4T, Haswell, 2013) |
-| RAM | 16GB DDR3 |
-| Disk | 238GB SSD |
-| GPU | Intel HD Graphics 4400 (integrated) |
-| AVX2 | No |
-| AVX-512 | No |
+| Component | Spec                                                 |
+| --------- | ---------------------------------------------------- |
+| CPU       | Intel Core i7-4500U @ 1.80GHz (2C/4T, Haswell, 2013) |
+| RAM       | 16GB DDR3                                            |
+| Disk      | 238GB SSD                                            |
+| GPU       | Intel HD Graphics 4400 (integrated)                  |
+| AVX2      | No                                                   |
+| AVX-512   | No                                                   |
 
 ## The stack (what's actually running)
 
@@ -57,22 +57,22 @@ Most developers have an old laptop gathering dust. Mine was a 2013-era machine �
 
 ## Development toolchain
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Node.js | 22.22.1 | JavaScript runtime |
-| npm | 9.2.0 | Package manager |
-| pnpm | latest | Fast, disk-efficient package manager |
-| GitHub CLI (gh) | 2.95.0 | GitHub API from terminal |
-| ngrok | 3.39.9 | Secure public tunnels |
-| Netdata | latest | Real-time system monitoring |
-| Docker | latest | Container runtime |
+| Tool            | Version | Purpose                              |
+| --------------- | ------- | ------------------------------------ |
+| Node.js         | 22.22.1 | JavaScript runtime                   |
+| npm             | 9.2.0   | Package manager                      |
+| pnpm            | latest  | Fast, disk-efficient package manager |
+| GitHub CLI (gh) | 2.95.0  | GitHub API from terminal             |
+| ngrok           | 3.39.9  | Secure public tunnels                |
+| Netdata         | latest  | Real-time system monitoring          |
+| Docker          | latest  | Container runtime                    |
 
 ## Model routing: Nemotron daily, OpenRouter for specifics
 
-| Use Case | Provider | Model | Why |
-|----------|----------|-------|-----|
-| Daily chat, reasoning, coding | NVIDIA `build.nvidia.com` | `nvidia/nemotron-3-ultra-550b-a55b` | Free tier, strong reasoning, 1000 req/day |
-| Specialized tasks (vision, specific models) | OpenRouter | `anthropic/claude-sonnet-4`, `google/gemini-2.5-pro`, `openai/gpt-4o`, etc. | Model variety, pay-per-use, fallback |
+| Use Case                                    | Provider                  | Model                                                                       | Why                                       |
+| ------------------------------------------- | ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------- |
+| Daily chat, reasoning, coding               | NVIDIA `build.nvidia.com` | `nvidia/nemotron-3-ultra-550b-a55b`                                         | Free tier, strong reasoning, 1000 req/day |
+| Specialized tasks (vision, specific models) | OpenRouter                | `anthropic/claude-sonnet-4`, `google/gemini-2.5-pro`, `openai/gpt-4o`, etc. | Model variety, pay-per-use, fallback      |
 
 Hermes config uses `openai_compatible` provider pointed at NVIDIA for daily use. For specific tasks, I switch to OpenRouter via `/model` command or delegate to subagents with different model configs.
 
@@ -81,6 +81,7 @@ Hermes config uses `openai_compatible` provider pointed at NVIDIA for daily use.
 The Hermes gateway runs as a Telegram bot (24/7). Only my user ID has admin access — wife @devinfortran and others can chat but no slash commands.
 
 **Key commands:**
+
 ```
 /status        # Server health, CPU/RAM, API status
 /models        # List/switch models (Nemotron, OpenRouter models)
@@ -95,11 +96,11 @@ The Hermes gateway runs as a Telegram bot (24/7). Only my user ID has admin acce
 
 ## Resource reality
 
-| Component | Usage |
-|-----------|-------|
-| RAM | ~2-3GB / 16GB (OS + dev server + Hermes + minimal services) |
-| CPU | ~5-15% idle, spikes during builds |
-| Disk | ~10GB / 238GB |
+| Component | Usage                                                       |
+| --------- | ----------------------------------------------------------- |
+| RAM       | ~2-3GB / 16GB (OS + dev server + Hermes + minimal services) |
+| CPU       | ~5-15% idle, spikes during builds                           |
+| Disk      | ~10GB / 238GB                                               |
 
 Headroom: ~13-14GB RAM free. No swap pressure. Fans barely spin.
 
@@ -107,16 +108,18 @@ Headroom: ~13-14GB RAM free. No swap pressure. Fans barely spin.
 
 ![Actual setup: Lenovo laptop running headless Ubuntu, tucked behind a router with power strip](/images/articles/ai-agent-server/actual-setup.jpg)
 
-*The actual setup: a dusty Lenovo laptop running headless Ubuntu Server, tucked behind a router with a power strip. No monitor, no keyboard, no desk space needed. Just power, ethernet, and it runs 24/7.*
+_The actual setup: a dusty Lenovo laptop running headless Ubuntu Server, tucked behind a router with a power strip. No monitor, no keyboard, no desk space needed. Just power, ethernet, and it runs 24/7._
 
 ## Future plans for this server
 
 ### 1. Personal research agent
+
 - Automated literature review: feed it topics, get synthesized summaries with citations
 - Monitor arXiv, blogs, GitHub for keywords; daily digest via Telegram
 - Long-running research threads with persistent context across sessions
 
 ### 2. IHSG trading bot with AI signals
+
 - Cron job pulls market data (IHSG, sector indices, portfolio positions) at market open/close
 - Agent analyzes technicals, news sentiment, volume patterns → generates signal
 - Telegram alert with entry/exit rationale, risk level, position sizing
@@ -124,6 +127,7 @@ Headroom: ~13-14GB RAM free. No swap pressure. Fans barely spin.
 - All logic auditable in Hermes memory — no black box
 
 ### 3. Automated dev workflows
+
 - **Auto PR review:** Webhook triggers agent on new PR → reads diff, runs linters/tests, posts inline comments
 - **Auto bug fix:** Issue labeled `auto-fix` → agent reproduces, proposes patch, creates PR
 - **Dependency audit:** Weekly cron scans all repos for vulnerable/outdated deps, opens PRs with updates
