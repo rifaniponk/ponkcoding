@@ -107,6 +107,13 @@ export function Article() {
       <header className="header">
         <div className="header__inner">
           <Link to={HOME} className="brand">
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="brand__logo"
+              width="32"
+              height="32"
+            />
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
@@ -300,12 +307,17 @@ export function Article() {
       <footer className="footer--compact">
         <div className="footer__inner">
           <Link to={HOME} className="brand">
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="brand__logo"
+              width="32"
+              height="32"
+            />
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
-          <span className="footer__fine">
-            © 2026 · Built with React, Vite &amp; Markdown · Netlify
-          </span>
+          <span className="footer__fine">© 2026 · Built with React, Vite & Markdown · Netlify</span>
         </div>
       </footer>
     </div>

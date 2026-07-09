@@ -115,7 +115,13 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
       <header className="header home-header">
         <div className="header__inner">
           <a href="#top" className="brand" aria-label="Ponkcoding, back to top">
-            <span className="brand__mark">P</span>
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="brand__mark"
+              width="32"
+              height="32"
+            />
             <span className="brand__lockup">
               <span className="brand__name">Ponkcoding</span>
               <span className="brand__edition">Rifan's engineering journal</span>
@@ -414,7 +420,13 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
       <footer className="home-footer">
         <div className="section-shell home-footer__inner">
           <div>
-            <span className="home-footer__mark">P</span>
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="home-footer__mark"
+              width="48"
+              height="48"
+            />
             <h2>
               Stay curious.
               <br />
