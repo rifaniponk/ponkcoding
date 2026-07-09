@@ -1,7 +1,8 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useParams, Navigate } from 'react-router-dom'
 import './styles/global.scss'
+import { ARTICLES } from './generated/content-index.ts'
 
 /* Route-based code splitting: each page is its own chunk, fetched on
    navigation. The initial bundle carries only React, the router, and
@@ -40,6 +41,13 @@ function ScrollManager() {
   return null
 }
 
+function ShortRedirect() {
+  const { shortId } = useParams<{ shortId: string }>()
+  const article = ARTICLES.find((a) => a.shortId === shortId)
+  if (!article) return <Navigate to="/" replace />
+  return <Navigate to={`/articles/${article.slug}`} replace />
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -50,6 +58,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/articles/:slug" element={<Article />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/design-system" element={<DesignSystem />} />
+          <Route path="/s/:shortId" element={<ShortRedirect />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
