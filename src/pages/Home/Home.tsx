@@ -7,6 +7,7 @@ import { formatDateShort } from '../../lib/format.ts'
 import { LAB, NOW, NOW_PERIOD } from './Home.data.ts'
 
 const DESIGN_SYSTEM = '/design-system'
+const SHOW_LAB = false // toggle when ready
 
 export interface HomeProps {
   accent?: string
@@ -324,7 +325,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           </div>
         </section>
 
-        <section id="lab" className="lab-section">
+        {SHOW_LAB && <section id="lab" className="lab-section">
           <div className="section-shell">
             <div className="section-title section-title--dark">
               <div>
@@ -361,8 +362,8 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                 </a>
               ))}
             </div>
-          </div>
-        </section>
+           </div>
+         </section>}
 
         <section id="about" className="about-section">
           <div className="section-shell about-shell">
@@ -379,7 +380,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               <span className="story-label">
                 <i /> The person behind the signal
               </span>
-              <h2>Senior engineer building complete products, from interface to infrastructure.</h2>
+              <h2>Senior engineer delivering end-to-end products, from design to deployment.</h2>
               <p>
                 Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise
                 systems; led engineering teams; and worked across frontend, mobile, backend, cloud,
