@@ -32,6 +32,16 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
+// Generate a short 6-char ID from slug (base36 hash)
+function generateShortId(slug: string): string {
+  let hash = 0
+  for (let i = 0; i < slug.length; i++) {
+    hash = ((hash << 5) - hash) + slug.charCodeAt(i)
+    hash |= 0
+  }
+  return Math.abs(hash).toString(36).padStart(6, '0')
+}
+
 /** Collects heading elements (h2/h3) into the passed array after slug ids exist. */
 function collectHeadings(out: Heading[]) {
   return () => (tree: unknown) => {
@@ -155,6 +165,7 @@ async function run() {
       author: data.author as string,
       featured: data.featured === true,
       readingTime: readingTime(content),
+      shortId: generateShortId(slug),
     }
     metas.push(meta)
 

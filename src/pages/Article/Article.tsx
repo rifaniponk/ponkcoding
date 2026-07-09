@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import './Article.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
 import { categoryColor } from '../../lib/categories.ts'
-import { MarkdownContent, Tag } from '../../components'
+import { MarkdownContent, Tag, ShareButton } from '../../components'
 import { formatDate } from '../../lib/format.ts'
 import type { ArticleBody } from '../../lib/content-types.ts'
 
@@ -165,6 +165,11 @@ export function Article() {
             <span className="read-time">{meta.readingTime} min read</span>
           </div>
         </div>
+
+        {/* ---------- Share button ---------- */}
+        <div className="art-head__share">
+          <ShareButton slug={meta.slug} shortId={meta.shortId} />
+        </div>
         <div className="art-head__cover">
           {meta.cover ? (
             <img
@@ -202,6 +207,8 @@ export function Article() {
               </Tag>
             ))}
           </div>
+
+          <ShareButton slug={meta.slug} shortId={meta.shortId} />
 
           <div className="author">
             <div className="author__avatar" />
