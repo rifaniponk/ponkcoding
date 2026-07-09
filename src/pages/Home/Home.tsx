@@ -171,10 +171,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                   ))}
                 </div>
                 <div className="hero__actions">
-                  <a href="#lab" className="hero__action hero__action--primary">
-                    Explore selected work <b>↘</b>
-                  </a>
-                  <a href="#notes" className="hero__action">
+                  <a href="##notes" className="hero__action hero__action--primary">
                     Read my journal <b>↘</b>
                   </a>
                 </div>
