@@ -122,9 +122,9 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </span>
           </a>
           <nav className="nav" aria-label="Primary navigation">
-            <a href="#lab" className="nav__link">
+            {/*<a href="#lab" className="nav__link">
               Work
-            </a>
+            </a>*/}
             <a href="#notes" className="nav__link">
               Notes
             </a>
@@ -155,17 +155,18 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                   I build scalable web <span>&amp;</span> mobile products.
                 </h1>
                 <p className="hero__dek">
-                  Senior software engineer with 15+ years of experience designing product
-                  architecture, leading teams, and shipping reliable systems across healthcare,
-                  fintech, and logistics, while also designing AI workflows, automation, and
-                  orchestration that make engineering and everyday operations more effective.
+                  Senior software engineer with 15+ years of experience shipping high-quality
+                  product, delivering high performance system, leading teams, and shipping reliable
+                  systems across healthcare, fintech, and logistics, while also designing AI
+                  development workflows that make engineering and everyday operations more
+                  effective.
                 </p>
                 <div className="hero__expertise" aria-label="Core expertise">
                   {[
-                    'Product architecture',
-                    'Full-stack systems',
+                    'Cross-platform development',
                     'Technical leadership',
-                    'AI workflow orchestration',
+                    'High performance system',
+                    'AI-assisted engineering',
                   ].map((item) => (
                     <span key={item}>{item}</span>
                   ))}
@@ -210,8 +211,11 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <div className="hero__ticker" aria-label="Current areas of interest">
               <span>Core toolkit</span>
               <div>
-                Angular & TypeScript <i>✦</i> Ionic & Flutter <i>✦</i> React & Go <i>✦</i> AI
-                automation & orchestration
+                TypeScript &amp; Go on the backend.
+                <br />
+                Angular, React &amp; Flutter on the client.
+                <br />
+                AI agents in between.
               </div>
             </div>
           </div>
@@ -383,8 +387,8 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               <p>
                 Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise
                 systems; led engineering teams; and worked across frontend, mobile, backend, cloud,
-                and AI workflow automation and orchestration. Ponkcoding is where I document the
-                useful decisions behind that work.
+                and AI development workflow. Ponkcoding is where I document the useful decisions
+                behind that work.
               </p>
               <div className="about-links">
                 <Link to="/profile">Full profile →</Link>
@@ -420,7 +424,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           <div className="home-footer__nav">
             <a href="#notes">Latest notes</a>
             <a href="#topics">Field index</a>
-            <a href="#lab">The lab</a>
+            {/*<a href="#lab">The lab</a>*/}
             <Link to={DESIGN_SYSTEM}>Design system</Link>
           </div>
           <div className="home-footer__fine">

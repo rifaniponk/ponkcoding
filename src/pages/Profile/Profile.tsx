@@ -18,9 +18,9 @@ export function Profile() {
             <Link to={`${HOME}#notes`} className="nav__link">
               Notes
             </Link>
-            <Link to={`${HOME}#lab`} className="nav__link">
+            {/*<Link to={`${HOME}#lab`} className="nav__link">
               Lab
-            </Link>
+            </Link>*/}
             <Link to={HOME} className="nav__link">
               Home
             </Link>
