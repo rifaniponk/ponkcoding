@@ -11,6 +11,13 @@ export function Profile() {
       <header className="header">
         <div className="header__inner">
           <Link to={HOME} className="brand">
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="brand__logo"
+              width="32"
+              height="32"
+            />
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
@@ -165,6 +172,13 @@ export function Profile() {
       <footer className="footer--compact">
         <div className="footer__inner">
           <Link to={HOME} className="brand">
+            <img
+              src="/images/avatar-logo.jpg"
+              alt="Ponkcoding"
+              className="brand__logo"
+              width="32"
+              height="32"
+            />
             <span className="brand__name">Ponkcoding</span>
             <span className="dot" />
           </Link>
