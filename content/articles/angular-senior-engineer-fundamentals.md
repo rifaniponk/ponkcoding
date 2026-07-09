@@ -15,7 +15,7 @@ tags:
   - rxjs
 status: 'published'
 author: 'Rifan Fauzi'
-cover: '/images/articles/angular/angular-signals-architecture.jpg'
+cover: '/images/articles/angular/cover.jpg'
 featured: true
 ---
 
