@@ -325,45 +325,47 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
           </div>
         </section>
 
-        {SHOW_LAB && <section id="lab" className="lab-section">
-          <div className="section-shell">
-            <div className="section-title section-title--dark">
-              <div>
-                <span>04</span>
-                <p>Working lab</p>
+        {SHOW_LAB && (
+          <section id="lab" className="lab-section">
+            <div className="section-shell">
+              <div className="section-title section-title--dark">
+                <div>
+                  <span>04</span>
+                  <p>Working lab</p>
+                </div>
+                <p>Experiments that escaped the notebook</p>
               </div>
-              <p>Experiments that escaped the notebook</p>
+              <div className="lab-intro">
+                <h2>
+                  Built to answer a question,
+                  <br />
+                  <em>kept only if useful.</em>
+                </h2>
+                <p>
+                  Small products and internal tools. Some ship, some become essays, all leave behind
+                  a better mental model.
+                </p>
+              </div>
+              <div className="lab-list">
+                {LAB.map((item) => (
+                  <a key={item.name} href="#lab" className="lab-row" data-reveal>
+                    <span className="lab-row__no">{item.no}</span>
+                    <span className="lab-row__status">
+                      <i />
+                      {item.status}
+                    </span>
+                    <span className="lab-row__main">
+                      <strong>{item.name}</strong>
+                      <small>{item.desc}</small>
+                    </span>
+                    <span className="lab-row__stack">{item.stack}</span>
+                    <span className="lab-row__arrow">↗</span>
+                  </a>
+                ))}
+              </div>
             </div>
-            <div className="lab-intro">
-              <h2>
-                Built to answer a question,
-                <br />
-                <em>kept only if useful.</em>
-              </h2>
-              <p>
-                Small products and internal tools. Some ship, some become essays, all leave behind a
-                better mental model.
-              </p>
-            </div>
-            <div className="lab-list">
-              {LAB.map((item) => (
-                <a key={item.name} href="#lab" className="lab-row" data-reveal>
-                  <span className="lab-row__no">{item.no}</span>
-                  <span className="lab-row__status">
-                    <i />
-                    {item.status}
-                  </span>
-                  <span className="lab-row__main">
-                    <strong>{item.name}</strong>
-                    <small>{item.desc}</small>
-                  </span>
-                  <span className="lab-row__stack">{item.stack}</span>
-                  <span className="lab-row__arrow">↗</span>
-                </a>
-              ))}
-            </div>
-           </div>
-         </section>}
+          </section>
+        )}
 
         <section id="about" className="about-section">
           <div className="section-shell about-shell">
