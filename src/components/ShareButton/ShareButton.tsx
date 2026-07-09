@@ -71,11 +71,15 @@ export function ShareButton({ slug, shortId }: ShareButtonProps) {
         aria-expanded={isOpen}
         aria-haspopup="menu"
       >
-        <svg className="share-button__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="18" cy="5" r="3" />
-          <circle cx="6" cy="19" r="3" />
-          <path d="M8.59 13.51a1 1 0 0 0 1.41 0l4.24-4.24a1 1 0 0 0 0-1.41L10 4.49a1 1 0 0 0-1.41 0l-4.24 4.24a1 1 0 0 0 0 1.41l4.24 4.24a1 1 0 0 0 1.41 0z" />
-        </svg>
+        {copied ? (
+          <span className="share-button__copied-text">copied</span>
+        ) : (
+          <svg className="share-button__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+            <polyline points="16 6 12 2 8 6" />
+            <line x1="12" y1="2" x2="12" y2="15" />
+          </svg>
+        )}
       </button>
 
       {isOpen && (
