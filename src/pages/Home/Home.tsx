@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.scss'
 import { ARTICLES } from '../../generated/content-index.ts'
@@ -27,8 +27,61 @@ const TOPICS = (() => {
       name,
       count,
       color: categoryColor(name),
+      articles: ARTICLES.filter((a) => a.category === name),
     }))
 })()
+
+interface Topic {
+  code: string
+  name: string
+  count: number
+  color: string
+  articles: typeof ARTICLES
+}
+
+function TopicRow({ topic }: { topic: Topic }) {
+  const [open, setOpen] = useState(false)
+  const [height, setHeight] = useState(0)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (open && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight)
+    } else {
+      setHeight(0)
+    }
+  }, [open])
+
+  return (
+    <div>
+      <button
+        type="button"
+        className="topic-row topic-row--btn"
+        style={{ ['--cat' as string]: topic.color }}
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        <span className="topic-row__code">{topic.code}</span>
+        <span className="topic-row__dot" />
+        <span className="topic-row__name">{topic.name}</span>
+        <span className="topic-row__count">
+          {topic.count} {topic.count === 1 ? 'note' : 'notes'}
+        </span>
+        <span className="topic-row__arrow">{open ? '−' : '+'}</span>
+      </button>
+      <div className="topic-expand" style={{ maxHeight: height ? `${height}px` : '0px' }}>
+        <div ref={contentRef}>
+          {topic.articles.map((a) => (
+            <Link key={a.slug} to={`/articles/${a.slug}`} className="topic-expand__item">
+              <span className="topic-expand__title">{a.title}</span>
+              <span className="topic-expand__date">{formatDateShort(a.date)}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -265,20 +318,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <div className="topic-list">
               {TOPICS.map((topic) => (
-                <a
-                  key={topic.name}
-                  href="#notes"
-                  className="topic-row"
-                  style={{ ['--cat' as string]: topic.color }}
-                >
-                  <span className="topic-row__code">{topic.code}</span>
-                  <span className="topic-row__dot" />
-                  <span className="topic-row__name">{topic.name}</span>
-                  <span className="topic-row__count">
-                    {topic.count} {topic.count === 1 ? 'note' : 'notes'}
-                  </span>
-                  <span className="topic-row__arrow">↗</span>
-                </a>
+                <TopicRow key={topic.name} topic={topic} />
               ))}
             </div>
           </div>
