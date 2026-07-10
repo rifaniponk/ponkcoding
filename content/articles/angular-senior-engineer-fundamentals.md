@@ -622,6 +622,8 @@ export class ProfileComponent {
 
 ### 1. Coalescing Multiple State Changes
 
+**Use case:** When rapid user input (typing, dragging, slider moves) would trigger many signal writes in sequence, each write causes a reactive cascade. Coalescing batches all pending changes into a single flush — one update, one CD cycle, no wasted intermediate renders.
+
 ```typescript
 @Component({...})
 export class FormComponent {
@@ -650,6 +652,8 @@ export class FormComponent {
 ---
 
 ### 2. Signal-Based State Management (Mini Store)
+
+**Use case:** Instead of NgRx or a full state management library, you can build a lightweight store with just signals + `computed` + `effect`. Perfect for component-level state that doesn't need Redux tooling. The store is a plain class injected via DI, with reactive selectors via `computed`. Bonus: optimistic updates become trivial because signals are synchronous.
 
 ```typescript
 // store/todo.store.ts
@@ -720,6 +724,8 @@ export class TodoComponent {
 
 ### 3. `runInInjectionContext` for Non-DI Contexts
 
+**Use case:** When you need DI (e.g., `HttpClient`, `ConfigService`) in a place that's outside Angular's injection context — utility functions, custom operators, event callbacks, or class constructors that aren't components/directives/pipes. Wrap the DI-dependent code in `runInInjectionContext` with a captured `EnvironmentInjector` reference.
+
 ```typescript
 // utils/rxjs-operators.ts
 import { inject, runInInjectionContext, EnvironmentInjector } from '@angular/core';
@@ -751,6 +757,8 @@ export class MyComponent {
 ---
 
 ### 4. Testing with Signals and Zoneless
+
+**Use case:** When testing with `provideExperimentalZonelessChangeDetection`, Angular no longer auto-triggers CD after async operations. You must call `fixture.detectChanges()` explicitly after each state change. This is actually cleaner — tests become deterministic because you control when the view is refreshed.
 
 ```typescript
 // component.spec.ts
@@ -793,6 +801,8 @@ describe('CounterComponent', () => {
 ---
 
 ### 5. Interoperability: Signals ↔ RxJS in Effects
+
+**Use case:** When you need RxJS operators (debounce, switchMap, distinctUntilChanged) inside a signal-based workflow. The `effect` tracks signal reads synchronously, then uses `toObservable` to pipe into RxJS operators. The cleanup function returned from the effect automatically unsubscribes when the effect re-runs or the component is destroyed.
 
 ```typescript
 @Component({...})
