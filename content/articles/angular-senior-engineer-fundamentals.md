@@ -19,7 +19,7 @@ cover: '/images/articles/angular/cover.jpg'
 featured: true
 ---
 
-This is a personal reference for senior Angular engineers — concepts you've internalized but occasionally need to re-verify. Not a tutorial; a condensed technical reference with code you can grep.
+This is a personal reference for senior Angular engineers: concepts you've internalized but occasionally need to re-verify. It is not a tutorial, but a condensed technical reference with code you can grep.
 
 ---
 
@@ -27,10 +27,10 @@ This is a personal reference for senior Angular engineers — concepts you've in
 
 ### Default Strategy (Default Change Detection)
 
-Angular's default change detection runs **bottom-up** from the component where a change originated, checking every component in the tree. It uses **dirty checking** — comparing current vs previous values for each bound expression.
+In the classic Zone.js model, Angular schedules an application change detection pass after many browser async tasks. The pass walks the component view tree **top-down**, evaluates template bindings, and updates the DOM where bound values changed.
 
 ```typescript
-// Default: runs on every async event (zone.js)
+// Legacy zone-based default: many async tasks schedule an app-level check.
 @Component({
   selector: 'app-root',
   template: `{{ counter }}`,
@@ -44,13 +44,13 @@ export class AppComponent {
 }
 ```
 
-**What triggers a check:**
+**What commonly schedules a check in zone-based apps:**
 
-- Any async event (click, timer, HTTP, Promise, Observable)
-- `setTimeout`, `setInterval`, `requestAnimationFrame`
-- `zone.js` monkey-patches all async APIs
+- Template or host events, such as click handlers
+- Timers, promises, XHR/fetch completion, and other patched browser APIs
+- Observable emissions when they are bridged into Angular, for example through the `async` pipe
 
-**Cost:** O(components) per tick. With 1000 components, 60fps = 60,000 checks/sec.
+**Cost model:** a scheduled pass can visit a large part of the view tree. With 1000 components and frequent events, the problem is rarely one binding, but repeated tree walks.
 
 ---
 
@@ -58,10 +58,11 @@ export class AppComponent {
 
 `ChangeDetectionStrategy.OnPush` restricts checks to when:
 
-1. `@Input()` reference changes
-2. Event handler in the component or its children fires
-3. `markForCheck()` is called explicitly
-4. An `Observable` subscribed via `async` pipe emits
+1. A template-bound input receives a new value. Object inputs still need a new reference.
+2. Angular handles a template or host event in the component subtree.
+3. `ChangeDetectorRef.markForCheck()` marks the component dirty.
+4. An `Observable` subscribed via `async` pipe emits.
+5. A signal read by the template changes.
 
 ```typescript
 @Component({
@@ -70,17 +71,15 @@ export class AppComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserCard {
-  @Input() user = signal<User>({ name: '', email: '' })
+  @Input({ required: true }) user!: User
+  @Input() user$?: Observable<User>
 
   // Or with signals (Angular 17+)
-  user = input.required<User>()
-
-  // Or with async pipe
-  @Input() user$!: Observable<User>
+  userInput = input.required<User>()
 }
 ```
 
-**Key insight:** OnPush doesn't mean "skip checks." It means "check only when inputs change by reference." Mutating an object passed as `@Input()` **will not** trigger detection.
+**Key insight:** OnPush does not mean "never check." It means "skip this subtree until Angular has a reason to treat it as dirty." Mutating an object passed as `@Input()` keeps the same reference, so Angular will not treat it as a new input.
 
 ```typescript
 // ❌ Won't trigger OnPush detection
@@ -94,20 +93,20 @@ this.user.update((u) => ({ ...u, name: 'New Name' }))
 
 ---
 
-### Zone.js vs Zoneless (Angular 18+)
+### Zone.js vs Zoneless
 
-**Zone.js** (legacy default): Monkey-patches all async APIs. Every tick runs change detection for the entire component tree.
+**Zone.js** (legacy model): Monkey-patches browser async APIs and uses those callbacks as a broad signal that Angular should run change detection.
 
-**Zoneless** (Angular 18+, experimental in 19): No zone.js. Change detection runs **only** when you explicitly signal it via signals or `markForCheck()`.
+**Zoneless** (stable since Angular 20.2, default in Angular 21+): Angular no longer uses Zone.js as the scheduler. It schedules change detection from Angular APIs: signal updates read by templates, template or host listeners, `markForCheck()`, `ComponentRef.setInput()`, view attach/remove, and render hooks that mark state dirty.
 
 ```typescript
-// main.ts — Zoneless bootstrap (Angular 18+)
+// main.ts, for Angular versions or apps where zoneless is not already default.
 import { bootstrapApplication } from '@angular/platform-browser'
-import { provideExperimentalZonelessChangeDetection } from '@angular/core'
+import { provideZonelessChangeDetection } from '@angular/core'
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     // other providers
   ],
 })
@@ -119,7 +118,7 @@ bootstrapApplication(AppComponent, {
 - `NgZone.runOutsideAngular()` → unnecessary
 - `async` pipe still works (uses `markForCheck` internally)
 - `setTimeout`/`setInterval`/`Promise` no longer auto-trigger CD
-- Manual `ChangeDetectorRef.markForCheck()` or signals required
+- Use signals for state that templates read, or call `ChangeDetectorRef.markForCheck()` at integration boundaries
 
 ---
 
@@ -132,22 +131,19 @@ Signals are **synchronous**, **glitch-free**, and **lazy**. They track reads and
 ```typescript
 import { signal, computed, effect, Signal, WritableSignal } from '@angular/core'
 
-// Writable signal — mutable source
+// Writable signal: mutable source
 const count = signal(0)
 count.set(5)
 count.update((v) => v + 1)
-count.mutate((arr) => arr.push(1)) // for arrays/objects
+items.update((current) => [...current, newItem]) // arrays/objects need a new value
 
-// Computed signal — derived, read-only, memoized
+// Computed signal: derived, read-only, memoized
 const double = computed(() => count() * 2)
 
-// Effect — side effects, runs after render
-effect(
-  () => {
-    console.log('Count changed:', count())
-  },
-  { allowSignalWrites: true },
-) // needed for writes in effect
+// Effect: side effects for non-reactive APIs.
+effect(() => {
+  console.log('Count changed:', count())
+})
 ```
 
 ### Signals in Components
@@ -173,7 +169,7 @@ export class CounterComponent {
 }
 ```
 
-### `input()` and `output()` — Signal-Based Inputs/Outputs (Angular 17+)
+### `input()` and `output()`: Function-Based Inputs/Outputs (Angular 17+)
 
 ```typescript
 @Component({
@@ -191,7 +187,7 @@ export class UserCard {
   // Transform input (coerce, validate)
   limit = input(10, { transform: (v) => Math.max(1, Number(v)) })
 
-  // Signal-based output
+  // Function-based output. This is an OutputEmitterRef, not a signal.
   select = output<User>()
 
   // Computed from input
@@ -220,32 +216,32 @@ Angular's DI is hierarchical. Understanding **injection context** is critical fo
 ### Where Injection Context Exists
 
 ```typescript
-// ✅ Component constructor — injection context
+// Component constructor: injection context
 constructor(private service: MyService) {}
 
-// ✅ Directive constructor
+// Directive constructor
 constructor(private el: ElementRef) {}
 
-// ✅ Pipe constructor
+// Pipe constructor
 constructor(private sanitizer: DomSanitizer) {}
 
-// ✅ Provider factory functions
+// Provider factory functions
 providers: [
   { provide: MyService, useFactory: () => new MyService(inject(HttpClient)) }
 ]
 
-// ✅ inject() in field initializer (Angular 15+)
+// inject() in field initializer (Angular 15+)
 private http = inject(HttpClient);
 
-// ❌ Regular function — NO injection context
+// Regular function: no injection context
 function helper() {
   const svc = inject(MyService); // ERROR: no injection context
 }
 
-// ❌ setTimeout callback — NO injection context
+// setTimeout callback: no injection context
 setTimeout(() => inject(MyService), 1000);
 
-// ✅ runInInjectionContext (when you need DI outside)
+// runInInjectionContext, when you need DI outside.
 constructor(private injector: EnvironmentInjector) {}
 runInInjectionContext(this.injector, () => {
   const svc = inject(MyService); // ✅ works
@@ -270,7 +266,7 @@ PlatformInjector (NgModule providers, platform providers)
               │    └─ DashboardComponent (injects UserService → AppComponent's)
 ```
 
-**Resolution:** Child asks parent, parent asks parent, up to root. `providedIn: 'root'` = platform injector (singleton app-wide). `providedIn: 'any'` = new instance per injector.
+**Resolution:** A request starts at the current injection context, then walks up the injector hierarchy until Angular finds a provider. `providedIn: 'root'` registers with the root application injector, so the service is usually a singleton for the app. Component `providers` create instances scoped to that component subtree.
 
 ---
 
@@ -280,16 +276,16 @@ PlatformInjector (NgModule providers, platform providers)
 // Basic injection
 private http = inject(HttpClient);
 
-// Optional — returns null if not provided
+// Optional: returns null if not provided
 private optionalSvc = inject(OptionalService, { optional: true });
 
-// Self — only check current injector, don't go up
+// Self: only check current injector, don't go up
 private localSvc = inject(LocalService, { self: true });
 
-// SkipSelf — start from parent, skip current
+// SkipSelf: start from parent, skip current
 private parentSvc = inject(ParentService, { skipSelf: true });
 
-// Host — for directives, get from host component
+// Host: for directives, get from host component
 @Directive({ selector: '[appHighlight]' })
 export class HighlightDirective {
   private renderer = inject(Renderer2);
@@ -337,13 +333,13 @@ clicks = toSignal(
 ### `toSignal` Options
 
 ```typescript
-// initialValue — required for synchronous reads before first emission
+// initialValue: required for synchronous reads before first emission
 user = toSignal(user$, { initialValue: null })
 
-// requireSync — throw if first value isn't synchronous (SSR safety)
+// requireSync: throw if first value is not synchronous
 data = toSignal(asyncData$, { requireSync: true })
 
-// equal — custom equality for change detection
+// equal: custom equality for change detection
 items = toSignal(items$, {
   equal: (a, b) => a.id === b.id,
 })
@@ -415,8 +411,6 @@ data$.pipe(takeUntil(this.destroy$)).subscribe();
 export class ListComponent {
   items = signal<Item[]>([])
 
-  trackById = (index: number, item: Item) => item.id
-
   // Or with computed for derived arrays
   filteredItems = computed(() => this.items().filter((i) => i.active))
   trackById = (_: number, item: Item) => item.id
@@ -486,7 +480,7 @@ const routes: Routes = [
   template: `
     <button (click)="loadHeavy()">Load Heavy</button>
     @if (heavyComponent()) {
-      <ng-component [ngComponentOutlet]="heavyComponent()" />
+      <ng-container *ngComponentOutlet="heavyComponent()" />
     }
   `,
 })
@@ -504,7 +498,7 @@ export class HostComponent {
 
 ### 4. Virtual Scrolling (CDK)
 
-**Use case:** You have a large list (1000+ items) and rendering all DOM nodes at once would kill performance. Virtual scrolling only renders the visible rows plus a small buffer above and below the viewport — the rest are recycled or not yet created. DOM nodes stay constant regardless of list size.
+**Use case:** You have a large list (1000+ items) and rendering all DOM nodes at once would kill performance. Virtual scrolling only renders the visible rows plus a small buffer above and below the viewport. The rest are recycled or not yet created, so DOM node count stays bounded regardless of list size.
 
 ```typescript
 import { ScrollingModule } from '@angular/cdk/scrolling'
@@ -572,7 +566,7 @@ export class DataGridComponent {
   rows = input.required<Row[]>()
   highlightedId = input<number | null>(null)
 
-  // Derived — only recomputes when rows() or highlightedId() changes
+  // Derived: only recomputes when rows() or highlightedId() changes
   displayedRows = computed(() => this.rows().filter((r) => r.visible))
 }
 ```
@@ -586,9 +580,9 @@ export class DataGridComponent {
 
 ---
 
-### 6. `inject()` in Providers for Tree-Shakable Services
+### 6. Functional DI in Tree-Shakable Services
 
-**Use case:** Instead of relying on constructor injection (which makes the service untree-shakable when imported via NgModule), use `inject()` with `providedIn: 'root'`. This lets Angular's tree-shaker remove the service entirely from the production bundle if no component injects it — dead code elimination for free.
+**Use case:** Keep services tree-shakable by registering them with `providedIn: 'root'` or a narrow component provider instead of broad NgModule provider arrays. `inject()` is a clean field-initializer style for service dependencies, but tree-shaking comes from provider scope and actual usage, not from replacing constructors by itself.
 
 ```typescript
 // service.ts
@@ -608,7 +602,7 @@ export class UserService {
   }
 }
 
-// component.ts — tree-shakable, no constructor injection needed
+// component.ts
 @Component({...})
 export class ProfileComponent {
   private userService = inject(UserService);
@@ -622,14 +616,14 @@ export class ProfileComponent {
 
 ### 1. Coalescing Multiple State Changes
 
-**Use case:** When rapid user input (typing, dragging, slider moves) would trigger many signal writes in sequence, each write causes a reactive cascade. Coalescing batches all pending changes into a single flush — one update, one CD cycle, no wasted intermediate renders.
+**Use case:** When rapid user input (typing, dragging, slider moves) would trigger many signal writes in sequence, each write can invalidate dependent state. Coalescing batches pending changes into a single flush: one state update and no wasted intermediate renders.
 
 ```typescript
 @Component({...})
 export class FormComponent {
   #pendingChanges = signal<Partial<FormData>>({});
 
-  // Batch updates — single CD cycle
+  // Batch updates before committing to the main form state.
   updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     this.#pendingChanges.update(current => ({ ...current, [key]: value }));
   }
@@ -659,6 +653,7 @@ export class FormComponent {
 // store/todo.store.ts
 import { signal, computed, effect } from '@angular/core'
 import { inject } from '@angular/core'
+import { firstValueFrom } from 'rxjs'
 import { TodoApiService } from './todo.api'
 
 export class TodoStore {
@@ -684,8 +679,8 @@ export class TodoStore {
   async load() {
     this.#loading.set(true)
     try {
-      const todos = await this.api.getAll().toPromise()
-      this.#todos.set(todos ?? [])
+      const todos = await firstValueFrom(this.api.getAll())
+      this.#todos.set(todos)
     } finally {
       this.#loading.set(false)
     }
@@ -724,7 +719,7 @@ export class TodoComponent {
 
 ### 3. `runInInjectionContext` for Non-DI Contexts
 
-**Use case:** When you need DI (e.g., `HttpClient`, `ConfigService`) in a place that's outside Angular's injection context — utility functions, custom operators, event callbacks, or class constructors that aren't components/directives/pipes. Wrap the DI-dependent code in `runInInjectionContext` with a captured `EnvironmentInjector` reference.
+**Use case:** When you need DI (e.g., `HttpClient`, `ConfigService`) in a place that's outside Angular's injection context, such as utility functions, custom operators, event callbacks, or class constructors that are not components/directives/pipes. Wrap the DI-dependent code in `runInInjectionContext` with a captured `EnvironmentInjector` reference.
 
 ```typescript
 // utils/rxjs-operators.ts
@@ -758,12 +753,12 @@ export class MyComponent {
 
 ### 4. Testing with Signals and Zoneless
 
-**Use case:** When testing with `provideExperimentalZonelessChangeDetection`, Angular no longer auto-triggers CD after async operations. You must call `fixture.detectChanges()` explicitly after each state change. This is actually cleaner — tests become deterministic because you control when the view is refreshed.
+**Use case:** When testing with zoneless change detection, do not assume Zone.js will flush the view after arbitrary async work. Prefer explicit `fixture.detectChanges()` after state changes when the assertion depends on rendered DOM. This keeps tests deterministic because you control when the view is refreshed.
 
 ```typescript
 // component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { provideExperimentalZonelessChangeDetection } from '@angular/core'
+import { provideZonelessChangeDetection } from '@angular/core'
 
 describe('CounterComponent', () => {
   let fixture: ComponentFixture<CounterComponent>
@@ -773,7 +768,7 @@ describe('CounterComponent', () => {
     TestBed.configureTestingModule({
       imports: [CounterComponent],
       providers: [
-        provideExperimentalZonelessChangeDetection(), // for zoneless tests
+        provideZonelessChangeDetection(), // for zoneless tests
       ],
     })
     fixture = TestBed.createComponent(CounterComponent)
@@ -802,7 +797,7 @@ describe('CounterComponent', () => {
 
 ### 5. Interoperability: Signals ↔ RxJS in Effects
 
-**Use case:** When you need RxJS operators (debounce, switchMap, distinctUntilChanged) inside a signal-based workflow. The `effect` tracks signal reads synchronously, then uses `toObservable` to pipe into RxJS operators. The cleanup function returned from the effect automatically unsubscribes when the effect re-runs or the component is destroyed.
+**Use case:** When you need RxJS operators (debounce, switchMap, distinctUntilChanged) inside a signal-based workflow. Usually prefer one bridge at the boundary, such as `toObservable(query).pipe(...)`, then convert the final stream back with `toSignal`. If you do subscribe inside an `effect`, use the `onCleanup` callback; returning a cleanup function from the effect body is not the Angular API.
 
 ```typescript
 @Component({...})
@@ -810,7 +805,7 @@ export class SearchComponent {
   query = signal('');
 
   // Side effect: debounced search
-  private searchEffect = effect(() => {
+  private searchEffect = effect((onCleanup) => {
     const q = this.query();
     if (!q) return;
 
@@ -825,8 +820,8 @@ export class SearchComponent {
     });
 
     // Cleanup on effect re-run or destroy
-    return () => sub.unsubscribe();
-  }, { allowSignalWrites: true });
+    onCleanup(() => sub.unsubscribe());
+  });
 
   results = signal<Result[]>([]);
 
@@ -841,21 +836,22 @@ export class SearchComponent {
 
 ## Migration Checklist: Zone.js → Zoneless + Signals
 
-| Legacy Pattern                      | Modern Replacement                                        |
-| ----------------------------------- | --------------------------------------------------------- |
-| `@Input()` / `@Output()`            | `input()` / `output()` signals                            |
-| `ChangeDetectorRef.detectChanges()` | Signals auto-trigger; `markForCheck()` only for interop   |
-| `NgZone.runOutsideAngular()`        | Unnecessary (no zone)                                     |
-| `async` pipe                        | `toSignal(observable, { initialValue })`                  |
-| `BehaviorSubject` in service        | `signal()` + `computed()`                                 |
-| `takeUntil(destroy$)`               | Effect cleanup / `DestroyRef` (Angular 16+)               |
-| `providedIn: 'root'`                | Still valid, or `provideIn: 'root'` in `inject()` options |
-| `constructor(private svc: Svc)`     | `private svc = inject(Svc)` (field injection)             |
+| Legacy Pattern                      | Modern Replacement                                             |
+| ----------------------------------- | -------------------------------------------------------------- |
+| `@Input()` / `@Output()`            | `input()` / `output()` for new component APIs                  |
+| `ChangeDetectorRef.detectChanges()` | Prefer signal-driven state; use `markForCheck()` first         |
+| `NgZone.runOutsideAngular()`        | Usually unnecessary when Zone.js is removed                    |
+| `async` pipe                        | Still valid, or `toSignal(observable, { initialValue })`       |
+| `BehaviorSubject` in service        | `signal()` + `computed()` for synchronous local state          |
+| `takeUntil(destroy$)`               | `takeUntilDestroyed()` or `DestroyRef`                         |
+| NgModule provider arrays            | `providedIn: 'root'` or scoped component providers             |
+| `constructor(private svc: Svc)`     | `private svc = inject(Svc)` where field injection reads better |
 
-### `DestroyRef` (Angular 16+) — Cleanup Without `ngOnDestroy`
+### `DestroyRef` (Angular 16+): Cleanup Without `ngOnDestroy`
 
 ```typescript
-import { DestroyRef, inject, takeUntilDestroyed } from '@angular/core';
+import { DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({...})
 export class MyComponent {
@@ -883,7 +879,7 @@ export class MyComponent {
 | `computed(() => ...)`          | Derived read-only signal               | `Signal<T>`           |
 | `effect(() => ...)`            | Side effect, runs on signal read       | `EffectRef`           |
 | `input()` / `input.required()` | Component input as signal              | `InputSignal<T>`      |
-| `output()`                     | Component output as signal emitter     | `OutputEmitterRef<T>` |
+| `output()`                     | Component output emitter               | `OutputEmitterRef<T>` |
 | `model()`                      | Two-way binding signal                 | `ModelSignal<T>`      |
 | `toSignal(obs, opts)`          | Observable → Signal                    | `Signal<T>`           |
 | `toObservable(sig)`            | Signal → Observable                    | `Observable<T>`       |
@@ -894,31 +890,31 @@ export class MyComponent {
 
 ## Mental Models to Keep
 
-1. **Signals are synchronous** — reading a signal during computation creates a dependency. Writing triggers dependents immediately.
+1. **Signals are synchronous**: reading a signal during computation creates a dependency. Writing invalidates dependents immediately, then Angular schedules the relevant work.
 
-2. **Computed is lazy** — it only computes when read. If nothing reads it, it never runs.
+2. **Computed is lazy**: it only computes when read. If nothing reads it, it never runs.
 
-3. **OnPush + signals = no CD cycles** — components only update when their specific signals change.
+3. **OnPush + signals narrows work**: components update when Angular has a reason to mark them dirty, and template-read signals are one of the most precise reasons.
 
-4. **Injection context is lexical** — `inject()` works in field initializers, constructor params, and factory functions. Not in callbacks, timeouts, or plain functions.
+4. **Injection context is lexical**: `inject()` works in field initializers, constructor bodies, and factory functions. Not in callbacks, timeouts, or plain functions unless you create a context explicitly.
 
-5. **Zoneless = manual CD control** — you decide when to check. Signals make this explicit; RxJS needs `toSignal` + `markForCheck`.
+5. **Zoneless removes Zone.js scheduling**: signals, Angular listeners, `markForCheck()`, and input updates become the important scheduling signals. RxJS needs an Angular bridge such as `async` pipe or `toSignal`.
 
-6. **TrackBy is non-negotiable** — for any list over ~20 items, always provide `trackBy`.
+6. **TrackBy is non-negotiable**: for any list over ~20 items, always provide `trackBy` or `track`.
 
-7. **Effects run after render** — use for side effects (logging, persistence, DOM measurements). Not for deriving state (use `computed`).
+7. **Effects are for side effects**: use them for non-reactive APIs such as logging and persistence. Do not derive state with effects when `computed` expresses the dependency directly.
 
-8. **Tree-shakable providers** — prefer `providedIn: 'root'` or component-level `providers: [Service]` over module-level.
+8. **Tree-shakable providers**: prefer `providedIn: 'root'` or component-level `providers: [Service]` over broad module-level provider arrays.
 
 ---
 
 ## Further Reading
 
-- [Angular Signals RFC](https://github.com/angular/angular/discussions/47643)
-- [Zoneless Change Detection RFC](https://github.com/angular/angular/discussions/53351)
-- [Angular Core Runtime Guide](https://angular.io/guide/core-runtime)
-- [RxJS Interop Guide](https://angular.io/guide/rxjs-interop)
-- [Change Detection Deep Dive](https://blog.angular.io/a-gentle-introduction-to-change-detection-in-angular-5d8f2c8c2e9c)
+- [Angular Signals Guide](https://angular.dev/guide/signals)
+- [Angular Zoneless Guide](https://angular.dev/guide/zoneless)
+- [Skipping Component Subtrees](https://angular.dev/best-practices/skipping-subtrees)
+- [RxJS Interop with Angular Signals](https://angular.dev/ecosystem/rxjs-interop)
+- [WritableSignal API](https://angular.dev/api/core/WritableSignal)
 
 ---
 
