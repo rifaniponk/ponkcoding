@@ -915,7 +915,3 @@ export class MyComponent {
 - [Skipping Component Subtrees](https://angular.dev/best-practices/skipping-subtrees)
 - [RxJS Interop with Angular Signals](https://angular.dev/ecosystem/rxjs-interop)
 - [WritableSignal API](https://angular.dev/api/core/WritableSignal)
-
----
-
-_This reference lives in `content/articles/angular-senior-engineer-fundamentals.md`. Update it when Angular ships new primitives._
