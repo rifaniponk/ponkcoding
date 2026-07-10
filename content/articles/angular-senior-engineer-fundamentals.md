@@ -430,6 +430,8 @@ export class ListComponent {
 
 ### 2. `ChangeDetectorRef` Manual Control
 
+**Use case:** You have an OnPush component that needs to respond to events outside Angular's zone (e.g., WebSocket, third-party library, `requestAnimationFrame`). In zoneless mode, this is also how you manually signal Angular that something changed.
+
 ```typescript
 @Component({ changeDetection: ChangeDetectionStrategy.OnPush })
 export class HeavyComponent {
@@ -462,6 +464,8 @@ export class HeavyComponent {
 ---
 
 ### 3. Lazy Loading & Code Splitting
+
+**Use case:** Reduce initial bundle size by deferring feature modules, routes, and even individual components until they're needed. Every `loadChildren` or `loadComponent` creates a separate chunk that the browser only fetches on demand.
 
 ```typescript
 // Route-level lazy loading (standard)
@@ -499,6 +503,8 @@ export class HostComponent {
 ---
 
 ### 4. Virtual Scrolling (CDK)
+
+**Use case:** You have a large list (1000+ items) and rendering all DOM nodes at once would kill performance. Virtual scrolling only renders the visible rows plus a small buffer above and below the viewport — the rest are recycled or not yet created. DOM nodes stay constant regardless of list size.
 
 ```typescript
 import { ScrollingModule } from '@angular/cdk/scrolling'
@@ -581,6 +587,8 @@ export class DataGridComponent {
 ---
 
 ### 6. `inject()` in Providers for Tree-Shakable Services
+
+**Use case:** Instead of relying on constructor injection (which makes the service untree-shakable when imported via NgModule), use `inject()` with `providedIn: 'root'`. This lets Angular's tree-shaker remove the service entirely from the production bundle if no component injects it — dead code elimination for free.
 
 ```typescript
 // service.ts
