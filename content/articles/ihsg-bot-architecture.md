@@ -1,7 +1,7 @@
 ---
-title: 'Membangun IHSG Bot: Arsitektur Social Sentiment + BSJP Signal'
+title: 'Building IHSG Bot: Architecture of My Social Sentiment + BSJP Signal Pipeline'
 slug: 'ihsg-bot-architecture'
-description: 'Cerita teknis di balik ihsg-bot: how a Telegram chatter pipeline, OpenRouter LLM scoring, Yahoo live data, dan accuracy tracking menyatu menjadi sinyal saham harian yang dikirim otomatis ke Telegram.'
+description: 'A personal technical journal on how I built ihsg-bot: a Telegram chatter pipeline, OpenRouter LLM scoring, Yahoo live data, and accuracy tracking that turn into daily stock signals delivered to my Telegram.'
 date: '2026-07-16'
 updated: '2026-07-16'
 category: 'Trading Bot'
@@ -19,129 +19,129 @@ cover: '/images/articles/ihsg-bot/cover.png'
 featured: true
 ---
 
-Setiap hari setelah pasar tutup, ada ringkasan percakapan dari puluhan grup Telegram saham Indonesia yang mengalir ke sebuah mesin. Mesin itu menilai mana emiten yang lagi ramai dibicarakan, mengukur kekuatan sentimen, lalu memadukannya dengan data harga _live_ dari Yahoo Finance. Hasilnya: daftar kandidat saham untuk strategi **BSJP** (Beli Sore, Jual Pagi) yang langsung dikirim ke Telegram.
+Every day after the market closes, a stream of conversations from dozens of Indonesian stock Telegram groups flows into a machine I built. That machine figures out which tickers people are actually talking about, measures how strong the sentiment is, then blends it with _live_ price data from Yahoo Finance. The result: a list of candidate stocks for the **BSJP** strategy (Buy at Close, Sell at Open) pushed straight to my Telegram.
 
-Artikel ini membongkar arsitektur **ihsg-bot** — monorepo yang berjalan di mesin `ponkai` (homelab pribadi). Bukan tutorial langkah-demi-langkah, tapi _reference_ arsitektur: komponen apa, bagaimana mereka berbicara, dan trade-off yang diambil.
+In this entry I'm breaking down the architecture of **ihsg-bot** — a monorepo I run on my home-lab box `ponkai`. This isn't a tutorial; it's a personal reference of what the components are, how they talk, and the trade-offs I made along the way.
 
 ---
 
-## Big Picture: Tiga Dunia
+## Big Picture: Three Worlds
 
-ihsg-bot terdiri dari tiga kelompok layanan yang berbeda bahasa tapi saling terhubung melalui database SQLite:
+I split ihsg-bot into three service groups in different languages, all connected through SQLite databases:
 
-| Dunia             | Bahasa     | Peran                                           |
+| World             | Language   | Role                                            |
 | ----------------- | ---------- | ----------------------------------------------- |
-| **Warehouse**     | Go         | Pengambil data harga saham (Yahoo Finance)      |
-| **Social / BSJP** | Python     | Pipeline sentiment + sinyal + dispatch Telegram |
-| **Reader**        | Go + React | Dashboard web untuk lihat sinyal + akurasi      |
+| **Warehouse**     | Go         | Stock price fetcher (Yahoo Finance)             |
+| **Social / BSJP** | Python     | Sentiment pipeline + signal + Telegram dispatch |
+| **Reader**        | Go + React | Web dashboard to view signals + accuracy        |
 
-Semuanya di-orchestrate oleh **systemd timer** di ponkai, dan dibantu **Hermes cron** untuk ringkasan harian.
+Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron** helping out for the daily digest.
 
-![Arsitektur ihsg-bot — alur data dari Telegram ke sinyal](/images/articles/ihsg-bot/architecture.png)
+![ihsg-bot architecture — data flow from Telegram to signal](/images/articles/ihsg-bot/architecture.png)
 
-> **Catatan gambar:** Diagram di atas (dan cover) saya generate terpisah. Penjelasan tiap komponen ada di bawah.
+> **Image note:** I generated the diagram above (and the cover) separately. Explanations of each component are below.
 
 ---
 
-## 1. Warehouse — Sumber Data Harga
+## 1. Warehouse — The Price Data Source
 
-`warehouse/` adalah binary Go (`idx-warehouse`) yang menarik data OHLCV harian dari Yahoo Finance untuk ~300 saham IDX (butuh suffix `.JK`, misal `BBCA.JK`).
+`warehouse/` is a Go binary (`idx-warehouse`) I wrote to pull daily OHLCV data from Yahoo Finance for ~300 IDX stocks (it needs the `.JK` suffix, e.g. `BBCA.JK`).
 
-**Fakta teknis yang penting:**
+**Things I learned the hard way:**
 
-- Timer jalan **Senin–Jumat 19:30 WIB** (setelah semua data hari itu final).
-- Adapter Yahoo punya _bug_ menarik: parameter `period2` dihitung dari tengah malam hari target, sehingga hari terakhir dari rentang selalu kepotong. Fix-nya: extend ke `23:59:59` (PR #16).
+- The timer runs **Mon–Fri 19:30 WIB** (after all of the day's data is final).
+- The Yahoo adapter had a fun bug: the `period2` parameter was computed from midnight of the target day, so the last day of any range was always truncated. I fixed it by extending to `23:59:59` (PR #16).
 - DB: `/var/lib/idxwarehouse/db/warehouse.db` (~37k records).
 
 ```bash
-# Fetch manual satu saham
+# Manual fetch for one stock
 /usr/local/bin/idx-warehouse fetch BBCA.JK --save
 ```
 
-Warehouse **tidak** tahu menahu soal sentiment. Dia cuma penyedia fakta harga.
+Warehouse knows **nothing** about sentiment. It's just my price-fact provider.
 
 ---
 
-## 2. Social Pipeline — Otak BSJP
+## 2. Social Pipeline — The BSJP Brain
 
-Ini jantung bot, ditulis Python di folder `social/`. Berjalan sebagai `idx-bsjp.service` tiap **Senin–Jumat 15:00 WIB** (tepat setelah penutupan pasar 15:57, tapi sinyal dihitung dari data yang sudah ada).
+This is the heart of the bot, written in Python under `social/`. It runs as `idx-bsjp.service` every **Mon–Fri 15:00 WIB** (right after the 15:57 market close, though I compute the signal from data already present).
 
-Pipeline punya **4 tahap**:
+The pipeline has **4 stages**:
 
-### Tahap 1: Collect (`collectors.telegram`)
+### Stage 1: Collect (`collectors.telegram`)
 
-Userbot Pyrogram membaca semua grup Telegram yang di-join, mengekstrak mention ticker (regex + kasual match), lalu menyimpan ke tabel `mentions` di `social.db`.
+A Pyrogram userbot I set up reads all my joined Telegram groups, extracts ticker mentions (regex + casual match), then stores them in the `mentions` table in `social.db`.
 
-**Gotcha:** collector menangkap kata "yang" (bahasa Indo = _that/which_) sebagai ticker `YANG`. Belum di-fix — butuh stoplist. Jadi jangan percaya 100% pada ticker dengan konteks rendah.
+**Gotcha I still need to fix:** the collector catches the Indonesian word "yang" (means _that/which_) as the ticker `YANG`. Not yet fixed — I need a stoplist. So I don't fully trust low-context tickers yet.
 
-### Tahap 2: Score (`analysis.sentiment`)
+### Stage 2: Score (`analysis.sentiment`)
 
-Di sinilah LLM masuk. OpenRouter (`tencent/hy3:free`) mem-score sentiment tiap mention dalam **batch 8 mention per call** (bukan per-mention, supaya hemat waktu — 133 mention cuma butuh ~14 call, bukan 12 menit).
+This is where the LLM earns its keep. OpenRouter (`tencent/hy3:free`) scores the sentiment of each mention in **batches of 8 per call** — not per-mention, to save time. 133 mentions need only ~14 calls instead of 12 minutes.
 
-Model juga mendeteksi pola **pump-dump** dan **fear-mongering**, bukan cuma skor -1..+1. Hasilnya masuk ke `hype_scores`.
+The model also detects **pump-dump** and **fear-mongering** patterns, not just a -1..+1 score. Results land in `hype_scores`.
 
-### Tahap 3: Signal (`bsjp_signal`)
+### Stage 3: Signal (`bsjp_signal`)
 
-Ambil metrik _live_ dari Yahoo (`.JK`), lalu _rank_ kandidat:
+I pull _live_ metrics from Yahoo (`.JK`), then _rank_ candidates:
 
 ```
 bsjp_score = hype*0.5 + gap*0.25 + close*0.15 + liq*0.10
 ```
 
-- `hype` — seberapa ramai di Telegram
-- `gap` — rata-rata _gap up_ pagi historis (inti strategi BSJP)
-- `close` — kekuatan posisi penutupan hari ini (0..1)
-- `liq` — likuiditas (biar gak kejebak saham tipis)
+- `hype` — how loud it is on Telegram
+- `gap` — average historical morning _gap up_ (the core of my BSJP strategy)
+- `close` — strength of today's closing position (0..1)
+- `liq` — liquidity (so I don't get stuck in thin stocks)
 
-Lalu LLM (lagi) menulis **narrative** singkat: kenapa layak, apa risk-nya. Disimpan di `bsjp_signals` + kolom `narrative`.
+Then the LLM writes a short **narrative**: why it's worth it, what the risk is. Stored in `bsjp_signals` + the `narrative` column.
 
-### Tahap 4: Dispatch (`dispatch`)
+### Stage 4: Dispatch (`dispatch`)
 
-Kirim sinyal ke chat Telegram `6417591526` via Pyrogram userbot. Selesai — sinyal sampai sebelum kamu selesai makan sore.
+Sends the signal to my Telegram chat `6417591526` via the Pyrogram userbot. Done — the signal lands before I finish my afternoon meal.
 
 ---
 
-## 3. Accuracy Tracking — Belajar dari Kemarin
+## 3. Accuracy Tracking — Learning from Yesterday
 
-Bot tidak cuma kirim sinyal, tapi juga mengecek **apakah sinyal kemarin benar**.
+The bot doesn't just send signals, it also checks **whether yesterday's signal was right**.
 
-Timer `idx-bsjp-eval.service` jalan **Senin–Jumat 09:30 WIB** (besok pagi setelah sinyal). Logika:
+The `idx-bsjp-eval.service` timer runs **Mon–Fri 09:30 WIB** (next morning after the signal). Logic:
 
-- `entry = close[signal_date]` (harga pasar tutup saat sinyal dibuat)
-- `exit = open[signal_date + 1]` (harga pasar buka pagi ini)
+- `entry = close[signal_date]` (market close price when I made the signal)
+- `exit = open[signal_date + 1]` (market open price this morning)
 - `realized_gap_pct = (exit - entry) / entry * 100`
 - `win = realized_gap_pct > 0`
 
-Hasil masuk ke `bsjp_outcomes`. Perintah `python -m track_accuracy --summary` kasih win rate + avg gap 30 hari terakhir.
+Results go into `bsjp_outcomes`. `python -m track_accuracy --summary` gives me the win rate + avg gap over the last 30 days.
 
-Ini jujur: prototype, belum di-backtest. Tapi tracking ada, sehingga suatu hari bisa di-evaluasi serius.
-
----
-
-## 4. Market Digest — Konteks untuk Besok
-
-Selain sinyal (yang berupa _pick_ saham), ada **ringkasan intelijen pasar** harian.
-
-`market_digest.py` membaca mentions + BSJP signals hari ini, lalu tanya LLM: "apa yang menarik? ada corporate action? akuisisi? geopolitik? anomali sentiment?" Hasilnya Markdown summary yang dikirim ke Telegram **Senin–Jumat 18:00 WIB** (setelah pasar tutup + sinyal jadi).
-
-Tujuannya: biar kamu lebih siap menyambut pembukaan besok.
+Honestly: it's a prototype, not yet backtested. But the tracking exists, so one day I can evaluate it seriously.
 
 ---
 
-## 5. Reader — Dashboard Web
+## 4. Market Digest — Context for Tomorrow
 
-`reader/` adalah binary Go (`ihsg-reader`) yang nge-embed React SPA. Jalan terus di port `9090`.
+Beyond the signal (which is a stock _pick_), I added a daily **market intelligence summary**.
 
-Fitur BSJP di dashboard:
+`market_digest.py` reads today's mentions + BSJP signals, then asks the LLM: "what's interesting? any corporate action? acquisition? geopolitical? sentiment anomaly?" The result is a Markdown summary sent to my Telegram **Mon–Fri 18:00 WIB** (after market close + signal generation).
 
-- Menu **/bsjp** — tabel sinyal per hari (ticker, score, hype, mentions, narrative)
-- Kartu **akurasi** — win rate, avg gap, total evaluasi
-
-Backend baca `social.db` langsung (Go registry buka semua DB di config `[databases.*]` — nambah sumber DB = nambah blok config, gak perlu ubah Go code).
+Goal: so I'm better prepared for tomorrow's open.
 
 ---
 
-## Arsitektur Data Flow
+## 5. Reader — The Web Dashboard
+
+`reader/` is a Go binary (`ihsg-reader`) I built that embeds a React SPA. Runs continuously on port `9090`.
+
+BSJP features in the dashboard:
+
+- Menu **/bsjp** — per-day signal table (ticker, score, hype, mentions, narrative)
+- **Accuracy** cards — win rate, avg gap, total evaluated
+
+The backend reads `social.db` directly (the Go registry opens every DB in the `[databases.*]` config — adding a DB source = adding a config block, no Go code change needed).
+
+---
+
+## Architecture Data Flow
 
 ```
 Telegram groups
@@ -170,20 +170,20 @@ Yahoo Finance ──▶ [warehouse] ─┤
 
 ---
 
-## LLM: OpenRouter, Bukan agy
+## LLM: OpenRouter, Not agy
 
-Awalnya pakai `agy` CLI untuk semua pemanggilan LLM. Tapi subscription habis. Migrasi ke **OpenRouter** (`tencent/hy3:free`):
+I originally used the `agy` CLI for all my LLM calls. But the subscription expired, so I migrated to **OpenRouter** (`tencent/hy3:free`):
 
-- `social/` Python: `requests.post` langsung ke OpenRouter
-- `signals/` Go: dulu `exec.Command("agy")`, sekarang `internal/agent/openrouter.go` (HTTP client)
+- `social/` Python: `requests.post` directly to OpenRouter
+- `signals/` Go: used to be `exec.Command("agy")`, now `internal/agent/openrouter.go` (HTTP client)
 
-Satu model, satu API key env (`OPENROUTER_API_KEY`), konsisten di semua modul.
+One model, one API key env (`OPENROUTER_API_KEY`), consistent across all my modules.
 
 ---
 
 ## Deployment
 
-Semua di systemd. Tiga command buat deploy ulang di ponkai:
+All on systemd. Three commands to redeploy on ponkai:
 
 ```bash
 sudo bash deploy/idx-deploy.sh          # warehouse + signals binary
@@ -191,29 +191,29 @@ sudo bash deploy/idx-social-install.sh  # BSJP + digest timer
 sudo bash deploy/idx-reader-install.sh  # dashboard
 ```
 
-Timernya:
+The timers:
 
-- `idx-warehouse.timer` — fetch harian (Selasa–Sabtu 04:00 WIB)
-- `idx-bsjp.timer` — pipeline (Senin–Jumat 15:00 WIB)
-- `idx-bsjp-eval.timer` — evaluasi (Senin–Jumat 09:30 WIB)
-- `idx-market-digest.timer` — ringkasan (Senin–Jumat 18:00 WIB)
-
----
-
-## Pelajaran Arsitektur
-
-1. **Pisahkan sumber data dari intelijen.** Warehouse (fakta) dan Social (sentiment) terpisah DB, terpisah bahasa. Mereka bertemu cuma di tahap signal.
-2. **Batch LLM calls.** Jangan panggil LLM per-item kalau bisa di-batch. 14 call vs 133 call = beda 12 menit.
-3. **Track your own accuracy.** Sinyal tanpa evaluasi cuma noise. Simpan outcome, hitung win rate.
-4. **Auto-migrate schema.** `db.py connect()` menambah kolom `narrative` + tabel `bsjp_outcomes` secara idempoten. Gak perlu migrasi manual tiap kali nambah kolom.
-5. **Pilih satu trigger.** Market digest punya dua trigger (Hermes cron + systemd timer) — jangan biarkan dua-duanya nyala, nanti dobel kirim.
+- `idx-warehouse.timer` — daily fetch (Tue–Sat 04:00 WIB)
+- `idx-bsjp.timer` — pipeline (Mon–Fri 15:00 WIB)
+- `idx-bsjp-eval.timer` — evaluation (Mon–Fri 09:30 WIB)
+- `idx-market-digest.timer` — digest (Mon–Fri 18:00 WIB)
 
 ---
 
-## Penutup
+## Architecture Lessons
 
-ihsg-bot bukan sistem trading yang sudah di-backtest. Dia prototype yang jujur: kumpulin gossip pasar, ukur sentiment, padukan dengan harga, kirim ke Telegram, lalu cek besok pagi apa benar.
+1. **Separate data sources from intelligence.** Warehouse (facts) and Social (sentiment) are separate DBs, separate languages. They meet only at the signal stage.
+2. **Batch LLM calls.** Don't call the LLM per-item if you can batch. 14 calls vs 133 calls = 12 minutes difference.
+3. **Track your own accuracy.** A signal without evaluation is just noise. Store the outcome, compute the win rate.
+4. **Auto-migrate schema.** `db.py connect()` adds the `narrative` column + `bsjp_outcomes` table idempotently. No manual migration every time I add a column.
+5. **Pick one trigger.** The market digest has two triggers (Hermes cron + systemd timer) — don't leave both on, or it double-sends.
 
-Yang menarik bukan akurasinya (masih prototype), tapi **arsitekturnya** — bagaimana tiga dunia (Go, Python, React) yang berbeda bisa menyatu lewat SQLite + systemd tanpa microservice overkill.
+---
 
-Kalau mau lihat kodenya: [github.com/rifaniponk/ihsg-bot](https://github.com/rifaniponk/ihsg-bot).
+## Closing
+
+ihsg-bot isn't a backtested trading system. It's an honest prototype I built: gather market gossip, measure sentiment, blend with price, send to my Telegram, then check next morning if it was right.
+
+What I find interesting isn't the accuracy (still a prototype), but **the architecture** — how three different worlds (Go, Python, React) can unite through SQLite + systemd without microservice overkill.
+
+If you want to see the code: [github.com/rifaniponk/ihsg-bot](https://github.com/rifaniponk/ihsg-bot).
