@@ -15,7 +15,7 @@ tags:
   - bsjp
 status: 'published'
 author: 'Rifan Fauzi'
-cover: '/images/articles/ihsg-bot/cover.jpg'
+cover: '/images/articles/ihsg-bot/cover.png'
 featured: true
 ---
 
