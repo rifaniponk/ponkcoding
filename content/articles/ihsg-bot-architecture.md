@@ -38,9 +38,7 @@ I split ihsg-bot into three service groups in different languages, all connected
 
 Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron** helping out for the daily digest.
 
-![ihsg-bot architecture — data flow from Telegram to signal](/images/articles/ihsg-bot/architecture.png)
-
-> **Image note:** I generated the diagram above (and the cover) separately. Explanations of each component are below.
+![ihsg-bot architecture — high-level data flow](/images/articles/ihsg-bot/architecture.png)
 
 ---
 
