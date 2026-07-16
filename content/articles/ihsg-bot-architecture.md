@@ -33,6 +33,7 @@ I split ihsg-bot into three service groups in different languages, all connected
 | ----------------- | ---------- | ----------------------------------------------- |
 | **Warehouse**     | Go         | Stock price fetcher (Yahoo Finance)             |
 | **Social / BSJP** | Python     | Sentiment pipeline + signal + Telegram dispatch |
+| **Signals**       | Go         | TA/FA screening + AI buy signals (legacy)       |
 | **Reader**        | Go + React | Web dashboard to view signals + accuracy        |
 
 Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron** helping out for the daily digest.
@@ -138,6 +139,42 @@ BSJP features in the dashboard:
 - **Accuracy** cards — win rate, avg gap, total evaluated
 
 The backend reads `social.db` directly (the Go registry opens every DB in the `[databases.*]` config — adding a DB source = adding a config block, no Go code change needed).
+
+---
+
+## 6. Trading Signals — The TA/FA Engine
+
+Before I built the social pipeline, I wrote a second signal system in Go under `signals/`. Where BSJP is _sentiment-driven_ (buy what people are shouting about), this one is _fundamentals-and-technicals-driven_: it screens the whole market for stocks with good chart setups and healthy balance sheets, then asks the LLM to pick the best.
+
+The generator (`cmd/signals`) runs a **two-stage pipeline**:
+
+**Stage 1 — AI evaluation of every screened candidate.** `RunScreeningPipeline` pulls candidates from `warehouse.db` that pass both technical (TA score) and fundamental (ROE, DER) filters. For each one, the LLM returns `BUY`/`NO_BUY` + a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
+
+**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite:
+
+```
+composite = confidence*0.6 + taNorm*0.25 + faStrength*0.15
+```
+
+- `confidence` — the LLM's conviction (already blends TA + FA + news)
+- `taNorm` — technical score normalized 0..1
+- `faStrength` — `(ROE/100) - (DER/20)`, clamped to -1..1
+
+The top **3** become active signals with an `entry`, `target` (entry + 1.5×ATR if the model didn't give one), and `stop_loss` (entry − 1.0×ATR). Stored in `signals.db` (`trading_signals` table).
+
+**Where it stands today:** the generator has no systemd timer — it's dormant. The Reader still serves `/api/v1/signals/*` from the historical `signals.db` (49KB of past signals), so the dashboard shows both systems side by side. If I ever re-activate it, I just set `OPENROUTER_API_KEY` in the unit and rebuild. I migrated its LLM call off `agy` too (`internal/agent/openrouter.go`), same model as everything else.
+
+**BSJP vs Signals — the two lenses:**
+
+|          | **BSJP** (Python)                 | **Signals** (Go)               |
+| -------- | --------------------------------- | ------------------------------ |
+| Driver   | Telegram sentiment (hype)         | Technical + fundamental screen |
+| Horizon  | Intraday (buy close, sell open)   | Positional (entry/target/SL)   |
+| Picks    | Top hype × gap candidates         | Top 3 by composite score       |
+| LLM role | Score sentiment + write narrative | Decide BUY + set target/SL     |
+| Status   | Live (15:00 WIB timer)            | Dormant (no timer)             |
+
+I like having both: BSJP catches what the crowd is excited about today; Signals catches what the charts say is actually setup. They answer different questions.
 
 ---
 
