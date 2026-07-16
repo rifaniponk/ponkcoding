@@ -1,7 +1,7 @@
 ---
-title: 'Building IHSG Bot: Architecture of My Social Sentiment + BSJP Signal Pipeline'
+title: 'Building IHSG Bot: Architecture of My Trading Signal + Social Sentiment Pipeline'
 slug: 'ihsg-bot-architecture'
-description: 'A personal technical journal on how I built ihsg-bot: a Telegram chatter pipeline, OpenRouter LLM scoring, Yahoo live data, and accuracy tracking that turn into daily stock signals delivered to my Telegram.'
+description: 'A personal technical journal on how I built ihsg-bot: a Go TA/FA signal engine as the core, plus a Python Telegram sentiment layer (BSJP) and accuracy tracking that deliver daily stock picks to my Telegram.'
 date: '2026-07-16'
 updated: '2026-07-16'
 category: 'Trading Bot'
@@ -19,9 +19,9 @@ cover: '/images/articles/ihsg-bot/cover.png'
 featured: true
 ---
 
-Every day after the market closes, a stream of conversations from dozens of Indonesian stock Telegram groups flows into a machine I built. That machine figures out which tickers people are actually talking about, measures how strong the sentiment is, then blends it with _live_ price data from Yahoo Finance. The result: a list of candidate stocks for the **BSJP** strategy (Buy at Close, Sell at Open) pushed straight to my Telegram.
+Every day after the market closes, a machine I built scans the whole IDX for stocks with good chart setups and healthy fundamentals, asks an LLM to pick the best ones, then pushes those signals to my Telegram. On top of that core engine, I later added a second lens: a pipeline that reads what people are shouting in dozens of Indonesian stock Telegram groups, scores the sentiment, and blends it with price data into a separate intraday signal (BSJP — Buy at Close, Sell at Open).
 
-In this entry I'm breaking down the architecture of **ihsg-bot** — a monorepo I run on my home-lab box `ponkai`. This isn't a tutorial; it's a personal reference of what the components are, how they talk, and the trade-offs I made along the way.
+This entry breaks down the architecture of **ihsg-bot** — a monorepo I run on my home-lab box `ponkai`. The **signal engine is the main feature**; the social/BSJP layer is a complementary add-on. This isn't a tutorial; it's a personal reference of what the components are, how they talk, and the trade-offs I made.
 
 ---
 
@@ -32,8 +32,8 @@ I split ihsg-bot into three service groups in different languages, all connected
 | World             | Language   | Role                                            |
 | ----------------- | ---------- | ----------------------------------------------- |
 | **Warehouse**     | Go         | Stock price fetcher (Yahoo Finance)             |
+| **Signals**       | Go         | TA/FA screening + AI buy signals (core engine)  |
 | **Social / BSJP** | Python     | Sentiment pipeline + signal + Telegram dispatch |
-| **Signals**       | Go         | TA/FA screening + AI buy signals (legacy)       |
 | **Reader**        | Go + React | Web dashboard to view signals + accuracy        |
 
 Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron** helping out for the daily digest.
@@ -46,7 +46,7 @@ Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron
 
 ## 1. Warehouse — The Price Data Source
 
-`warehouse/` is a Go binary (`idx-warehouse`) I wrote to pull daily OHLCV data from Yahoo Finance for ~300 IDX stocks (it needs the `.JK` suffix, e.g. `BBCA.JK`).
+`warehouse/` is a Go binary (`idx-warehouse`) I wrote to pull daily OHLCV data from Yahoo Finance for ~300 IDX stocks (it needs the `.JK` suffix, e.g. `BBCA.JK`). Both my signal engines read from it.
 
 **Things I learned the hard way:**
 
@@ -59,13 +59,37 @@ Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron
 /usr/local/bin/idx-warehouse fetch BBCA.JK --save
 ```
 
-Warehouse knows **nothing** about sentiment. It's just my price-fact provider.
+Warehouse knows **nothing** about signals or sentiment. It's just my price-fact provider.
 
 ---
 
-## 2. Social Pipeline — The BSJP Brain
+## 2. Trading Signals — The Core Engine
 
-This is the heart of the bot, written in Python under `social/`. It runs as `idx-bsjp.service` every **Mon–Fri 15:00 WIB** (right after the 15:57 market close, though I compute the signal from data already present).
+This is the main feature of ihsg-bot: a Go signal generator under `signals/` that screens the entire market for stocks with strong technical and fundamental setups, then asks an LLM to decide which to buy. Where the BSJP layer (below) is _sentiment-driven_ (buy what people are shouting about), this engine is _fundamentals-and-technicals-driven_.
+
+The generator (`cmd/signals`) runs a **two-stage pipeline**:
+
+**Stage 1 — AI evaluation of every screened candidate.** `RunScreeningPipeline` pulls candidates from `warehouse.db` that pass both technical (TA score) and fundamental (ROE, DER) filters. For each one, the LLM returns `BUY`/`NO_BUY` + a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
+
+**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite:
+
+```
+composite = confidence*0.6 + taNorm*0.25 + faStrength*0.15
+```
+
+- `confidence` — the LLM's conviction (already blends TA + FA + news)
+- `taNorm` — technical score normalized 0..1
+- `faStrength` — `(ROE/100) - (DER/20)`, clamped to -1..1
+
+The top **3** become active signals with an `entry`, `target` (entry + 1.5×ATR if the model didn't give one), and `stop_loss` (entry − 1.0×ATR). Stored in `signals.db` (`trading_signals` table).
+
+**Where it stands today:** the generator has no systemd timer — it's dormant. The Reader still serves `/api/v1/signals/*` from the historical `signals.db` (49KB of past signals), so the dashboard shows both systems side by side. If I ever re-activate it, I just set `OPENROUTER_API_KEY` in the unit and rebuild. I migrated its LLM call off `agy` too (`internal/agent/openrouter.go`), same model as everything else.
+
+---
+
+## 3. Social Pipeline — The BSJP Sentiment Layer
+
+On top of the core signal engine, I built a Python pipeline under `social/` that captures market mood from Telegram. It runs as `idx-bsjp.service` every **Mon–Fri 15:00 WIB** (right after the 15:57 market close). Think of it as a second opinion: instead of charts and balance sheets, it listens to the crowd.
 
 The pipeline has **4 stages**:
 
@@ -102,11 +126,13 @@ Sends the signal to my Telegram chat `6417591526` via the Pyrogram userbot. Done
 
 ---
 
-## 3. Accuracy Tracking — Learning from Yesterday
+## 4. Accuracy Tracking — Learning From the Past
 
-The bot doesn't just send signals, it also checks **whether yesterday's signal was right**.
+Both engines need to be checked against reality, but they track differently.
 
-The `idx-bsjp-eval.service` timer runs **Mon–Fri 09:30 WIB** (next morning after the signal). Logic:
+**Signals (core engine):** the generator keeps a feedback loop — `GetRecentClosedSignals(10)` feeds past outcomes back into the LLM prompt at Stage 1, so the model sees what worked before. Closed signals carry their realized result.
+
+**BSJP (sentiment layer):** the `idx-bsjp-eval.service` timer runs **Mon–Fri 09:30 WIB** (next morning after the signal). Logic:
 
 - `entry = close[signal_date]` (market close price when I made the signal)
 - `exit = open[signal_date + 1]` (market open price this morning)
@@ -115,13 +141,13 @@ The `idx-bsjp-eval.service` timer runs **Mon–Fri 09:30 WIB** (next morning aft
 
 Results go into `bsjp_outcomes`. `python -m track_accuracy --summary` gives me the win rate + avg gap over the last 30 days.
 
-Honestly: it's a prototype, not yet backtested. But the tracking exists, so one day I can evaluate it seriously.
+Honestly: both are prototypes, not yet backtested. But the tracking exists, so one day I can evaluate them seriously.
 
 ---
 
-## 4. Market Digest — Context for Tomorrow
+## 5. Market Digest — Context for Tomorrow
 
-Beyond the signal (which is a stock _pick_), I added a daily **market intelligence summary**.
+Beyond the signals (which are stock _picks_), I added a daily **market intelligence summary**.
 
 `market_digest.py` reads today's mentions + BSJP signals, then asks the LLM: "what's interesting? any corporate action? acquisition? geopolitical? sentiment anomaly?" The result is a Markdown summary sent to my Telegram **Mon–Fri 18:00 WIB** (after market close + signal generation).
 
@@ -129,52 +155,17 @@ Goal: so I'm better prepared for tomorrow's open.
 
 ---
 
-## 5. Reader — The Web Dashboard
+## 6. Reader — The Web Dashboard
 
 `reader/` is a Go binary (`ihsg-reader`) I built that embeds a React SPA. Runs continuously on port `9090`.
 
-BSJP features in the dashboard:
+Features in the dashboard:
 
-- Menu **/bsjp** — per-day signal table (ticker, score, hype, mentions, narrative)
+- Menu **/signals** — the core engine's picks (entry/target/SL, TA/FA snapshot)
+- Menu **/bsjp** — per-day sentiment signal table (ticker, score, hype, mentions, narrative)
 - **Accuracy** cards — win rate, avg gap, total evaluated
 
-The backend reads `social.db` directly (the Go registry opens every DB in the `[databases.*]` config — adding a DB source = adding a config block, no Go code change needed).
-
----
-
-## 6. Trading Signals — The TA/FA Engine
-
-Before I built the social pipeline, I wrote a second signal system in Go under `signals/`. Where BSJP is _sentiment-driven_ (buy what people are shouting about), this one is _fundamentals-and-technicals-driven_: it screens the whole market for stocks with good chart setups and healthy balance sheets, then asks the LLM to pick the best.
-
-The generator (`cmd/signals`) runs a **two-stage pipeline**:
-
-**Stage 1 — AI evaluation of every screened candidate.** `RunScreeningPipeline` pulls candidates from `warehouse.db` that pass both technical (TA score) and fundamental (ROE, DER) filters. For each one, the LLM returns `BUY`/`NO_BUY` + a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
-
-**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite:
-
-```
-composite = confidence*0.6 + taNorm*0.25 + faStrength*0.15
-```
-
-- `confidence` — the LLM's conviction (already blends TA + FA + news)
-- `taNorm` — technical score normalized 0..1
-- `faStrength` — `(ROE/100) - (DER/20)`, clamped to -1..1
-
-The top **3** become active signals with an `entry`, `target` (entry + 1.5×ATR if the model didn't give one), and `stop_loss` (entry − 1.0×ATR). Stored in `signals.db` (`trading_signals` table).
-
-**Where it stands today:** the generator has no systemd timer — it's dormant. The Reader still serves `/api/v1/signals/*` from the historical `signals.db` (49KB of past signals), so the dashboard shows both systems side by side. If I ever re-activate it, I just set `OPENROUTER_API_KEY` in the unit and rebuild. I migrated its LLM call off `agy` too (`internal/agent/openrouter.go`), same model as everything else.
-
-**BSJP vs Signals — the two lenses:**
-
-|          | **BSJP** (Python)                 | **Signals** (Go)               |
-| -------- | --------------------------------- | ------------------------------ |
-| Driver   | Telegram sentiment (hype)         | Technical + fundamental screen |
-| Horizon  | Intraday (buy close, sell open)   | Positional (entry/target/SL)   |
-| Picks    | Top hype × gap candidates         | Top 3 by composite score       |
-| LLM role | Score sentiment + write narrative | Decide BUY + set target/SL     |
-| Status   | Live (15:00 WIB timer)            | Dormant (no timer)             |
-
-I like having both: BSJP catches what the crowd is excited about today; Signals catches what the charts say is actually setup. They answer different questions.
+The backend reads both `signals.db` and `social.db` directly (the Go registry opens every DB in the `[databases.*]` config — adding a DB source = adding a config block, no Go code change needed).
 
 ---
 
@@ -200,9 +191,14 @@ Yahoo Finance ──▶ [warehouse] ─┤
     │                          │
     │                     [dispatch] ──▶ Telegram chat 6417591526
     │
+[signals generator] ◀── warehouse.db (TA/FA screen)
+    │                     [agent.CallGemini] OpenRouter LLM
+    ▼
+signals.db (trading_signals)
+    │
 [market_digest] ──▶ Telegram (18:00 WIB)
 [idx-bsjp-eval] ──▶ bsjp_outcomes (next morning)
-[reader] ──▶ web dashboard :9090
+[reader] ──▶ web dashboard :9090 (/signals + /bsjp)
 ```
 
 ---
@@ -239,7 +235,7 @@ The timers:
 
 ## Architecture Lessons
 
-1. **Separate data sources from intelligence.** Warehouse (facts) and Social (sentiment) are separate DBs, separate languages. They meet only at the signal stage.
+1. **Separate data sources from intelligence.** Warehouse (facts) and the signal engines (sentiment / TA+FA) are separate DBs, separate languages. They meet only at the signal stage.
 2. **Batch LLM calls.** Don't call the LLM per-item if you can batch. 14 calls vs 133 calls = 12 minutes difference.
 3. **Track your own accuracy.** A signal without evaluation is just noise. Store the outcome, compute the win rate.
 4. **Auto-migrate schema.** `db.py connect()` adds the `narrative` column + `bsjp_outcomes` table idempotently. No manual migration every time I add a column.
@@ -249,8 +245,8 @@ The timers:
 
 ## Closing
 
-ihsg-bot isn't a backtested trading system. It's an honest prototype I built: gather market gossip, measure sentiment, blend with price, send to my Telegram, then check next morning if it was right.
+ihsg-bot started as a signal engine — a Go screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are honest prototypes I built: gather data, measure what matters, blend with price, send to my Telegram, then check next morning if it was right.
 
-What I find interesting isn't the accuracy (still a prototype), but **the architecture** — how three different worlds (Go, Python, React) can unite through SQLite + systemd without microservice overkill.
+What I find interesting isn't the accuracy (still prototypes), but **the architecture** — how three different worlds (Go, Python, React) can unite through SQLite + systemd without microservice overkill.
 
 If you want to see the code: [github.com/rifaniponk/ihsg-bot](https://github.com/rifaniponk/ihsg-bot).
