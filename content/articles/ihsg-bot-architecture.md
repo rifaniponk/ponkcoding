@@ -167,6 +167,8 @@ The backend reads both `signals.db` and `social.db` directly (the Go registry op
 
 ## Closing
 
-ihsg-bot started as a signal engine — a Go screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are honest prototypes I built: gather data, measure what matters, blend with price, send to my Telegram, then check next morning if it was right.
+ihsg-bot started as a signal engine — a screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are systems I built to gather data, measure what matters, blend it with price, send it to my Telegram, then check the next morning if it was right.
 
-What I find interesting isn't the accuracy (still prototypes), but **the architecture** — how three different worlds (Go, Python, React) can unite through SQLite + systemd without microservice overkill.
+The part I actually care about isn't the tech stack — it's the **accuracy**. These are live prototypes I keep running against the real market, watching the win rate and the gaps, tuning the filters and the prompts as I learn what survives contact with actual prices. It's an ongoing experiment, not a finished product.
+
+More updates are coming as I keep improving it.
