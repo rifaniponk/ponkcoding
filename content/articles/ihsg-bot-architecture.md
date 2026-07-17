@@ -86,8 +86,6 @@ composite = confidence * 0.6 + taNorm * 0.25 + faStrength * 0.15
 
 where `taNorm` is the technical score normalized 0–1 and `faStrength` blends ROE (good) against DER (bad). The **top 3** become active signals; target defaults to entry + 1.5×ATR and stop-loss to entry − 1.0×ATR when the model doesn't supply them. They're stored in the signals database.
 
-**Where it stands today:** the generator is currently dormant — it has no scheduled timer. The dashboard still serves the historical signals, so both systems show up side by side. I migrated its LLM call off the old CLI onto OpenRouter, same model as everything else, so re-activating it is just a config change.
-
 ---
 
 ## 3. Social Pipeline — The BSJP Sentiment Layer
