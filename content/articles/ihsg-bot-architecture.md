@@ -175,35 +175,7 @@ The backend reads both `signals.db` and `social.db` directly (the Go registry op
 
 ## Architecture Data Flow
 
-```
-Telegram groups
-    │ (Pyrogram userbot)
-    ▼
-[collectors.telegram] ──▶ mentions (social.db)
-    │                          │
-    │                     [analysis.sentiment] OpenRouter LLM
-    │                          │
-    │                          ▼
-    │                     hype_scores (social.db)
-    │                          │
-Yahoo Finance ──▶ [warehouse] ─┤
-    │                          │
-    │                     [bsjp_signal] Yahoo live + LLM narrative
-    │                          │
-    │                          ▼
-    │                     bsjp_signals (social.db)
-    │                          │
-    │                     [dispatch] ──▶ Telegram chat 6417591526
-    │
-[signals generator] ◀── warehouse.db (TA/FA screen)
-    │                     [agent.CallGemini] OpenRouter LLM
-    ▼
-signals.db (trading_signals)
-    │
-[market_digest] ──▶ Telegram (18:00 WIB)
-[idx-bsjp-eval] ──▶ bsjp_outcomes (next morning)
-[reader] ──▶ web dashboard :9090 (/signals + /bsjp)
-```
+![ihsg-bot data flow — Telegram to signal to Telegram](/images/articles/ihsg-bot/architecture-flow.png)
 
 ---
 
@@ -218,36 +190,7 @@ One model, one API key env (`OPENROUTER_API_KEY`), consistent across all my modu
 
 ---
 
-## Deployment
-
-All on systemd. Three commands to redeploy on ponkai:
-
-```bash
-sudo bash deploy/idx-deploy.sh          # warehouse + signals binary
-sudo bash deploy/idx-social-install.sh  # BSJP + digest timer
-sudo bash deploy/idx-reader-install.sh  # dashboard
-```
-
-The timers:
-
-- `idx-warehouse.timer` — daily fetch (Tue–Sat 04:00 WIB)
-- `idx-bsjp.timer` — pipeline (Mon–Fri 15:00 WIB)
-- `idx-bsjp-eval.timer` — evaluation (Mon–Fri 09:30 WIB)
-- `idx-market-digest.timer` — digest (Mon–Fri 18:00 WIB)
-
----
-
-## Architecture Lessons
-
-1. **Separate data sources from intelligence.** Warehouse (facts) and the signal engines (sentiment / TA+FA) are separate DBs, separate languages. They meet only at the signal stage.
-2. **Batch LLM calls.** Don't call the LLM per-item if you can batch. 14 calls vs 133 calls = 12 minutes difference.
-3. **Track your own accuracy.** A signal without evaluation is just noise. Store the outcome, compute the win rate.
-4. **Auto-migrate schema.** `db.py connect()` adds the `narrative` column + `bsjp_outcomes` table idempotently. No manual migration every time I add a column.
-5. **Pick one trigger.** The market digest has two triggers (Hermes cron + systemd timer) — don't leave both on, or it double-sends.
-
----
-
-## Closing
+## LLM: OpenRouter, Not agy
 
 ihsg-bot started as a signal engine — a Go screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are honest prototypes I built: gather data, measure what matters, blend with price, send to my Telegram, then check next morning if it was right.
 
