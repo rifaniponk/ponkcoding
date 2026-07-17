@@ -46,7 +46,7 @@ Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron
 
 At the base is a Go service that acts as my single source of truth for market data. It pulls from **two providers**:
 
-- **Yahoo Finance** — daily OHLCV prices for the ~300 IDX stocks I track. A timer fetches this every morning after the market closes.
+- **Yahoo Finance** — daily OHLCV prices for the ~500 IDX stocks I track. A timer fetches this every morning after the market closes.
 - **IDX XBRL** — the official IDX endpoint for verified fundamental filings (ROE, DER, revenue, and so on). These land as immutable, versioned facts in the database.
 
 Both feed one warehouse database. The Signals engine reads the fundamentals for its FA filter; the price data backs both engines. The warehouse knows **nothing** about signals or sentiment — it's purely my data provider.
