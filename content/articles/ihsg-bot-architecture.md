@@ -55,13 +55,36 @@ Both feed one warehouse database. The Signals engine reads the fundamentals for 
 
 ## 2. Trading Signals — The Core Engine
 
-This is the main feature of ihsg-bot: a Go signal generator that screens the entire market for stocks with strong technical and fundamental setups, then asks an LLM to decide which to buy. Where the BSJP layer (below) is _sentiment-driven_ (buy what people are shouting about), this engine is _fundamentals-and-technicals-driven_.
+This is the main feature of ihsg-bot: a Go signal generator that screens the entire ~500-stock watchlist for names with strong technical and fundamental setups, then asks an LLM to make the final buy call. This engine is _fundamentals-and-technicals-driven_; the BSJP layer below is the opposite — _sentiment-driven_.
 
 The generator runs a **two-stage pipeline**:
 
-**Stage 1 — AI evaluation of every screened candidate.** Candidates that pass both technical and fundamental filters are sent to the LLM, which returns `BUY`/`NO_BUY` with a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
+**Stage 0 — screen (TA + FA).** For every stock with a valid end-of-day record, the engine computes a technical score from four indicators:
 
-**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite that weighs the LLM's confidence most heavily, then technical strength, then fundamental strength. The top 3 become active signals with an entry, target, and stop-loss, stored in their own database.
+- **RSI(14)** — flags oversold recovery (dipped below 35, now climbing back under 55)
+- **EMA(20)** and **SMA(50)** — a golden-cross trigger when the short EMA crosses above the long SMA, plus a simpler "price above EMA20" state
+- **ATR(14)** — used later to size the stop-loss
+- **Volume vs 20-day average** — a volume-expansion trigger when the day's volume exceeds 1.5× the average
+
+Each triggered pattern adds to a bullish score (golden cross +40, RSI recovery +35, volume expansion +25, EMA cross +30). Stocks with zero triggers are discarded.
+
+In parallel, the engine pulls the latest **XBRL fundamental filing** and runs three hard filters:
+
+- **Net income > 0** (must be profitable)
+- **Debt-to-Equity < 3.0** (skipped for banks/financials, where leverage is normal)
+- **P/E < 45** (no extreme valuation)
+
+Only stocks that pass both the technical scan and the fundamental filter survive to the AI stage.
+
+**Stage 1 — AI evaluation of every surviving candidate.** Each candidate is handed to the LLM as a structured brief: the technical triggers, the RSI/EMA/SMA/ATR numbers, the fundamental snapshot (net income, assets, liabilities, ROE, DER, P/E), and a web-search step where the model checks recent news sentiment (dividends, profit warnings, management changes) under strict guardrails — it may use the web for _qualitative_ context only, never to invent figures. The model returns `BUY` / `NO_BUY`, a confidence score (0–1), and a suggested target + stop-loss. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what actually worked before.
+
+**Stage 2 — rank and pick.** A `BUY` is accepted only if confidence is **≥ 0.70**. All accepted candidates are ranked by a composite:
+
+```
+composite = confidence * 0.6 + taNorm * 0.25 + faStrength * 0.15
+```
+
+where `taNorm` is the technical score normalized 0–1 and `faStrength` blends ROE (good) against DER (bad). The **top 3** become active signals; target defaults to entry + 1.5×ATR and stop-loss to entry − 1.0×ATR when the model doesn't supply them. They're stored in the signals database.
 
 **Where it stands today:** the generator is currently dormant — it has no scheduled timer. The dashboard still serves the historical signals, so both systems show up side by side. I migrated its LLM call off the old CLI onto OpenRouter, same model as everything else, so re-activating it is just a config change.
 
