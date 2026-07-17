@@ -144,18 +144,7 @@ The backend reads both `signals.db` and `social.db` directly (the Go registry op
 
 ---
 
-## LLM: OpenRouter, Not agy
-
-I originally used a third-party CLI for all my LLM calls. But the subscription expired, so I migrated to **OpenRouter** (one free model):
-
-- Python side: a direct HTTP call to OpenRouter
-- Go side: replaced the CLI subprocess with a proper OpenRouter client
-
-One model, one API key, consistent across all my modules.
-
----
-
-## LLM: OpenRouter, Not agy
+## Closing
 
 ihsg-bot started as a signal engine — a Go screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are honest prototypes I built: gather data, measure what matters, blend with price, send to my Telegram, then check next morning if it was right.
 
