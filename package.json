@@ -7,7 +7,7 @@
     "generate:content": "tsx scripts/generate-content-index.ts",
     "optimize:images": "tsx scripts/optimize-images.ts",
     "predev": "npm run generate:content",
-    "dev": "vite",
+    "dev": "node api.js && vite",
     "prebuild": "NODE_ENV=production npm run generate:content",
     "build": "tsc -b && vite build && npm run optimize:images",
     "preview": "vite preview",
@@ -15,6 +15,8 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.4"

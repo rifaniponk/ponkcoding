@@ -94,11 +94,9 @@ On top of the core signal engine, I built a Python pipeline under `social/` that
 
 The pipeline has **4 stages**:
 
-### Stage 1: Collect (`collectors.telegram`)
+### Stage 1: Collect
 
-A Pyrogram userbot I set up reads all my joined Telegram groups, extracts ticker mentions (regex + casual match), then stores them in the `mentions` table in `social.db`.
-
-**Gotcha I still need to fix:** the collector catches the Indonesian word "yang" (means _that/which_) as the ticker `YANG`. Not yet fixed — I need a stoplist. So I don't fully trust low-context tickers yet.
+A userbot reads all my joined Telegram groups, extracts ticker mentions (regex + casual match), then stores them in the mentions table in the social database.
 
 ### Stage 2: Score
 
