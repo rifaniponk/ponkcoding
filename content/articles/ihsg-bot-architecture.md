@@ -46,14 +46,10 @@ Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron
 
 `warehouse/` is a Go binary (`idx-warehouse`) I wrote to be the single source of truth for market data. It pulls from **two providers**, not one:
 
-- **Yahoo Finance** — daily OHLCV prices for ~300 IDX stocks (needs the `.JK` suffix, e.g. `BBCA.JK`). The daily fetch timer runs **Mon–Fri 19:30 WIB**.
+- **Yahoo Finance** — daily OHLCV prices for ~300 IDX stocks (needs the `.JK` suffix, e.g. `BBCA.JK`). The daily fetch timer runs **Tue–Sat 04:00 WIB** (after market close, before the next session).
 - **IDX XBRL** — verified fundamental filings (ROE, DER, revenue, etc.) scraped from the official IDX XBRL endpoint. I fetch these per-ticker with `idx-warehouse fundamentals fetch <TICKER> --year <Y> --period tw1|tw2|tw3|audit`, and they land as immutable XBRL facts in `warehouse.db`.
 
 Both feed `warehouse.db` (~37k price records; fundamentals stored as versioned XBRL facts). The Signals engine reads the fundamentals for its FA filter; the price data backs both engines.
-
-**Things I learned the hard way:**
-
-- The Yahoo adapter had a fun bug: the `period2` parameter was computed from midnight of the target day, so the last day of any range was always truncated. I fixed it by extending to `23:59:59` (PR #16).
 
 ```bash
 # Manual price fetch for one stock
