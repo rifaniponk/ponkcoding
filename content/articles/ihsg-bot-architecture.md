@@ -44,46 +44,26 @@ Everything is orchestrated by **systemd timers** on ponkai, with a **Hermes cron
 
 ## 1. Warehouse — The Data Source
 
-`warehouse/` is a Go binary (`idx-warehouse`) I wrote to be the single source of truth for market data. It pulls from **two providers**, not one:
+At the base is a Go service that acts as my single source of truth for market data. It pulls from **two providers**:
 
-- **Yahoo Finance** — daily OHLCV prices for ~300 IDX stocks (needs the `.JK` suffix, e.g. `BBCA.JK`). The daily fetch timer runs **Tue–Sat 04:00 WIB** (after market close, before the next session).
-- **IDX XBRL** — verified fundamental filings (ROE, DER, revenue, etc.) scraped from the official IDX XBRL endpoint. I fetch these per-ticker with `idx-warehouse fundamentals fetch <TICKER> --year <Y> --period tw1|tw2|tw3|audit`, and they land as immutable XBRL facts in `warehouse.db`.
+- **Yahoo Finance** — daily OHLCV prices for the ~300 IDX stocks I track. A timer fetches this every morning after the market closes.
+- **IDX XBRL** — the official IDX endpoint for verified fundamental filings (ROE, DER, revenue, and so on). These land as immutable, versioned facts in the database.
 
-Both feed `warehouse.db` (~37k price records; fundamentals stored as versioned XBRL facts). The Signals engine reads the fundamentals for its FA filter; the price data backs both engines.
-
-```bash
-# Manual price fetch for one stock
-/usr/local/bin/idx-warehouse fetch BBCA.JK --save
-
-# Manual fundamental fetch (IDX XBRL)
-/usr/local/bin/idx-warehouse fundamentals fetch BBCA --year 2025 --period tw3
-```
-
-Warehouse knows **nothing** about signals or sentiment. It's just my data provider.
+Both feed one warehouse database. The Signals engine reads the fundamentals for its FA filter; the price data backs both engines. The warehouse knows **nothing** about signals or sentiment — it's purely my data provider.
 
 ---
 
 ## 2. Trading Signals — The Core Engine
 
-This is the main feature of ihsg-bot: a Go signal generator under `signals/` that screens the entire market for stocks with strong technical and fundamental setups, then asks an LLM to decide which to buy. Where the BSJP layer (below) is _sentiment-driven_ (buy what people are shouting about), this engine is _fundamentals-and-technicals-driven_.
+This is the main feature of ihsg-bot: a Go signal generator that screens the entire market for stocks with strong technical and fundamental setups, then asks an LLM to decide which to buy. Where the BSJP layer (below) is _sentiment-driven_ (buy what people are shouting about), this engine is _fundamentals-and-technicals-driven_.
 
-The generator (`cmd/signals`) runs a **two-stage pipeline**:
+The generator runs a **two-stage pipeline**:
 
-**Stage 1 — AI evaluation of every screened candidate.** `RunScreeningPipeline` pulls candidates from `warehouse.db` that pass both technical (TA score) and fundamental (ROE, DER) filters. For each one, the LLM returns `BUY`/`NO_BUY` + a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
+**Stage 1 — AI evaluation of every screened candidate.** Candidates that pass both technical and fundamental filters are sent to the LLM, which returns `BUY`/`NO_BUY` with a confidence score. I keep a feedback loop: the 10 most recent closed signals are fed back into the prompt so the model sees what worked before.
 
-**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite:
+**Stage 2 — rank and pick.** All `BUY` candidates are scored by a composite that weighs the LLM's confidence most heavily, then technical strength, then fundamental strength. The top 3 become active signals with an entry, target, and stop-loss, stored in their own database.
 
-```
-composite = confidence*0.6 + taNorm*0.25 + faStrength*0.15
-```
-
-- `confidence` — the LLM's conviction (already blends TA + FA + news)
-- `taNorm` — technical score normalized 0..1
-- `faStrength` — `(ROE/100) - (DER/20)`, clamped to -1..1
-
-The top **3** become active signals with an `entry`, `target` (entry + 1.5×ATR if the model didn't give one), and `stop_loss` (entry − 1.0×ATR). Stored in `signals.db` (`trading_signals` table).
-
-**Where it stands today:** the generator has no systemd timer — it's dormant. The Reader still serves `/api/v1/signals/*` from the historical `signals.db` (49KB of past signals), so the dashboard shows both systems side by side. If I ever re-activate it, I just set `OPENROUTER_API_KEY` in the unit and rebuild. I migrated its LLM call off `agy` too (`internal/agent/openrouter.go`), same model as everything else.
+**Where it stands today:** the generator is currently dormant — it has no scheduled timer. The dashboard still serves the historical signals, so both systems show up side by side. I migrated its LLM call off the old CLI onto OpenRouter, same model as everything else, so re-activating it is just a config change.
 
 ---
 
@@ -99,30 +79,19 @@ A Pyrogram userbot I set up reads all my joined Telegram groups, extracts ticker
 
 **Gotcha I still need to fix:** the collector catches the Indonesian word "yang" (means _that/which_) as the ticker `YANG`. Not yet fixed — I need a stoplist. So I don't fully trust low-context tickers yet.
 
-### Stage 2: Score (`analysis.sentiment`)
+### Stage 2: Score
 
-This is where the LLM earns its keep. OpenRouter (`tencent/hy3:free`) scores the sentiment of each mention in **batches of 8 per call** — not per-mention, to save time. 133 mentions need only ~14 calls instead of 12 minutes.
+This is where the LLM earns its keep. It scores the sentiment of each mention in **batches** — not one call per mention, to save time. A day's 130+ mentions collapse into ~14 calls.
 
-The model also detects **pump-dump** and **fear-mongering** patterns, not just a -1..+1 score. Results land in `hype_scores`.
+The model also detects **pump-dump** and **fear-mongering** patterns, not just a -1..+1 score. Results land in the hype table.
 
-### Stage 3: Signal (`bsjp_signal`)
+### Stage 3: Signal
 
-I pull _live_ metrics from Yahoo (`.JK`), then _rank_ candidates:
+I pull _live_ metrics from Yahoo, then _rank_ candidates by a blend of how loud they are on Telegram, their historical morning gap-up, today's close strength, and liquidity (so I don't get stuck in thin stocks). Then the LLM writes a short **narrative**: why it's worth it, what the risk is.
 
-```
-bsjp_score = hype*0.5 + gap*0.25 + close*0.15 + liq*0.10
-```
+### Stage 4: Dispatch
 
-- `hype` — how loud it is on Telegram
-- `gap` — average historical morning _gap up_ (the core of my BSJP strategy)
-- `close` — strength of today's closing position (0..1)
-- `liq` — liquidity (so I don't get stuck in thin stocks)
-
-Then the LLM writes a short **narrative**: why it's worth it, what the risk is. Stored in `bsjp_signals` + the `narrative` column.
-
-### Stage 4: Dispatch (`dispatch`)
-
-Sends the signal to my Telegram chat `6417591526` via the Pyrogram userbot. Done — the signal lands before I finish my afternoon meal.
+Sends the signal to my Telegram via the userbot. Done — the signal lands before I finish my afternoon meal.
 
 ---
 
@@ -139,7 +108,7 @@ Both engines need to be checked against reality, but they track differently.
 - `realized_gap_pct = (exit - entry) / entry * 100`
 - `win = realized_gap_pct > 0`
 
-Results go into `bsjp_outcomes`. `python -m track_accuracy --summary` gives me the win rate + avg gap over the last 30 days.
+Results go into the outcomes table. A summary command gives me the win rate + average gap over the last 30 days.
 
 Honestly: both are prototypes, not yet backtested. But the tracking exists, so one day I can evaluate them seriously.
 
@@ -177,12 +146,12 @@ The backend reads both `signals.db` and `social.db` directly (the Go registry op
 
 ## LLM: OpenRouter, Not agy
 
-I originally used the `agy` CLI for all my LLM calls. But the subscription expired, so I migrated to **OpenRouter** (`tencent/hy3:free`):
+I originally used a third-party CLI for all my LLM calls. But the subscription expired, so I migrated to **OpenRouter** (one free model):
 
-- `social/` Python: `requests.post` directly to OpenRouter
-- `signals/` Go: used to be `exec.Command("agy")`, now `internal/agent/openrouter.go` (HTTP client)
+- Python side: a direct HTTP call to OpenRouter
+- Go side: replaced the CLI subprocess with a proper OpenRouter client
 
-One model, one API key env (`OPENROUTER_API_KEY`), consistent across all my modules.
+One model, one API key, consistent across all my modules.
 
 ---
 
@@ -191,5 +160,3 @@ One model, one API key env (`OPENROUTER_API_KEY`), consistent across all my modu
 ihsg-bot started as a signal engine — a Go screener that asks an LLM to pick the best setups from the whole market. The BSJP social layer came later as a second lens: instead of charts, it listens to the crowd. Both are honest prototypes I built: gather data, measure what matters, blend with price, send to my Telegram, then check next morning if it was right.
 
 What I find interesting isn't the accuracy (still prototypes), but **the architecture** — how three different worlds (Go, Python, React) can unite through SQLite + systemd without microservice overkill.
-
-If you want to see the code: [github.com/rifaniponk/ihsg-bot](https://github.com/rifaniponk/ihsg-bot).
