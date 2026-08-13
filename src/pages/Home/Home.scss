@@ -1,4 +1,4 @@
-/* Home route — “Signal notebook” editorial concept */
+/* Home route · “Signal notebook” editorial concept */
 
 .home-page {
   --signal: #eadfa8;
@@ -295,6 +295,7 @@
 }
 
 .issue-card {
+  display: none; /* hidden for now */
   align-self: end;
   margin-bottom: 12px;
   color: var(--night);

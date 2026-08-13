@@ -78,7 +78,7 @@ export interface Experience {
   points: string[]
 }
 
-// Overview only — company names included, no start/end dates.
+// Overview only · company names included, no start/end dates.
 export const EXPERIENCE: Experience[] = [
   {
     role: 'Senior Software Engineer',

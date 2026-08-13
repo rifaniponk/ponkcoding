@@ -8,21 +8,21 @@ export interface LabEntry {
 
 export const LAB: LabEntry[] = [
   {
-    no: 'L—01',
+    no: 'L·01',
     status: 'Live',
     name: 'Personal AI router',
     desc: 'One quiet endpoint for the models and workflows I use every day.',
     stack: 'Node / LLM APIs / SQLite',
   },
   {
-    no: 'L—02',
+    no: 'L·02',
     status: 'Shipped',
     name: 'Ayatura',
     desc: 'A focused reading companion, designed and built in public.',
     stack: 'Flutter / Dart / Drift',
   },
   {
-    no: 'L—03',
+    no: 'L·03',
     status: 'Ongoing',
     name: 'Useful automations',
     desc: 'Small pipelines that remove repeated work without becoming another system to manage.',

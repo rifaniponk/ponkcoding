@@ -32,7 +32,7 @@ That would make generated HTML the source of truth. HTML is noisier to review, a
 
 Markdown keeps authorship separate from presentation. One small, durable source file describes the content; a controlled pipeline applies consistent headings, links, tables, code blocks, and future formatting changes across the entire publication.
 
-There is an important distinction in that description: this site is **not prerendered yet**. The server returns the same application shell for every route, then React renders the requested page in the browser. What is static today is the content source and the build output—not one complete HTML document per article.
+There is an important distinction in that description: this site is **not prerendered yet**. The server returns the same application shell for every route, then React renders the requested page in the browser. What is static today is the content source and the build output, not one complete HTML document per article.
 
 This article documents the implementation that is running now, including where JavaScript is used, what is loaded on each route, and where prerendering fits next.
 
@@ -279,4 +279,4 @@ That last point corrects an easy misconception: a static content source does not
 
 The implementation is small because each layer has one job. Markdown owns content. The generator owns validation and compilation. Generated modules create performance boundaries. React owns page composition and interaction. Vite turns those boundaries into deployable assets. The static host serves the assets and falls back to the SPA shell.
 
-This is enough for a fast personal publication today, without a database, CMS, API, or request-time server. The next improvements can remain build-time features—and the browser can continue downloading only what the current page needs.
+This is enough for a fast personal publication today, without a database, CMS, API, or request-time server. The next improvements can remain build-time features, and the browser can continue downloading only what the current page needs.

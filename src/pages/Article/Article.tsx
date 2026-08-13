@@ -9,7 +9,7 @@ import type { ArticleBody } from '../../lib/content-types.ts'
 
 const HOME = '/'
 
-/* One lazy chunk per article body — only the requested slug is fetched. */
+/* One lazy chunk per article body · only the requested slug is fetched. */
 const bodyLoaders = import.meta.glob<{ body: ArticleBody }>('../../generated/articles/*.ts')
 
 export function Article() {
@@ -219,8 +219,8 @@ export function Article() {
             <div className="author__meta">
               <p className="author__name">{meta.author}</p>
               <p className="author__bio">
-                Software engineer, content creator, indie developer, and technical explorer. Writing
-                Ponkcoding one note at a time.
+                Software engineer, content creator, and technical explorer. Writing Ponkcoding one
+                note at a time.
               </p>
             </div>
             <Link to={`${HOME}#about`} className="author__link">

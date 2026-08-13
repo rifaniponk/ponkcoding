@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import './Profile.scss'
-import { Button, Tag } from '../../components'
+import { Tag } from '../../components'
 import { PROFILE, SUMMARY, EXPERTISE, EXPERIENCE, EDUCATION, INTERESTS } from './Profile.data.ts'
 
 const HOME = '/'
@@ -55,15 +55,12 @@ export function Profile() {
                     X @{PROFILE.x}
                   </a>
                 </li>
+                <li>
+                  <a href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
+                    Upwork
+                  </a>
+                </li>
               </ul>
-              <div className="profile-hero__actions">
-                <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
-                  Hire on Upwork ↗
-                </Button>
-                <Button variant="secondary" href={PROFILE.xUrl} target="_blank" rel="noreferrer">
-                  Message on X ↗
-                </Button>
-              </div>
             </div>
             <div className="profile-hero__portrait-frame">
               <img
@@ -157,15 +154,6 @@ export function Profile() {
               </div>
             </div>
           </div>
-        </section>
-
-        {/* ---------- Freelance ---------- */}
-        <section className="profile-cta">
-          <h2>Available for freelance & consulting</h2>
-          <p>Part-time software engineering through Upwork and independent engagements.</p>
-          <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
-            View Upwork profile ↗
-          </Button>
         </section>
       </main>
 

@@ -1,7 +1,7 @@
 ---
 title: 'Turning an old laptop into a self-hosted AI agent server'
 slug: 'old-laptop-ai-agent-server'
-description: 'How I repurposed a 2013 laptop into a 24/7 AI agent server — full control, zero cloud cost, complete privacy.'
+description: 'How I repurposed a 2013 laptop into a 24/7 AI agent server, full control, zero cloud cost, complete privacy.'
 date: '2026-07-08'
 category: 'AI Infrastructure'
 tags:
@@ -15,7 +15,7 @@ author: 'Rifan Fauzi'
 cover: '/images/articles/ai-agent-server/cover.jpg'
 ---
 
-Most developers have an old laptop gathering dust. Mine was a 2013-era machine — Intel Core i7-4500U (2 cores, 4 threads, Haswell), 16GB RAM, 238GB SSD. No AVX2, no AVX-512, no NPU. Local LLM inference is a non-starter. But it doesn't need to run models — it just needs to orchestrate an agent.
+Most developers have an old laptop gathering dust. Mine was a 2013-era machine, Intel Core i7-4500U (2 cores, 4 threads, Haswell), 16GB RAM, 238GB SSD. No AVX2, no AVX-512, no NPU. Local LLM inference is a non-starter. But it doesn't need to run models, it just needs to orchestrate an agent.
 
 ## The actual hardware
 
@@ -48,12 +48,12 @@ Most developers have an old laptop gathering dust. Mine was a 2013-era machine �
 ```
 
 - **OS:** Ubuntu Server 24.04 LTS, minimal install (no GUI, saves ~1GB RAM)
-- **Remote access:** Tailscale — SSH from anywhere on tailnet
+- **Remote access:** Tailscale, SSH from anywhere on tailnet
 - **WebUI:** Ponkcoding site (Vite + React) served via dev server on Tailscale
-- **Agent:** Hermes Agent — persistent memory, skills, cron, delegation, Telegram gateway
-- **Git ops:** GitHub CLI (`gh`) — agent uses it for automated commits, pushes, PR creation, issue management
-- **Monitoring:** Netdata — real-time system metrics (CPU, RAM, disk, network, processes) via Tailscale
-- **Tunnels:** ngrok — temporary public URLs for testing webhooks, OAuth callbacks, mobile testing
+- **Agent:** Hermes Agent, persistent memory, skills, cron, delegation, Telegram gateway
+- **Git ops:** GitHub CLI (`gh`), agent uses it for automated commits, pushes, PR creation, issue management
+- **Monitoring:** Netdata, real-time system metrics (CPU, RAM, disk, network, processes) via Tailscale
+- **Tunnels:** ngrok, temporary public URLs for testing webhooks, OAuth callbacks, mobile testing
 
 ## Development toolchain
 
@@ -76,9 +76,9 @@ Most developers have an old laptop gathering dust. Mine was a 2013-era machine �
 
 Hermes config uses `openai_compatible` provider pointed at NVIDIA for daily use. For specific tasks, I switch to OpenRouter via `/model` command or delegate to subagents with different model configs.
 
-## Telegram Gateway — my universal interface
+## Telegram Gateway: my universal interface
 
-The Hermes gateway runs as a Telegram bot (24/7). Only my user ID has admin access — wife @devinfortran and others can chat but no slash commands.
+The Hermes gateway runs as a Telegram bot (24/7). Only my user ID has admin access, wife @devinfortran and others can chat but no slash commands.
 
 **Key commands:**
 
@@ -92,7 +92,7 @@ The Hermes gateway runs as a Telegram bot (24/7). Only my user ID has admin acce
 /delegate      # Spawn parallel subagents
 ```
 
-**Daily workflow:** Message the bot from bed, commute, or laptop — same agent, same memory, same tools. Cron jobs deliver summaries to the same chat.
+**Daily workflow:** Message the bot from bed, commute, or laptop, same agent, same memory, same tools. Cron jobs deliver summaries to the same chat.
 
 ## Resource reality
 
@@ -124,7 +124,7 @@ _The actual setup: a dusty Lenovo laptop running headless Ubuntu Server, tucked 
 - Agent analyzes technicals, news sentiment, volume patterns → generates signal
 - Telegram alert with entry/exit rationale, risk level, position sizing
 - Paper trading first, then live with strict risk limits
-- All logic auditable in Hermes memory — no black box
+- All logic auditable in Hermes memory, no black box
 
 ### 3. Automated dev workflows
 
