@@ -295,6 +295,7 @@
 }
 
 .issue-card {
+  display: none; /* hidden for now */
   align-self: end;
   margin-bottom: 12px;
   color: var(--night);
