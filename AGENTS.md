@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Guidance for AI agents (and humans) working in this repo. Ponkcoding is a
-personal publication — "The Field Journal" — built as a React + Vite + TS
+personal publication · "The Field Journal" · built as a React + Vite + TS
 single-page app. **Performance is a first-class requirement: the initial
 bundle must stay as small as possible, and every page is lazy-loaded.**
 
@@ -13,7 +13,7 @@ bundle must stay as small as possible, and every page is lazy-loaded.**
   custom properties on `:root`. No CSS framework, no CSS-in-JS runtime. Keep
   runtime theming in CSS variables; use SCSS for nesting/vars/mixins at authoring
   time only.
-- No state library, no data layer — content is static.
+- No state library, no data layer · content is static.
 
 ## Commands
 
@@ -30,11 +30,11 @@ npm run format:check     # Prettier: verify formatting (CI runs this)
 Formatting is Prettier (config in `.prettierrc.json`: no semicolons, single
 quotes, 100 print width). CI (`.github/workflows/ci.yml`) fails on unformatted
 files, so **always run `npm run format` before committing.** This applies to
-Markdown files too — Prettier reformats tables, lists, and long lines.
+Markdown files too · Prettier reformats tables, lists, and long lines.
 
 `predev` / `prebuild` run `generate:content` automatically, so `src/generated/`
-is a build artifact (gitignored) — never edit or commit it. Always run
-`npm run build` before committing UI changes — it type-checks and prints the
+is a build artifact (gitignored) · never edit or commit it. Always run
+`npm run build` before committing UI changes · it type-checks and prints the
 per-chunk size table, then recompresses supported raster images in `dist/`.
 Source images in `public/` are never modified. Read the size output (see
 Performance below).
@@ -57,7 +57,7 @@ src/
 │   ├── Home/Home.tsx + Home.scss + Home.data.ts
 │   ├── Article/Article.tsx + Article.scss
 │   └── DesignSystem/DesignSystem.tsx + DesignSystem.scss + DesignSystem.data.ts
-├── components/         # reusable UI library — import from the barrel
+├── components/         # reusable UI library · import from the barrel
 │   ├── index.ts        # barrel: Button, Pill, Tag, TextLink, Callout, Dot, …
 │   ├── Button/Button.tsx + Button.scss
 │   ├── Pill/…  Tag/…  TextLink/…  Callout/…  Dot/…
@@ -66,13 +66,13 @@ src/
 │   ├── content-types.ts        # ArticleMeta / ArticleBody / Heading
 │   ├── categories.ts           # category → accent-color map
 │   └── format.ts               # date helpers
-└── generated/          # BUILD ARTIFACT (gitignored) — do not edit
+└── generated/          # BUILD ARTIFACT (gitignored) · do not edit
     ├── content-index.ts        # ARTICLES: metadata only, no HTML
     └── articles/<slug>.ts       # per-article { html, headings } body chunk
 ```
 
 Folders by role: `pages/` (one folder per route: component + its CSS), `components/`
-(reusable UI), `lib/` (types, config, helpers — no JSX), `styles/` (shared CSS),
+(reusable UI), `lib/` (types, config, helpers · no JSX), `styles/` (shared CSS),
 `generated/` (build output). Keep new files in the folder that matches their
 role; don't let `src/` go flat again.
 
@@ -81,7 +81,7 @@ imported _inside_ the page component (not in `main.tsx`), so Vite bundles it
 into that route's chunk and only ships it when the route loads.
 
 **Content data split (keep this):** listing surfaces (Home) import
-`content-index.ts` — metadata only, so no article HTML ever lands in the Home
+`content-index.ts` · metadata only, so no article HTML ever lands in the Home
 chunk. Article bodies load lazily, one chunk per slug, via
 `import.meta.glob('../../generated/articles/*.ts')` in `pages/Article/Article.tsx`. Never import a
 `generated/articles/*` module statically, and never add `html` to the metadata
@@ -91,7 +91,7 @@ index.
 
 1. **Every page is lazy-loaded.** Routes use `React.lazy(() => import(...))`
    under a single `<Suspense>` in `main.tsx`. Never add a static top-level
-   `import` of a page component — that pulls it into the initial bundle.
+   `import` of a page component · that pulls it into the initial bundle.
    New page → add a `lazy(...)` route, same pattern.
 
 2. **Per-route SCSS.** Page-specific styles live in that page's own `.scss`,
@@ -105,7 +105,7 @@ index.
 
    Rough current baseline (gzip): shared JS ~52 KB, shared CSS ~1.4 KB, each
    page chunk ~4 KB JS + 1.5–2.6 KB CSS. The 52 KB is React + react-router;
-   that is the floor — don't add heavy deps that inflate the shared chunk.
+   that is the floor · don't add heavy deps that inflate the shared chunk.
 
 4. **Think before adding a dependency.** A new runtime dep lands in the shared
    bundle and is paid on first paint of every page. Prefer a few lines of code
@@ -121,7 +121,7 @@ index.
 - Named exports for pages (`export function Home()`), matched in the lazy
   loader: `lazy(() => import('./Home.tsx').then(m => ({ default: m.Home })))`.
 - Props are typed via an exported interface (`HomeProps`, `ArticleProps`) with
-  sensible defaults in the signature — mirrors the design's configurable props
+  sensible defaults in the signature · mirrors the design's configurable props
   (e.g. `accent`, `showHeroIndex`, `showToc`).
 - Repeated markup is data-driven: define a typed array (`LAB`, `SWATCHES`,
   `PROFILE_FACTS`, …) and `.map()` it. Don't hand-repeat cards.
@@ -131,12 +131,12 @@ Callout, … } from '../../components'`) instead of hand-writing their
   `.scss`, so it drops into any page without copying styles. New primitive that
   repeats across pages → add a `components/<Name>/<Name>.tsx` + `.scss` and
   export it from the barrel; don't scatter the CSS into page files. The
-  `/design-system` route is the living showcase — render specimens there via the
+  `/design-system` route is the living showcase · render specimens there via the
   real components, never re-mocked markup.
 - Static page data lives in a co-located `<Page>.data.ts` (e.g.
   `pages/Home/Home.data.ts`, `pages/DesignSystem/DesignSystem.data.ts`), not
   inline in the component. Keep _derived_ data (computed from `ARTICLES`, e.g.
-  Home's `FEATURED`/`NOTES`/`TOPICS`) in the component — it's logic, not content.
+  Home's `FEATURED`/`NOTES`/`TOPICS`) in the component · it's logic, not content.
 - Side effects (scroll listeners, IntersectionObserver, keydown, clipboard)
   go in `useEffect` with cleanup. Passive listeners for scroll.
 - Respect `prefers-reduced-motion` (already handled for `.reveal`).
@@ -150,7 +150,7 @@ Callout, … } from '../../components'`) instead of hand-writing their
 - BEM-ish class names (`block__element--modifier`). No inline style objects
   except for dynamic values (a computed color, width, transition-delay).
 - Sharp corners everywhere except pills (`border-radius: 999px`). 2px ink
-  rules open sections. Mono font is for metadata/labels/code only — never
+  rules open sections. Mono font is for metadata/labels/code only · never
   headings or body. See the `/design-system` route for the full spec.
 
 ## Routing rules (SPA navigation is mandatory)
@@ -160,32 +160,32 @@ Navigating between `/`, `/articles/:slug`, `/profile`, and `/design-system` must
 stay client-side (no white flash, no document reload, shared bundle not re-fetched).
 
 - **Cross-route links use react-router `<Link to="...">`, never `<a href>`.**
-  A plain `<a>` to an internal route triggers a full document load — do not
+  A plain `<a>` to an internal route triggers a full document load · do not
   use it for `/`, `/articles/:slug`, `/profile`, `/design-system` (with or without a hash, e.g.
   `<Link to="/#notes">`). Applies everywhere: nav, cards, footers, tags,
   mapped lists.
 - **Same-page hash jumps** (e.g. `#notes` while already on `/`) stay as
-  `<a href="#notes">` — native, no reload, no router needed. `#top`
+  `<a href="#notes">` · native, no reload, no router needed. `#top`
   back-to-top with an `onClick` handler also stays `<a>`.
 - **Hash scrolling across routes** is handled by `ScrollManager` in
   `main.tsx` (a `useLocation` effect): on navigation it scrolls to the hash
   target, else to the top. It retries across frames because the target may
   not be mounted until the lazy page chunk resolves. Don't add per-page
-  scroll hacks — extend `ScrollManager` if behavior needs to change.
+  scroll hacks · extend `ScrollManager` if behavior needs to change.
 - Deep links / refreshes on `/articles/:slug`, `/profile`, and `/design-system` rely on SPA
   fallback (dev server + `vite preview` provide it; configure the host the
-  same way — e.g. Netlify `/* -> /index.html 200`, currently in
+  same way · e.g. Netlify `/* -> /index.html 200`, currently in
   `public/_redirects`).
 - New page → add a `lazy(...)` route AND link to it with `<Link>`.
 
 ## Design direction
 
-The site is a personal publication — "The Field Journal" — and should read like
+The site is a personal publication · "The Field Journal" · and should read like
 a serious editorial publication by a technical person, **not** a stereotypical
 programmer site. Aim for: calm, premium, editorial, content-first, readable,
 distinctive.
 
-Avoid the clichés — do not make it look like a generic dev portfolio, a
+Avoid the clichés · do not make it look like a generic dev portfolio, a
 terminal-themed coding blog, a SaaS landing page, a hacker/cyberpunk site, a
 Tailwind template clone, or a rendered GitHub README. Specifically avoid: matrix
 rain, terminal/fake-code backgrounds, neon-green-on-black, cyberpunk effects,
@@ -197,12 +197,12 @@ typography, strong spacing, subtle dividers, calm transitions. The
 
 ## Content language & tone
 
-All site content and UI copy is **English** — articles, notes, headings, labels,
+All site content and UI copy is **English** · articles, notes, headings, labels,
 and marketing/brand copy. The audience is global ("working worldwide"). Keep the
 tone credible, direct, and practical; avoid over-complication. Repository docs
 and code comments are English too.
 
-**Never use the em dash (—) in article prose.** It reads as AI-generated. Rewrite
+**Never use the em dash (U+2014) in article prose.** It reads as AI-generated. Rewrite
 with a comma, colon, parentheses, or two sentences instead. This applies to
 article body copy in `content/articles/*.md`; it does not restrict this AGENTS doc
 or code.
@@ -230,7 +230,7 @@ runs at build time (via `predev`/`prebuild`):
 5. Emit `src/generated/content-index.ts` (metadata) + one
    `src/generated/articles/<slug>.ts` body chunk each.
 
-The whole remark/rehype stack is a **devDependency** — it runs at build time and
+The whole remark/rehype stack is a **devDependency** · it runs at build time and
 never ships to the browser. `MarkdownContent.tsx` renders the pre-built HTML with
 `dangerouslySetInnerHTML` and adds the interactive copy buttons; this is safe
 because the author owns the Markdown. If user-generated content is ever added,
@@ -239,25 +239,25 @@ sanitize before rendering.
 **Frontmatter model** (required unless noted): `title`, `slug` (unique),
 `description`, `date` (ISO `YYYY-MM-DD`), `category`, `tags` (array),
 `status` (`draft` | `published`), `author`; optional `updated` (ISO),
-`cover` (absolute `/…` path), `featured` (bool — picks the Home hero).
+`cover` (absolute `/…` path), `featured` (bool · picks the Home hero).
 
 To add an article: drop a `.md` file in `content/articles/`, then run
 `npm run generate:content` (or `npm run dev` which does it automatically) and
 **`npm run format` before committing.** Home listings, topic counts, related
-links, and the `/articles/:slug` page all derive from it — no code edits, no
+links, and the `/articles/:slug` page all derive from it · no code edits, no
 hardcoded content.
 
 ## Direction / not yet built
 
 Remaining pieces of the static publishing engine:
 
-- **Prerendering** — each route to its own static `index.html` (currently a
+- **Prerendering** · each route to its own static `index.html` (currently a
   client-rendered SPA with `_redirects` fallback).
-- **Pagefind** static search — lazy-loaded, never in the initial bundle.
+- **Pagefind** static search · lazy-loaded, never in the initial bundle.
 - **`sitemap.xml` / `rss.xml`** generation.
-- **Custom Markdown blocks** — callout, terminal, file tree, Mermaid (today they
+- **Custom Markdown blocks** · callout, terminal, file tree, Mermaid (today they
   degrade to standard Markdown: blockquotes and plain code fences).
-- **Projects (`LAB`) and static pages** are still hardcoded in `Home.tsx` —
+- **Projects (`LAB`) and static pages** are still hardcoded in `Home.tsx` ·
   move them to a content type when they need real detail pages.
 
 Keep the static-first and small-initial-bundle rules above as these land, and

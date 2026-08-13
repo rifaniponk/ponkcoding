@@ -9,7 +9,7 @@ import type { ArticleBody } from '../../lib/content-types.ts'
 
 const HOME = '/'
 
-/* One lazy chunk per article body — only the requested slug is fetched. */
+/* One lazy chunk per article body · only the requested slug is fetched. */
 const bodyLoaders = import.meta.glob<{ body: ArticleBody }>('../../generated/articles/*.ts')
 
 export function Article() {

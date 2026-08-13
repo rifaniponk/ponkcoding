@@ -259,7 +259,7 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
                     <span className="signal-map__pulse" />
                   </div>
                 )}
-                <span className="featured__figure-label">FIG. 01 — THE STATIC PUBLISHING LOOP</span>
+                <span className="featured__figure-label">FIG. 01 · THE STATIC PUBLISHING LOOP</span>
               </div>
               <div className="featured__body">
                 <span className="story-label">

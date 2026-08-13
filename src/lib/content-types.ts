@@ -6,7 +6,7 @@ export interface Heading {
   label: string
 }
 
-/** Listing metadata — safe to import anywhere; carries no rendered HTML. */
+/** Listing metadata · safe to import anywhere; carries no rendered HTML. */
 export interface ArticleMeta {
   title: string
   slug: string
@@ -23,7 +23,7 @@ export interface ArticleMeta {
   shortId: string
 }
 
-/** Per-article body — loaded lazily, one chunk per article. */
+/** Per-article body · loaded lazily, one chunk per article. */
 export interface ArticleBody {
   html: string
   headings: Heading[]

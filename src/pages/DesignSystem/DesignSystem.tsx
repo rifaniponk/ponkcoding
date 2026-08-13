@@ -38,9 +38,9 @@ export function DesignSystem() {
       <main className="ds-main">
         {/* ---------- Concept ---------- */}
         <section className="ds-section ds-section--concept">
-          <p className="ds-eyebrow">00 — Design concept</p>
+          <p className="ds-eyebrow">00 · Design concept</p>
           <h1 className="ds-concept__title">
-            Signal Notebook — an editorial system for useful technology.
+            Signal Notebook: an editorial system for useful technology.
             <span
               className="hero__end-dot"
               style={{ width: '0.3em', height: '0.3em', marginLeft: '0.15em' }}
@@ -66,7 +66,7 @@ export function DesignSystem() {
 
         {/* ---------- Palette ---------- */}
         <section className="ds-section">
-          <p className="ds-eyebrow">01 — Color palette</p>
+          <p className="ds-eyebrow">01 · Color palette</p>
           <div className="ds-swatches">
             {SWATCHES.map((s) => (
               <div key={s.name} className="ds-swatch">
@@ -84,13 +84,13 @@ export function DesignSystem() {
           </div>
           <p className="ds-note">
             Rule: the two accents share lightness &amp; chroma (≈ oklch 0.50 0.05) and differ only
-            in hue — moss 130°, slate 240°. Never both in the same component.
+            in hue: moss 130°, slate 240°. Never both in the same component.
           </p>
         </section>
 
         {/* ---------- Typography ---------- */}
         <section className="ds-section">
-          <p className="ds-eyebrow">02 — Typography</p>
+          <p className="ds-eyebrow">02 · Typography</p>
           <div className="ds-type">
             <div className="ds-type__row">
               <span className="ds-type__label">Display / Newsreader 400</span>
@@ -107,14 +107,14 @@ export function DesignSystem() {
             <div className="ds-type__row">
               <span className="ds-type__label">Body / Instrument Sans 400</span>
               <span className="ds-type__spec-body">
-                Article body text runs at 17.5px with 1.75 line-height and a 680px measure — roughly
+                Article body text runs at 17.5px with 1.75 line-height and a 680px measure, roughly
                 70 characters per line, tuned for long technical reads.
               </span>
             </div>
             <div className="ds-type__row">
               <span className="ds-type__label">Meta / IBM Plex Mono</span>
               <span className="ds-type__spec-meta">
-                02 — Latest notes · Jun 26, 2026 · 14 min read
+                02 · Latest notes · Jun 26, 2026 · 14 min read
               </span>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function DesignSystem() {
 
         {/* ---------- Spacing & layout ---------- */}
         <section className="ds-section">
-          <p className="ds-eyebrow">03 — Spacing &amp; layout rules</p>
+          <p className="ds-eyebrow">03 · Spacing &amp; layout rules</p>
           <div className="ds-grid">
             <div className="ds-rule-card">
               <p className="ds-rule-card__label">Page grid</p>
@@ -165,7 +165,7 @@ export function DesignSystem() {
 
         {/* ---------- Components ---------- */}
         <section className="ds-section">
-          <p className="ds-eyebrow">04 — Components</p>
+          <p className="ds-eyebrow">04 · Components</p>
           <div className="ds-comp-grid">
             {/* Buttons & pills */}
             <div className="ds-card">
@@ -181,7 +181,7 @@ export function DesignSystem() {
 
             {/* Callout variants */}
             <div className="ds-card">
-              <p className="ds-card__head">Callouts — note · tip · caution</p>
+              <p className="ds-card__head">Callouts · note · tip · caution</p>
               <div className="ds-card__body ds-card__body--pad">
                 <Callout variant="note">Neutral context the reader should not miss.</Callout>
                 <Callout variant="tip">A shortcut worth stealing.</Callout>
@@ -191,7 +191,7 @@ export function DesignSystem() {
 
             {/* Mobile nav mock */}
             <div className="ds-card">
-              <p className="ds-card__head">Mobile nav — open state (375px)</p>
+              <p className="ds-card__head">Mobile nav · open state (375px)</p>
               <div className="ds-mobile-frame">
                 <div className="ds-mobile">
                   <div className="ds-mobile__bar">
@@ -227,8 +227,7 @@ export function DesignSystem() {
                   shaded paper; cards lift 2px + ink border.
                 </li>
                 <li>
-                  <strong>Focus:</strong> 2px moss outline, 2px offset — never removed, never a
-                  glow.
+                  <strong>Focus:</strong> 2px moss outline, 2px offset, never removed, never a glow.
                 </li>
                 <li>
                   <strong>Article:</strong> 2px reading-progress bar in accent; TOC scrollspy marks
@@ -242,8 +241,8 @@ export function DesignSystem() {
             </div>
           </div>
           <p className="ds-note">
-            Live specimens of the remaining components — article cards, list items, code / terminal
-            / file-tree / Mermaid blocks, TOC, and footer — are on the{' '}
+            Live specimens of the remaining components, article cards, list items, code / terminal /
+            file-tree / Mermaid blocks, TOC, and footer, are on the{' '}
             <Link to={HOME} className="ds-footlink">
               homepage
             </Link>{' '}
@@ -257,7 +256,7 @@ export function DesignSystem() {
 
         {/* ---------- React implementation ---------- */}
         <section className="ds-section" style={{ paddingBottom: 0 }}>
-          <p className="ds-eyebrow">05 — Implementation notes (React + Vite)</p>
+          <p className="ds-eyebrow">05 · Implementation notes (React + Vite)</p>
           <div className="ds-impl">
             <div className="ds-tree">
               <div className="block__head">
@@ -316,22 +315,22 @@ export function DesignSystem() {
                 <span className="ds-principles__mark">b</span>
                 <span>
                   <strong>Design tokens as CSS custom properties</strong> on <code>:root</code>{' '}
-                  (colors, fonts, measure) — dark mode later becomes one attribute swap, no
-                  component changes.
+                  (colors, fonts, measure). Dark mode later becomes one attribute swap, no component
+                  changes.
                 </span>
               </li>
               <li>
                 <span className="ds-principles__mark">c</span>
                 <span>
                   <strong>Everything prerenders;</strong> only MobileNav, Toc scrollspy, and the
-                  copy button hydrate — as tiny islands, not a page-level app.
+                  copy button hydrate, as tiny islands, not a page-level app.
                 </span>
               </li>
               <li>
                 <span className="ds-principles__mark">d</span>
                 <span>
                   <strong>Fonts self-hosted</strong> with <code>font-display: swap</code> and
-                  preloaded WOFF2 — the serif is the brand; it must not flash.
+                  preloaded WOFF2, the serif is the brand; it must not flash.
                 </span>
               </li>
             </ul>

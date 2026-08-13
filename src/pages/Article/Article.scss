@@ -1,4 +1,4 @@
-/* Article page — loaded as part of the Article route chunk */
+/* Article page · loaded as part of the Article route chunk */
 
 .progress-bar {
   position: fixed;
@@ -509,7 +509,7 @@
     margin: 0 0 8px;
   }
 
-  /* First paragraph reads as a lede, with a drop cap — no authoring markup needed. */
+  /* First paragraph reads as a lede, with a drop cap · no authoring markup needed. */
   .markdown > p:first-of-type {
     font-family: var(--serif);
     font-size: 21px;
