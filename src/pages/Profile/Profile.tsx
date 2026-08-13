@@ -57,9 +57,6 @@ export function Profile() {
                 </li>
               </ul>
               <div className="profile-hero__actions">
-                <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
-                  Hire on Upwork ↗
-                </Button>
                 <Button variant="secondary" href={PROFILE.xUrl} target="_blank" rel="noreferrer">
                   Message on X ↗
                 </Button>
