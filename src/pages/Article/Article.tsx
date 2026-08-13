@@ -219,8 +219,8 @@ export function Article() {
             <div className="author__meta">
               <p className="author__name">{meta.author}</p>
               <p className="author__bio">
-                Software engineer, content creator, indie developer, and technical explorer. Writing
-                Ponkcoding one note at a time.
+                Software engineer, content creator, and technical explorer. Writing Ponkcoding one
+                note at a time.
               </p>
             </div>
             <Link to={`${HOME}#about`} className="author__link">

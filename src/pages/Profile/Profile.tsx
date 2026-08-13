@@ -161,8 +161,11 @@ export function Profile() {
 
         {/* ---------- Freelance ---------- */}
         <section className="profile-cta">
-          <h2>Available for freelance & consulting</h2>
-          <p>Part-time software engineering through Upwork and independent engagements.</p>
+          <h2>Building in public</h2>
+          <p>
+            Full-time software engineer. Side projects, experiments, and AI workflows — documented
+            on Ponkcoding.
+          </p>
           <Button href={PROFILE.upworkUrl} target="_blank" rel="noreferrer">
             View Upwork profile ↗
           </Button>
