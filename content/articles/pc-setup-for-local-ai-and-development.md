@@ -12,6 +12,7 @@ tags:
   - homelab
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/pc-setup-for-local-ai-and-development/cover.jpg'
 ---
 
 I built a new Windows PC as my main workstation for development and local AI experiments.
