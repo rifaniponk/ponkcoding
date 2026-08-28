@@ -24,6 +24,10 @@ The task was to build a fictional product website called **Good Deal**, a platfo
 
 After the pages were generated, I asked Claude Code to assess the outputs. The review was not just a visual preference pass. It checked whether the apps built, rendered, responded across breakpoints, handled interactions, and matched the technical requirements in the prompt.
 
+![A generated Good Deal hero screen with a cream background, bold headline, search bar, product deal card, price alert, and savings widget.](/images/articles/local-llm-gooddeal-buildoff/gooddeal-hero-example.jpg)
+
+_One of the generated Good Deal hero sections. The prompt asked for a modern consumer marketplace feel, not just a functional React page._
+
 ## The setup
 
 The brief asked every model to build the same thing:
