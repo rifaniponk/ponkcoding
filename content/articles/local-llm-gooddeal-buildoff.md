@@ -24,9 +24,17 @@ The task was to build a fictional product website called **Good Deal**, a platfo
 
 After the pages were generated, I asked Claude Code to assess the outputs. The review was not just a visual preference pass. It checked whether the apps built, rendered, responded across breakpoints, handled interactions, and matched the technical requirements in the prompt.
 
-![A generated Good Deal hero screen with a cream background, bold headline, search bar, product deal card, price alert, and savings widget.](/images/articles/local-llm-gooddeal-buildoff/gooddeal-hero-example.jpg)
+The visual comparison matters because this was a landing page task. The models did not just need to generate React files. They needed to make the product feel real.
 
-_One of the generated Good Deal hero sections. The prompt asked for a modern consumer marketplace feel, not just a functional React page._
+| Empero                                                                                                                                                                                 | Ornith                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Empero Good Deal hero with a centered headline, soft pastel gradient background, search bar, and three feature cards.](/images/articles/local-llm-gooddeal-buildoff/empero-hero.jpg) | ![Ornith Good Deal hero with a blue SaaS visual system and a browser-style deal grid on the right.](/images/articles/local-llm-gooddeal-buildoff/ornith-hero.jpg) |
+
+| Gemma                                                                                                                                                                                          | Codex                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Gemma Good Deal output rendering as a mostly unstyled page with default links, plain buttons, and sparse left-aligned content.](/images/articles/local-llm-gooddeal-buildoff/gemma-hero.jpg) | ![Codex Good Deal hero with a cream background, bold headline, search bar, product deal card, price alert, and savings widget.](/images/articles/local-llm-gooddeal-buildoff/gooddeal-hero-example.jpg) |
+
+_The same prompt produced four very different surfaces: one nearly unstyled result, two credible local landing pages, and one more art-directed frontier baseline._
 
 ## The setup
 
