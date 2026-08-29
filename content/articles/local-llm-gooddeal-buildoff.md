@@ -64,6 +64,289 @@ It also required actual behavior:
 
 That last part matters. A landing page can look finished in a screenshot but still fail the assignment when you click it.
 
+## The full prompt
+
+This is the complete prompt I gave to each coding-agent run. I wanted the task to be specific enough to expose design taste, implementation discipline, responsive behavior, accessibility, and whether the generated project could actually build without manual repair.
+
+```markdown
+Build a complete, production-quality landing page for a fictional product called **Good Deal**.
+
+Good Deal is a platform that helps users discover the best deals, discounts, and limited-time offers from multiple online stores in one place.
+
+Your goal is not just to make the page functional. Create a landing page that looks polished, modern, and comparable to a real startup/product website.
+
+## Technical Requirements
+
+Use:
+
+- React
+- TypeScript
+- Tailwind CSS
+- Modern component-based architecture
+- Lucide icons where appropriate
+
+Do not use a prebuilt landing-page template.
+
+The project must run successfully after installation without requiring manual fixes.
+
+## Design Direction
+
+Create a modern SaaS / consumer marketplace visual style.
+
+The page should feel:
+
+- clean
+- premium
+- trustworthy
+- modern
+- slightly playful
+- conversion-focused
+
+Avoid excessive gradients, excessive rounded cards, and generic AI-generated-looking layouts.
+
+Use strong visual hierarchy, whitespace, good typography, and consistent spacing.
+
+## Page Structure
+
+### 1. Header
+
+Include:
+
+- Good Deal logo / wordmark
+- Deals
+- Categories
+- Stores
+- How It Works
+- Sign In
+- prominent **Find Deals** CTA
+
+Desktop navigation should collapse into a usable mobile menu on smaller screens.
+
+Make the header sticky after scrolling.
+
+### 2. Hero Section
+
+Create a strong headline communicating the value proposition.
+
+Example idea:
+
+**Never Pay Full Price Again**
+
+Add:
+
+- short supporting copy
+- primary CTA
+- secondary CTA
+- search input for products or stores
+- visually interesting product/deal presentation
+
+The hero should immediately communicate what Good Deal does without needing additional explanation.
+
+### 3. Deal Categories
+
+Show categories such as:
+
+- Electronics
+- Fashion
+- Home
+- Gaming
+- Travel
+- Food
+
+Each category should have an appropriate icon and hover interaction.
+
+### 4. Trending Deals
+
+Create at least 6 realistic deal cards.
+
+Each deal should contain:
+
+- product image or visual placeholder
+- product title
+- store name
+- original price
+- discounted price
+- discount percentage
+- rating
+- CTA
+
+Example products can include headphones, gaming monitors, sneakers, smartphones, keyboards, or travel deals.
+
+Cards should not all look visually identical.
+
+Highlight particularly good deals.
+
+### 5. Deal of the Day
+
+Create a visually distinctive section featuring one exceptional deal.
+
+Include:
+
+- large product visual
+- original and discounted price
+- discount percentage
+- countdown timer
+- CTA
+
+Implement the countdown timer as a working interactive component.
+
+### 6. How Good Deal Works
+
+Explain the product using three simple steps:
+
+1. Search
+2. Compare
+3. Save
+
+Use icons and concise descriptions.
+
+### 7. Store Logos
+
+Show several fictional or generic partner stores.
+
+Do not depend on external copyrighted logo assets.
+
+### 8. Trust / Social Proof
+
+Add realistic metrics such as:
+
+- 50K+ active shoppers
+- 12K+ deals tracked
+- 500+ stores
+- $2M+ saved by users
+
+Present them in a visually interesting way rather than simply four identical cards.
+
+### 9. Testimonials
+
+Add 3 realistic user testimonials.
+
+Include:
+
+- avatar
+- name
+- short testimonial
+- optional role/location
+
+Avoid overly generic marketing copy.
+
+### 10. Newsletter / Deal Alert
+
+Create a section where users can enter an email address to receive deal alerts.
+
+Implement:
+
+- email validation
+- success state
+- error state
+
+No backend is required.
+
+### 11. Footer
+
+Include:
+
+- product links
+- company links
+- resources
+- social icons
+- copyright
+- privacy and terms links
+
+## Interaction Requirements
+
+Implement meaningful interactions rather than making everything static.
+
+Include:
+
+- mobile navigation
+- hover/focus states
+- category selection
+- deal favorite/bookmark button
+- countdown timer
+- newsletter form validation
+- smooth scrolling where appropriate
+
+Buttons should have visible feedback when interacted with.
+
+## Responsive Requirements
+
+The page must work well at:
+
+- 375px mobile
+- 768px tablet
+- 1440px desktop
+
+Pay particular attention to:
+
+- navigation
+- hero layout
+- card grids
+- typography scaling
+- overflow
+- spacing
+
+Do not simply stack every desktop element vertically on mobile. Make deliberate responsive design decisions.
+
+## Accessibility
+
+Include:
+
+- semantic HTML
+- proper heading hierarchy
+- keyboard-accessible controls
+- visible focus states
+- useful alt text
+- appropriate ARIA attributes when necessary
+- sufficient color contrast
+
+## Code Quality
+
+Structure the implementation into sensible reusable components.
+
+Avoid:
+
+- one giant component
+- unnecessary abstraction
+- duplicated markup
+- hard-coded styles everywhere
+- unused dependencies
+- console errors
+
+Create realistic mock data separately from UI components where appropriate.
+
+Use TypeScript types/interfaces properly.
+
+## Important Visual Challenge
+
+Do not make every section use the same pattern of:
+
+heading → subtitle → three rounded cards.
+
+Introduce variation in composition and visual hierarchy across sections.
+
+The final website should feel intentionally designed rather than generated from a generic landing-page recipe.
+
+## Final Validation
+
+Before considering the task complete:
+
+1. Make sure the app builds successfully.
+2. Check for TypeScript errors.
+3. Check for console errors.
+4. Verify responsive behavior.
+5. Verify all interactive elements work.
+6. Review the UI for inconsistent spacing or alignment.
+7. Remove obviously unfinished placeholder content.
+
+When finished, briefly explain:
+
+- the component architecture
+- the main design decisions
+- which interactions were implemented
+- any compromises or assumptions you made
+```
+
 ## The models
 
 The local model runs used the same coding-agent style workflow and local runtime. I also added a Codex run using GPT-5.6 as a frontier baseline, not as an equal local competitor.
