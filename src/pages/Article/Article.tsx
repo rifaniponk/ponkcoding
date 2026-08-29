@@ -215,12 +215,19 @@ export function Article() {
           </div>
 
           <div className="author">
-            <div className="author__avatar" />
+            <img
+              className="author__avatar"
+              src="/images/rifan-profile-avatar.jpg"
+              alt="Rifan Fauzi"
+              width="512"
+              height="512"
+              loading="lazy"
+            />
             <div className="author__meta">
               <p className="author__name">{meta.author}</p>
               <p className="author__bio">
-                Software engineer, content creator, and technical explorer. Writing Ponkcoding one
-                note at a time.
+                Software engineer sharing practical notes from real tech work, AI-assisted
+                development, local LLM experiments, and product engineering.
               </p>
             </div>
             <Link to={`${HOME}#about`} className="author__link">
