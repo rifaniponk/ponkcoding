@@ -534,6 +534,65 @@
     margin: 0;
   }
 
+  .markdown__expandable-code {
+    margin: 0 0 28px;
+    overflow: hidden;
+    border: 1px solid #dedbd1;
+    border-radius: 6px;
+    background: #fbfaf6;
+  }
+
+  .markdown__expandable-code-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    color: var(--ink);
+    cursor: pointer;
+
+    &::marker {
+      color: var(--muted);
+    }
+
+    &:hover {
+      background: #f6f3eb;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+  }
+
+  .markdown__expandable-code-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .markdown__expandable-code-hint {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .markdown__expandable-code .markdown__code-block {
+    margin: 0;
+  }
+
+  .markdown__expandable-code pre {
+    max-height: min(70vh, 720px);
+    margin: 0;
+    border: 0;
+    border-top: 1px solid #dedbd1;
+    border-radius: 0;
+  }
+
+  .markdown__expandable-code:not([open]) .markdown__code-block,
+  .markdown__expandable-code:not([open]) .markdown__expandable-code-body {
+    display: none;
+  }
+
   /* Build-time syntax highlighting from rehype-highlight/highlight.js. */
   .hljs-comment,
   .hljs-quote {
