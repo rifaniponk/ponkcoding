@@ -230,7 +230,7 @@ export function Article() {
                 development, local LLM experiments, and product engineering.
               </p>
             </div>
-            <Link to={`${HOME}#about`} className="author__link">
+            <Link to="/profile" className="author__link">
               About →
             </Link>
           </div>
