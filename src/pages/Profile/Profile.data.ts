@@ -1,6 +1,7 @@
 export const PROFILE = {
-  name: 'Rifan Muhamad Fauzi',
-  title: 'Senior Software Engineer · Frontend Architect · Cross-platform Developer · AI',
+  name: 'Rifan Fauzi',
+  title:
+    'Software engineer sharing practical notes from real tech work, AI-assisted development, local LLM experiments, and product engineering.',
   location: 'Bandung, Indonesia',
   github: 'rifaniponk',
   githubUrl: 'https://github.com/rifaniponk',

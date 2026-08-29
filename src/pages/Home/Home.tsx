@@ -5,6 +5,7 @@ import { ARTICLES } from '../../generated/content-index.ts'
 import { categoryColor } from '../../lib/categories.ts'
 import { formatDateShort } from '../../lib/format.ts'
 import { LAB, NOW, NOW_PERIOD } from './Home.data.ts'
+import { PROFILE } from '../Profile/Profile.data.ts'
 
 const DESIGN_SYSTEM = '/design-system'
 const SHOW_LAB = false // toggle when ready
@@ -376,42 +377,20 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
 
         <section id="about" className="about-section">
           <div className="section-shell about-shell">
-            <div className="about-portrait">
+            <div className="about-card">
               <img
-                src="/images/rifan-profile.jpg"
-                alt="Rifan Fauzi standing in an office"
-                width="1086"
-                height="1448"
+                src="/images/rifan-profile-avatar.jpg"
+                alt="Rifan Fauzi"
+                className="about-card__avatar"
+                width="512"
+                height="512"
                 loading="lazy"
               />
-            </div>
-            <div className="about-copy">
-              <span className="story-label">
-                <i /> The person behind the signal
-              </span>
-              <h2>Senior engineer delivering end-to-end products, from design to deployment.</h2>
-              <p>
-                Across 15+ years, I’ve delivered healthcare, payment, logistics, and enterprise
-                systems; led engineering teams; and worked across frontend, mobile, backend, cloud,
-                and AI development workflow. Ponkcoding is where I document the useful decisions
-                behind that work.
-              </p>
-              <div className="about-links">
-                <Link to="/profile">Full profile →</Link>
-                <a href="https://github.com/rifaniponk" target="_blank" rel="noreferrer">
-                  GitHub ↗
-                </a>
-                <a
-                  href="https://www.upwork.com/freelancers/rifanfauzi"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Upwork ↗
-                </a>
-                <a href="https://x.com/rifaniponk" target="_blank" rel="noreferrer">
-                  X / Twitter ↗
-                </a>
-              </div>
+              <h2>{PROFILE.name}</h2>
+              <p>{PROFILE.title}</p>
+              <Link to="/profile" className="about-card__button">
+                About <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </section>

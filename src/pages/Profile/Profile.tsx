@@ -39,8 +39,14 @@ export function Profile() {
         {/* ---------- Hero ---------- */}
         <section className="profile-hero">
           <div className="profile-hero__layout">
+            <img
+              className="profile-hero__portrait"
+              src="/images/rifan-profile-avatar.jpg"
+              alt="Rifan Fauzi"
+              width="512"
+              height="512"
+            />
             <div>
-              <p className="profile-hero__eyebrow">Profile / Overview</p>
               <h1 className="profile-hero__name">{PROFILE.name}</h1>
               <p className="profile-hero__title">{PROFILE.title}</p>
               <ul className="profile-hero__meta">
@@ -61,15 +67,6 @@ export function Profile() {
                   </a>
                 </li>
               </ul>
-            </div>
-            <div className="profile-hero__portrait-frame">
-              <img
-                className="profile-hero__portrait"
-                src="/images/rifan-profile.jpg"
-                alt="Rifan Fauzi standing in an office"
-                width="1086"
-                height="1448"
-              />
             </div>
           </div>
         </section>
