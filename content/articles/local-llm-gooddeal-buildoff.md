@@ -446,7 +446,7 @@ Even when isolating Vite, the generated CSS still contained raw Tailwind directi
 
 There were also functional bugs: a favorite button with no click handler, a countdown that received `new Date()` and immediately displayed as expired, and category cards with no selection behavior.
 
-This was the reminder that a model can produce a lot of plausible code without producing a runnable project.
+This was the reminder that a model can produce a lot of plausible code without producing a runnable project. After this run, I would skip Gemma for this kind of agentic frontend workflow. The output did not clear the basic trust bar.
 
 ## Codex: the strongest design, not the cleanest engineering
 
@@ -481,7 +481,7 @@ On that question, the differences were clear.
 | Ornith | A strong first draft that I would review, polish, and maybe ship after fixes          |
 | Codex  | A visually strong first draft that needs engineering cleanup and accessibility review |
 | Empero | A design draft only, because interactions need manual verification                    |
-| Gemma  | Idea generation, not implementation, at least for this setup                          |
+| Gemma  | I would skip it for this workflow because the output failed the basic trust bar       |
 
 The most useful signal was not the total score. It was the class of failure.
 
