@@ -13,6 +13,7 @@ tags:
   - evaluation
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/local-llm-gooddeal-buildoff/cover.jpg'
 featured: false
 ---
 
