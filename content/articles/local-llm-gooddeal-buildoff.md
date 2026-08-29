@@ -68,7 +68,7 @@ That last part matters. A landing page can look finished in a screenshot but sti
 
 This is the complete prompt I gave to each coding-agent run. I wanted the task to be specific enough to expose design taste, implementation discipline, responsive behavior, accessibility, and whether the generated project could actually build without manual repair.
 
-```markdown
+```markdown expandable title="Full Good Deal prompt"
 Build a complete, production-quality landing page for a fictional product called **Good Deal**.
 
 Good Deal is a platform that helps users discover the best deals, discounts, and limited-time offers from multiple online stores in one place.

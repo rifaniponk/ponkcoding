@@ -24,6 +24,8 @@ import { visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
 import type { ArticleMeta, Heading } from '../src/lib/content-types.ts'
 
+const EXPANDABLE_CODE_PREFIX = 'PONK_EXPANDABLE_CODE:'
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const CONTENT_DIR = join(ROOT, 'content/articles')
 const OUT_DIR = join(ROOT, 'src/generated')
@@ -77,11 +79,99 @@ function normalizeHighlightedJsxBraces() {
   }
 }
 
+function parseExpandableTitle(meta: string | null | undefined): string | null {
+  if (!meta || !/\bexpandable\b/.test(meta)) return null
+
+  const quoted = meta.match(/\btitle=(['"])(.*?)\1/)
+  if (quoted?.[2]) return quoted[2]
+
+  const unquoted = meta.match(/\btitle=([^\s]+)/)
+  if (unquoted?.[1]) return unquoted[1]
+
+  return 'Show code'
+}
+
+function markExpandableCodeBlocks() {
+  return (tree: unknown) => {
+    visit(tree as never, 'code', (node: any) => {
+      const title = parseExpandableTitle(node.meta)
+      if (!title) return
+
+      node.value = `${EXPANDABLE_CODE_PREFIX}${JSON.stringify({ title })}\n${node.value}`
+    })
+  }
+}
+
+function wrapExpandableCodeBlocks() {
+  return (tree: unknown) => {
+    visit(tree as never, 'element', (node: any, index: number | undefined, parent: any) => {
+      if (node.tagName !== 'pre' || !parent || index === undefined) return
+
+      const code = node.children?.find((child: any) => child.tagName === 'code')
+      const firstText = code?.children?.[0]
+      if (!code || firstText?.type !== 'text') return
+
+      const value = String(firstText.value ?? '')
+      if (!value.startsWith(EXPANDABLE_CODE_PREFIX)) return
+
+      const newlineIndex = value.indexOf('\n')
+      if (newlineIndex === -1) return
+
+      let title = 'Show code'
+      try {
+        const payload = JSON.parse(value.slice(EXPANDABLE_CODE_PREFIX.length, newlineIndex)) as {
+          title?: unknown
+        }
+        if (typeof payload.title === 'string' && payload.title.trim()) title = payload.title.trim()
+      } catch {
+        // Keep the default title if a malformed marker somehow reaches this point.
+      }
+
+      firstText.value = value.slice(newlineIndex + 1)
+
+      parent.children[index] = {
+        type: 'element',
+        tagName: 'details',
+        properties: { className: ['markdown__expandable-code'] },
+        children: [
+          {
+            type: 'element',
+            tagName: 'summary',
+            properties: { className: ['markdown__expandable-code-summary'] },
+            children: [
+              {
+                type: 'element',
+                tagName: 'span',
+                properties: { className: ['markdown__expandable-code-title'] },
+                children: [{ type: 'text', value: title }],
+              },
+              {
+                type: 'element',
+                tagName: 'span',
+                properties: { className: ['markdown__expandable-code-hint'] },
+                children: [{ type: 'text', value: 'Click to expand' }],
+              },
+            ],
+          },
+          {
+            type: 'element',
+            tagName: 'div',
+            properties: { className: ['markdown__expandable-code-body'] },
+            children: [node],
+          },
+        ],
+      }
+    })
+  }
+}
+
 async function markdownToHtml(md: string, headings: Heading[]): Promise<string> {
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(markExpandableCodeBlocks)
     .use(remarkRehype)
+    .use(wrapExpandableCodeBlocks)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
     .use(rehypeHighlight, { plainText: ['text'] })
@@ -125,7 +215,7 @@ function validate(file: string, data: Record<string, unknown>) {
 async function run() {
   let files: string[]
   try {
-    files = (await readdir(CONTENT_DIR)).filter((f) => f.endsWith('.md'))
+    files = (await readdir(CONTENT_DIR)).filter((f: string) => f.endsWith('.md'))
   } catch {
     fail(CONTENT_DIR, 'content directory not found')
   }
