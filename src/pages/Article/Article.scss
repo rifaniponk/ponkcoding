@@ -537,74 +537,43 @@
   .markdown__expandable-code {
     margin: 0 0 28px;
     overflow: hidden;
-    background: #20211f;
-    border: 1px solid #20211f;
+    border: 1px solid #dedbd1;
     border-radius: 6px;
-    box-shadow: 8px 8px 0 var(--ink);
+    background: #fbfaf6;
   }
 
   .markdown__expandable-code-summary {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 16px 18px;
-    background: #f3efe3;
-    border-bottom: 1px solid var(--ink);
+    gap: 10px;
+    padding: 13px 16px;
     color: var(--ink);
     cursor: pointer;
-    list-style: none;
 
-    &::-webkit-details-marker {
-      display: none;
+    &::marker {
+      color: var(--muted);
     }
 
-    &::after {
-      content: '+';
-      display: grid;
-      width: 26px;
-      height: 26px;
-      flex: 0 0 auto;
-      place-items: center;
-      background: var(--accent);
-      border: 1px solid var(--ink);
-      border-radius: 999px;
-      box-shadow: 3px 3px 0 var(--ink);
-      font-family: var(--mono);
-      font-weight: 700;
-      line-height: 1;
-      transition: transform 0.16s ease;
+    &:hover {
+      background: #f6f3eb;
     }
 
     &:focus-visible {
       outline: 2px solid var(--accent);
-      outline-offset: 3px;
+      outline-offset: -2px;
     }
-  }
-
-  .markdown__expandable-code[open] .markdown__expandable-code-summary::after {
-    content: '−';
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
   }
 
   .markdown__expandable-code-title {
     font-family: var(--mono);
     font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-weight: 600;
   }
 
   .markdown__expandable-code-hint {
-    margin-left: auto;
     color: var(--muted);
     font-family: var(--mono);
     font-size: 12px;
-  }
-
-  .markdown__expandable-code-body {
-    background: #20211f;
   }
 
   .markdown__expandable-code .markdown__code-block {
@@ -615,6 +584,7 @@
     max-height: min(70vh, 720px);
     margin: 0;
     border: 0;
+    border-top: 1px solid #dedbd1;
     border-radius: 0;
   }
 
