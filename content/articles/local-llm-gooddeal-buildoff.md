@@ -25,6 +25,8 @@ The task was to build a fictional product website called **Good Deal**, a platfo
 
 After the pages were generated, I asked Claude Code to assess the outputs. The review was not just a visual preference pass. It checked whether the apps built, rendered, responded across breakpoints, handled interactions, and matched the technical requirements in the prompt.
 
+If you want to inspect the generated apps directly, the full source code from the local LLM runs is available in the [Good Deal generated source repository](https://github.com/rifaniponk/generated-app/tree/main/good-deal).
+
 The visual comparison matters because this was a landing page task. The models did not just need to generate React files. They needed to make the product feel real.
 
 | Empero                                                                                                                                                                                 | Ornith                                                                                                                                                            |
