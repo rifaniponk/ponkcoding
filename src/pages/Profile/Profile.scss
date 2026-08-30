@@ -72,7 +72,14 @@
     font-size: 13px;
     color: var(--faint);
 
+    > li:first-child {
+      flex-basis: 100%;
+    }
+
     a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: var(--muted);
       text-decoration: none;
       transition: color 0.15s ease;
@@ -81,6 +88,13 @@
         color: var(--accent);
       }
     }
+  }
+
+  &__social-icon {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    fill: currentColor;
   }
 
   &__actions {
