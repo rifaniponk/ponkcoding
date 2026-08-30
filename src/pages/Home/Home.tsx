@@ -156,22 +156,21 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             </div>
             <div className="hero__main">
               <div className="hero__copy">
-                <p className="hero__kicker">Rifan Muhamad Fauzi</p>
+                <p className="hero__kicker">Rifan M Fauzi</p>
                 <h1 className="hero__title">
-                  I build scalable web <span>&amp;</span> mobile products.
+                  I design and build scalable products <span>&amp;</span> reliable systems.
                 </h1>
                 <p className="hero__dek">
-                  Senior software engineer with 15+ years of experience shipping high-quality
-                  product, delivering high performance system, leading teams, and shipping reliable
-                  systems across healthcare, fintech, and logistics, while also designing AI
-                  development workflows that make engineering and everyday operations more
-                  effective.
+                  Full-stack software engineer with 15+ years of experience helping startups and
+                  enterprises turn complex requirements into dependable software. I work across
+                  product development, system architecture, technical leadership, and AI-assisted
+                  engineering, with experience in healthcare, fintech, and logistics.
                 </p>
                 <div className="hero__expertise" aria-label="Core expertise">
                   {[
                     'Cross-platform development',
                     'Technical leadership',
-                    'High performance system',
+                    'High-performance systems',
                     'AI-assisted engineering',
                   ].map((item) => (
                     <span key={item}>{item}</span>
