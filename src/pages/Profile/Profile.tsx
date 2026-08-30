@@ -69,8 +69,7 @@ export function Profile() {
                 <li>{PROFILE.location}</li>
                 <li>
                   <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer">
-                    <SocialIcon name="github" />
-                    @{PROFILE.github}
+                    <SocialIcon name="github" />@{PROFILE.github}
                   </a>
                 </li>
                 <li>
