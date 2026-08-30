@@ -10,7 +10,7 @@ export const PROFILE = {
 }
 
 export const SUMMARY: string[] = [
-  'Senior Software Engineer with 15+ years of experience building scalable web and mobile applications across healthcare, logistics, payment systems, and enterprise platforms. Specialized in modern frontend engineering with strong expertise in Angular, reactive architectures, performance optimization, and scalable application design. Experienced in leading frontend teams, driving engineering standards, and delivering production-grade applications used by thousands of daily users.',
+  'Full-stack software engineer with 15+ years of experience helping startups and enterprises turn complex requirements into dependable software. Experienced in product development, system architecture, technical leadership, and delivering scalable applications across healthcare, logistics, payment systems, and enterprise platforms.',
   'Strong cross-platform mobile development background using Ionic, with growing expertise in Flutter. Experienced in native mobile integrations including biometric authentication, HealthKit, Google Fit, and Garmin wearable SDK integrations. Backend experience includes Go and PHP microservices, REST APIs, message queues, PostgreSQL, and cloud infrastructure (AWS, Azure), allowing full understanding of end-to-end system architecture. Actively leveraging AI-assisted development workflows for engineering productivity, code quality, debugging, refactoring, and rapid prototyping.',
 ]
 
