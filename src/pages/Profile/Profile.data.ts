@@ -1,6 +1,6 @@
 export const PROFILE = {
   name: 'Rifan Muhamad Fauzi',
-  title: 'Senior Software Engineer · Frontend Architect · Cross-platform Developer · AI',
+  title: 'Senior Software Engineer · Frontend Craftsman · AI Enthusiast',
   location: 'Bandung, Indonesia',
   github: 'rifaniponk',
   githubUrl: 'https://github.com/rifaniponk',
@@ -10,8 +10,9 @@ export const PROFILE = {
 }
 
 export const SUMMARY: string[] = [
-  'Full-stack software engineer with 15+ years of experience helping startups and enterprises turn complex requirements into dependable software. Experienced in product development, system architecture, technical leadership, and delivering scalable applications across healthcare, logistics, payment systems, and enterprise platforms.',
-  'Strong cross-platform mobile development background using Ionic, with growing expertise in Flutter. Experienced in native mobile integrations including biometric authentication, HealthKit, Google Fit, and Garmin wearable SDK integrations. Backend experience includes Go and PHP microservices, REST APIs, message queues, PostgreSQL, and cloud infrastructure (AWS, Azure), allowing full understanding of end-to-end system architecture. Actively leveraging AI-assisted development workflows for engineering productivity, code quality, debugging, refactoring, and rapid prototyping.',
+  'Senior software engineer with 15+ years of experience building web applications, specializing in Angular, TypeScript, RxJS, and frontend architecture. I help startups and enterprises turn product requirements into scalable, maintainable software, contributing from system design and technical decisions through implementation and delivery. My work spans healthcare, logistics, fintech, and enterprise platforms, and includes leading teams and improving engineering practices.',
+  'Alongside web development, I have experience building cross-platform mobile applications with Ionic and Flutter, developing backend services with Go and PHP, and integrating APIs, databases, and cloud infrastructure. This end-to-end perspective helps me design systems that are practical, performant, and reliable. I also use AI-assisted development workflows to improve engineering productivity, code quality, debugging, refactoring, and prototyping.',
+  'AI is currently a major area of interest for me. I am actively exploring its capabilities, studying how these systems work, and building practical workflows and experiments to understand how AI can improve software development and everyday operations.',
 ]
 
 export interface ExpertiseGroup {
@@ -21,11 +22,12 @@ export interface ExpertiseGroup {
 
 export const EXPERTISE: ExpertiseGroup[] = [
   {
-    domain: 'Frontend Engineering',
+    domain: 'Web & Frontend Engineering',
     skills: [
       'Angular',
       'TypeScript',
       'RxJS',
+      'Frontend Architecture',
       'React',
       'Ionic Framework',
       'State Management',
