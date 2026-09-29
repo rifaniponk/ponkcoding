@@ -18,11 +18,13 @@ cover: '/images/articles/lm360-custom-display-driver/cover.jpg'
 
 The LCD on an AIO pump is useful when it shows information I actually need. Instead of another vendor dashboard running in the background, I wanted a compact status screen for CPU, GPU, memory, and storage.
 
-That led to `rifaniponk/LM360-custom-driver`, a small Windows driver for the DeepCool LM360 pump-cap display. After confirming that it works with the hardware, I uninstalled the official DeepCool software and let the custom driver take over the display.
+That led to [`rifaniponk/LM360-custom-driver`](https://github.com/rifaniponk/LM360-custom-driver), a small Windows driver for the DeepCool LM360 pump-cap display. The complete source code, installer scripts, and hardware integration details are available in the [GitHub repository](https://github.com/rifaniponk/LM360-custom-driver). After confirming that it works with the hardware, I uninstalled the official DeepCool software and let the custom driver take over the display.
 
-![Live result from the custom LM360 display driver](/images/articles/lm360-custom-display-driver/lm360-display.jpg)
+The display pipeline is intentionally small and decoupled:
 
-_The live result: the LM360 pump-cap LCD renders system telemetry without the official DeepCool application running in the background._
+![Architecture of the LM360 custom display driver](/images/articles/lm360-custom-display-driver/architecture.svg)
+
+_The data path is split into Windows sensor collection, a Python orchestration loop, a pure Pillow renderer, and a USB transport layer._
 
 ## What the display shows
 
