@@ -107,7 +107,7 @@ I chose this approach instead of building a native Windows service because the p
 
 ## Why remove the official software?
 
-The official application is useful when configuring the device, but a continuously running vendor stack is more than I need for a simple telemetry screen. A custom driver gives me control over:
+The official DeepCool application is bloated and frustrating for this use case. It takes up far more space and complexity than a simple telemetry screen should need, while still being less configurable than what I actually want. I do not need a bigger dashboard. I need a small driver that puts the exact metrics and layout I care about on the display. A custom driver gives me control over:
 
 - exactly which metrics are visible
 - how the information is prioritized on the small panel
