@@ -1,138 +1,78 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
   <title id="title">LM360 custom display driver architecture</title>
-  <desc id="desc">Windows sensors flow into a Python display loop, a Pillow renderer, and a USB transport that sends RGB565 frames to the DeepCool LM360 pump-cap LCD.</desc>
+  <desc id="desc">A simple vertical architecture diagram showing Windows sensors flowing through the Python display loop, renderer, and USB transport to the DeepCool LM360 LCD.</desc>
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M40 0H0V40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#1e293b" stroke-width="1"/>
     </pattern>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#0b1220"/>
       <stop offset="1" stop-color="#020617"/>
     </linearGradient>
-    <linearGradient id="display" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#102a3b"/>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12344a"/>
       <stop offset="1" stop-color="#172033"/>
     </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity=".35"/>
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".35"/>
     </filter>
-    <marker id="arrow-cyan" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path d="M0 0L10 5L0 10Z" fill="#22d3ee"/>
-    </marker>
-    <marker id="arrow-amber" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path d="M0 0L10 5L0 10Z" fill="#fbbf24"/>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#22d3ee"/>
     </marker>
     <style>
-      .title{font:700 30px 'JetBrains Mono',monospace;fill:#f8fafc;letter-spacing:.5px}
-      .subtitle{font:400 14px 'JetBrains Mono',monospace;fill:#94a3b8}
-      .section{font:700 12px 'JetBrains Mono',monospace;fill:#64748b;letter-spacing:2px}
-      .name{font:700 17px 'JetBrains Mono',monospace;fill:#f8fafc}
-      .label{font:400 12px 'JetBrains Mono',monospace;fill:#cbd5e1}
-      .small{font:400 11px 'JetBrains Mono',monospace;fill:#94a3b8}
-      .tiny{font:400 10px 'JetBrains Mono',monospace;fill:#64748b}
-      .box{stroke-width:2;rx:12}
-      .arrow{fill:none;stroke-width:2.5;marker-end:url(#arrow-cyan)}
-      .external-arrow{fill:none;stroke:#fbbf24;stroke-width:2.5;marker-end:url(#arrow-amber)}
+      .title{font:700 34px 'JetBrains Mono',monospace;fill:#f8fafc;letter-spacing:.4px}
+      .subtitle{font:400 16px 'JetBrains Mono',monospace;fill:#94a3b8}
+      .eyebrow{font:700 15px 'JetBrains Mono',monospace;fill:#64748b;letter-spacing:2px}
+      .name{font:700 27px 'JetBrains Mono',monospace;fill:#f8fafc}
+      .label{font:400 17px 'JetBrains Mono',monospace;fill:#cbd5e1}
+      .note{font:400 14px 'JetBrains Mono',monospace;fill:#94a3b8}
+      .box{rx:18;stroke-width:3}
     </style>
   </defs>
 
-  <rect width="1600" height="900" fill="url(#bg)"/>
-  <rect width="1600" height="900" fill="url(#grid)" opacity=".5"/>
-  <rect x="42" y="34" width="1516" height="832" rx="18" fill="none" stroke="#334155" stroke-width="1.5"/>
+  <rect width="900" height="1200" fill="url(#background)"/>
+  <rect width="900" height="1200" fill="url(#grid)" opacity=".55"/>
+  <rect x="34" y="34" width="832" height="1132" rx="24" fill="none" stroke="#334155" stroke-width="2"/>
 
-  <circle cx="84" cy="88" r="7" fill="#34d399"/>
-  <circle cx="84" cy="88" r="14" fill="none" stroke="#34d399" stroke-opacity=".25"/>
-  <text x="112" y="88" class="title" dominant-baseline="middle">LM360 CUSTOM DISPLAY DRIVER</text>
-  <text x="112" y="120" class="subtitle">Sensors → Python loop → Pillow framebuffer → USB bulk transfer → pump-cap LCD</text>
-  <text x="1508" y="90" class="tiny" text-anchor="end">WINDOWS 10/11 · ~1 FPS</text>
-  <line x1="78" y1="150" x2="1522" y2="150" stroke="#1e293b"/>
+  <circle cx="82" cy="92" r="8" fill="#34d399"/>
+  <text x="112" y="92" class="title" dominant-baseline="middle">LM360 CUSTOM DRIVER</text>
+  <text x="82" y="132" class="subtitle">A small path from system telemetry to the pump-cap LCD</text>
+  <line x1="82" y1="174" x2="818" y2="174" stroke="#334155" stroke-width="2"/>
 
-  <text x="92" y="190" class="section">01 · INPUTS</text>
-  <text x="470" y="190" class="section">02 · ORCHESTRATION</text>
-  <text x="852" y="190" class="section">03 · RENDERING</text>
-  <text x="1220" y="190" class="section">04 · OUTPUT</text>
+  <!-- flow arrows behind the boxes -->
+  <line x1="450" y1="342" x2="450" y2="388" stroke="#22d3ee" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="450" y1="542" x2="450" y2="588" stroke="#22d3ee" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="450" y1="742" x2="450" y2="788" stroke="#22d3ee" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="450" y1="942" x2="450" y2="988" stroke="#22d3ee" stroke-width="4" marker-end="url(#arrow)"/>
 
-  <!-- arrows are behind the component boxes -->
-  <path d="M300 340H440" class="arrow"/>
-  <path d="M300 530H400V405H440" class="arrow"/>
-  <path d="M300 700H400V405H440" class="arrow"/>
-  <path d="M700 405H820" class="arrow"/>
-  <path d="M1080 405H1190" class="arrow"/>
-  <path d="M1380 405H1480" class="external-arrow"/>
+  <text x="82" y="224" class="eyebrow">DATA FLOW</text>
 
-  <!-- input boundary -->
-  <rect x="72" y="218" width="330" height="570" rx="16" fill="#0f172a" fill-opacity=".6" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="8 5"/>
-  <text x="96" y="250" class="small" fill="#fb7185">WINDOWS SENSOR LAYER</text>
+  <rect x="110" y="250" width="680" height="92" class="box" fill="#0f172a" stroke="#34d399" filter="url(#shadow)"/>
+  <circle cx="158" cy="296" r="18" fill="#34d399" fill-opacity=".18" stroke="#34d399" stroke-width="2"/>
+  <text x="198" y="288" class="name">Windows sensors</text>
+  <text x="198" y="316" class="label">CPU · GPU · RAM · SSD telemetry</text>
 
-  <rect x="94" y="280" width="286" height="120" class="box" fill="#0f172a" stroke="#34d399"/>
-  <text x="116" y="317" class="name">sensors_windows.py</text>
-  <text x="116" y="345" class="label">CPU · GPU · RAM · SSD telemetry</text>
-  <text x="116" y="370" class="small">SensorType + fuzzy name matching</text>
+  <rect x="110" y="450" width="680" height="92" class="box" fill="#0f172a" stroke="#fbbf24" filter="url(#shadow)"/>
+  <circle cx="158" cy="496" r="18" fill="#fbbf24" fill-opacity=".18" stroke="#fbbf24" stroke-width="2"/>
+  <text x="198" y="488" class="name">Python display loop</text>
+  <text x="198" y="516" class="label">Read · render · send · reconnect</text>
 
-  <rect x="94" y="450" width="286" height="112" class="box" fill="#0f172a" stroke="#fb7185"/>
-  <text x="116" y="486" class="name">LibreHardwareMonitor</text>
-  <text x="116" y="514" class="label">Python.NET · PawnIO</text>
-  <text x="116" y="538" class="small">CPU ring0 access when elevated</text>
+  <rect x="110" y="650" width="680" height="92" class="box" fill="#0f172a" stroke="#a78bfa" filter="url(#shadow)"/>
+  <circle cx="158" cy="696" r="18" fill="#a78bfa" fill-opacity=".18" stroke="#a78bfa" stroke-width="2"/>
+  <text x="198" y="688" class="name">Pillow renderer</text>
+  <text x="198" y="716" class="label">Draw gauges and bars · convert to RGB565</text>
 
-  <rect x="94" y="608" width="286" height="112" class="box" fill="#0f172a" stroke="#94a3b8"/>
-  <text x="116" y="644" class="name">Windows fallbacks</text>
-  <text x="116" y="672" class="label">PDH GPU Engine · shutil.disk_usage</text>
-  <text x="116" y="696" class="small">Integrated GPU load + C: capacity</text>
+  <rect x="110" y="850" width="680" height="92" class="box" fill="#0f172a" stroke="#22d3ee" filter="url(#shadow)"/>
+  <circle cx="158" cy="896" r="18" fill="#22d3ee" fill-opacity=".18" stroke="#22d3ee" stroke-width="2"/>
+  <text x="198" y="888" class="name">USB transport</text>
+  <text x="198" y="916" class="label">PyUSB + libusb · frame transfer</text>
 
-  <!-- orchestration -->
-  <rect x="440" y="300" width="260" height="210" class="box" fill="#0f172a" stroke="#34d399" filter="url(#shadow)"/>
-  <text x="466" y="344" class="name">pc_display.py</text>
-  <text x="466" y="376" class="label">main loop</text>
-  <text x="466" y="410" class="small">1. read sensors</text>
-  <text x="466" y="435" class="small">2. render image</text>
-  <text x="466" y="460" class="small">3. send frame</text>
-  <text x="466" y="485" class="small">4. reconnect on failure</text>
+  <rect x="110" y="1050" width="680" height="92" class="box" fill="url(#screen)" stroke="#fb7185" filter="url(#shadow)"/>
+  <rect x="150" y="1072" width="48" height="48" rx="6" fill="#07111c" stroke="#22d3ee" stroke-width="2"/>
+  <circle cx="174" cy="1090" r="9" fill="none" stroke="#34d399" stroke-width="3"/>
+  <rect x="162" y="1104" width="24" height="4" rx="2" fill="#fbbf24"/>
+  <text x="230" y="1088" class="name">DeepCool LM360 LCD</text>
+  <text x="230" y="1116" class="label">320 × 240 pump-cap display</text>
 
-  <rect x="440" y="560" width="260" height="112" class="box" fill="#0f172a" stroke="#fbbf24"/>
-  <text x="466" y="597" class="name">Task Scheduler</text>
-  <text x="466" y="625" class="label">LM360CustomDisplay</text>
-  <text x="466" y="649" class="small">Hidden · highest privilege · at logon</text>
-
-  <path d="M570 560V510" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow-amber)"/>
-
-  <!-- rendering -->
-  <rect x="820" y="300" width="260" height="210" class="box" fill="#0f172a" stroke="#a78bfa" filter="url(#shadow)"/>
-  <text x="846" y="344" class="name">render.py</text>
-  <text x="846" y="376" class="label">pure Pillow renderer</text>
-  <text x="846" y="410" class="small">320 × 240 composition</text>
-  <text x="846" y="435" class="small">supersample ×3 + Lanczos</text>
-  <text x="846" y="460" class="small">gauges + capacity bars</text>
-  <text x="846" y="485" class="small">RGB565 conversion</text>
-
-  <!-- transport -->
-  <rect x="1190" y="300" width="190" height="210" class="box" fill="#0f172a" stroke="#22d3ee" filter="url(#shadow)"/>
-  <text x="1212" y="344" class="name">lm360_display.py</text>
-  <text x="1212" y="376" class="label">USB transport</text>
-  <text x="1212" y="410" class="small">pyusb + libusb</text>
-  <text x="1212" y="435" class="small">VID:PID 3633:0026</text>
-  <text x="1212" y="460" class="small">init + frame header</text>
-  <text x="1212" y="485" class="small">brightness commands</text>
-
-  <!-- physical output -->
-  <rect x="1480" y="300" width="72" height="210" class="box" fill="url(#display)" stroke="#fbbf24"/>
-  <rect x="1492" y="348" width="48" height="102" rx="4" fill="#07111c" stroke="#22d3ee"/>
-  <circle cx="1507" cy="372" r="13" fill="none" stroke="#34d399" stroke-width="3"/>
-  <circle cx="1525" cy="372" r="13" fill="none" stroke="#fbbf24" stroke-width="3"/>
-  <rect x="1498" y="404" width="36" height="5" rx="2" fill="#34d399"/>
-  <rect x="1498" y="416" width="26" height="5" rx="2" fill="#a78bfa"/>
-  <text x="1516" y="538" class="tiny" text-anchor="middle" transform="rotate(-90 1516 538)">LM360 LCD</text>
-
-  <!-- data contract -->
-  <rect x="820" y="590" width="732" height="118" rx="12" fill="#0f172a" stroke="#334155"/>
-  <text x="850" y="627" class="name">data contract</text>
-  <text x="850" y="658" class="small">plain dict: cpu_temp_c · cpu_load_pct · gpu_temp_c · gpu_load_pct</text>
-  <text x="850" y="682" class="small">ram_used_gb · ram_total_gb · ssd_temp_c · ssd_used_gb · ssd_total_gb</text>
-
-  <!-- legend -->
-  <text x="92" y="828" class="section">LEGEND</text>
-  <line x1="190" y1="824" x2="250" y2="824" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
-  <text x="264" y="829" class="small">data flow</text>
-  <line x1="370" y1="824" x2="430" y2="824" stroke="#fbbf24" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#arrow-amber)"/>
-  <text x="444" y="829" class="small">lifecycle / startup</text>
-  <text x="1508" y="829" class="tiny" text-anchor="end">open source · hardware-specific · no vendor app required</text>
+  <text x="450" y="1174" class="note" text-anchor="middle">No vendor dashboard required</text>
 </svg>
