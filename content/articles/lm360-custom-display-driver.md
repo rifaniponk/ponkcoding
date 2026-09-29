@@ -13,6 +13,7 @@ tags:
   - usb
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/lm360-custom-display-driver/cover.jpg'
 ---
 
 The LCD on an AIO pump is useful when it shows information I actually need. Instead of another vendor dashboard running in the background, I wanted a compact status screen for CPU, GPU, memory, and storage.
