@@ -74,9 +74,38 @@ The expert cache shrank from 3,775 resident experts (text-only, 64K context) to 
 
 ## Benchmark numbers
 
-Two sets of numbers here: Strata's own published benchmark for IQ3_S (measured by the project on an RTX 5070, 12GB), and what I actually measured on my RTX 5080 16GB, in the exact configuration I run day to day (128K context, vision on, engine 0.1.38).
+I did not want to leave the vision cost as a vague impression, so I ran a controlled A/B on my own machine: the exact same config, the exact same five prompt sizes, with vision on and then with vision off, both at 128K context. Then I added Strata's own published numbers and real coding-agent sessions as outside reference points.
 
-**Published (RTX 5070 12GB, Ryzen 5 7600, text-only, from Strata's docs):**
+### Vision on vs off, same machine, same context, same prompts
+
+Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens.
+
+| Prompt tokens | Output, vision off | Output, vision on | Output difference | Cache hit, vision off | Cache hit, vision on |
+| ------------: | -----------------: | ----------------: | ----------------: | --------------------: | -------------------: |
+|           259 |         25.2 tok/s |        30.0 tok/s |            noise¹ |                 60.2% |                43.7% |
+|         1,058 |         39.6 tok/s |        36.9 tok/s |       6.8% slower |                 75.1% |                65.7% |
+|         4,157 |         47.1 tok/s |        39.6 tok/s |      15.9% slower |                 81.5% |                72.6% |
+|        15,231 |         58.5 tok/s |        40.7 tok/s |      30.4% slower |                 85.6% |                81.0% |
+|        30,593 |         79.0 tok/s |        55.3 tok/s |      30.0% slower |                 90.5% |                86.1% |
+
+¹ The 259-token row is the first request right after each cold start, before either run had warmed its expert cache; I would not read anything into vision coming out faster there.
+
+Prompt processing speed was effectively identical between the two runs (within 1 to 3 percent at every size), so raw GPU throughput is not what vision costs you. What it costs you is expert cache room, and the gap grows with the prompt: by 15K to 30K tokens, vision-on decode is running about 30 percent slower, with a cache hit rate consistently 4 to 9 points lower at every size.
+
+The reason is VRAM, not compute. Same 128K context, same card, two different expert cache sizes at startup:
+
+| Config           | Expert cache | VRAM used | VRAM free at load | Startup warning           |
+| ---------------- | -----------: | --------: | ----------------: | ------------------------- |
+| Vision off, 128K |  3,674 slots |  7.03 GiB |           529 MiB | none                      |
+| Vision on, 128K  |  3,145 slots |  6.02 GiB |           194 MiB | "LOW: requests may stall" |
+
+Loading the image encoder on top of a 128K context leaves the expert cache 529 slots smaller, about 14 percent, on a 16GB card. That is the entire story behind the decode gap above.
+
+One more thing worth noting: output speed climbed with prompt size in both runs (25 to 79 tok/s for vision-off, 30 to 55 tok/s for vision-on), which is the opposite of what I expected going in. The expert cache hit rate climbed right alongside it, from 60 percent up to 90 percent for vision-off. My read is that a longer prompt touches more of the model's experts during the prompt-processing pass, which pre-warms the cache for whatever the model then uses while generating, so the shortest prompt is actually the worst case for decode speed, not the longest one.
+
+### Strata's published benchmark, for outside reference
+
+Strata publishes its own IQ3_S numbers, measured on an RTX 5070 (12GB), text-only:
 
 | Context | Prompt processing |     Output |
 | ------- | ----------------: | ---------: |
@@ -86,16 +115,11 @@ Two sets of numbers here: Strata's own published benchmark for IQ3_S (measured b
 | 64K     |       1,640 tok/s | 46.3 tok/s |
 | 128K    |       1,443 tok/s | 45.5 tok/s |
 
-**Measured on my RTX 5080 16GB, vision on, 128K context, engine 0.1.38:**
+My vision-off numbers above land in the same range as these despite a different GPU, which is a reasonable sanity check that the A/B test above was measuring vision and nothing else.
 
-| Prompt size                            | Prompt processing |     Output | Expert cache hit rate |
-| -------------------------------------- | ----------------: | ---------: | --------------------: |
-| 70 tokens (cold)                       |        66.8 tok/s | 21.7 tok/s |                     – |
-| 7,443 tokens (cold)                    |     2,007.1 tok/s | 31.5 tok/s |                     – |
-| 59 tokens, real session                |        28.0 tok/s | 22.8 tok/s |                 75.8% |
-| 1,194 tokens, real session (1,140 new) |       484.9 tok/s | 27.0 tok/s |                 77.6% |
+### Real coding-agent sessions
 
-And for comparison, real coding-agent sessions from before I turned vision on (text-only, 65,536 context, engine 0.1.34), where the expert cache had the full 3,775 slots to work with:
+The synthetic A/B above used fresh, uncached prompts on purpose, to isolate vision cleanly. A real coding session looks different because most of the context is reused turn to turn. These are from actual sessions before I turned vision on (text-only, 65,536 context, engine 0.1.34):
 
 | Prompt size (reused + new)                | Prompt processing (new tokens) |     Output | Expert cache hit rate |
 | ----------------------------------------- | -----------------------------: | ---------: | --------------------: |
@@ -103,7 +127,7 @@ And for comparison, real coding-agent sessions from before I turned vision on (t
 | 48,134 tokens (47,006 reused + 1,128 new) |                    456.9 tok/s | 40.0 tok/s |                 58.9% |
 | 49,363 tokens (48,129 reused + 1,234 new) |                    501.8 tok/s | 34.9 tok/s |                 63.8% |
 
-The pattern is consistent with what Strata's own warning said it would be: vision plus a long context measurably costs output speed on a 16GB card, roughly a 25 to 40 percent drop in my own numbers, because the expert cache has fewer slots to fill. Prompt processing on a fresh, long prompt is still very fast (2,000+ tok/s on a 7.4K-token prompt), and prompt reuse for a growing conversation is where the real win shows up: a 49K-token session only had to read 1,234 new tokens because the rest stayed cached.
+A 49K-token session only had to freshly read 1,234 tokens because the rest stayed cached from the previous turn. That reuse is where a long-context local server actually earns its keep in a coding agent loop: the expensive part of a growing conversation only happens once.
 
 ## Using it with coding agents
 
