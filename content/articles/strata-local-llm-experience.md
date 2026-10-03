@@ -85,12 +85,12 @@ I did not want to leave the vision cost as a vague impression, so I ran a contro
 Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens, with the monitor moved to onboard graphics so the 5080 had nothing else on it.
 
 | Prompt tokens | Output, vision off | Output, vision on | Output difference | Cache hit, vision off | Cache hit, vision on |
-| ------------: | ------------------: | ------------------: | ------------------: | ----------------------: | ----------------------: |
-|           259 |          39.0 tok/s |          38.1 tok/s |       2.3% slower |                   63.9% |                   60.2% |
-|         1,058 |          49.5 tok/s |          47.0 tok/s |       5.1% slower |                   77.5% |                   75.0% |
-|         4,157 |          54.8 tok/s |          51.0 tok/s |       6.9% slower |                   83.4% |                   81.6% |
-|        15,231 |          70.4 tok/s |          65.5 tok/s |       7.0% slower |                   88.7% |                   87.2% |
-|        30,593 |          84.9 tok/s |          86.1 tok/s |      1.4% faster¹ |                   91.7% |                   90.4% |
+| ------------: | -----------------: | ----------------: | ----------------: | --------------------: | -------------------: |
+|           259 |         39.0 tok/s |        38.1 tok/s |       2.3% slower |                 63.9% |                60.2% |
+|         1,058 |         49.5 tok/s |        47.0 tok/s |       5.1% slower |                 77.5% |                75.0% |
+|         4,157 |         54.8 tok/s |        51.0 tok/s |       6.9% slower |                 83.4% |                81.6% |
+|        15,231 |         70.4 tok/s |        65.5 tok/s |       7.0% slower |                 88.7% |                87.2% |
+|        30,593 |         84.9 tok/s |        86.1 tok/s |      1.4% faster¹ |                 91.7% |                90.4% |
 
 ¹ The only row where vision comes out ahead. Both configs are deep into their cache-warmed regime by 30K tokens (90%+ hit rate either way), and at that point the gap is noise, not a real effect.
 
@@ -99,9 +99,9 @@ Prompt processing speed was effectively identical between the two runs (within 1
 The reason is still VRAM, not compute, just a smaller amount of it now that the card is not also driving a monitor. Same 128K context, same card, two different expert cache sizes at startup:
 
 | Config           | Expert cache | VRAM used | VRAM free at load | Startup warning |
-| ---------------- | -----------: | --------: | -----------------: | ---------------- |
-| Vision off, 128K |  4,208 slots |  8.03 GiB |            403 MiB | none             |
-| Vision on, 128K  |  3,673 slots |  7.02 GiB |            269 MiB | none             |
+| ---------------- | -----------: | --------: | ----------------: | --------------- |
+| Vision off, 128K |  4,208 slots |  8.03 GiB |           403 MiB | none            |
+| Vision on, 128K  |  3,673 slots |  7.02 GiB |           269 MiB | none            |
 
 Both configs picked up more than 500 extra expert-cache slots compared to my first run (3,674 to 4,208 for vision-off, 3,145 to 3,673 for vision-on), and the "LOW: requests may stall" warning is gone entirely. Vision still costs about 535 slots either way, roughly 13 percent, but neither config is now scraping the bottom of the card the way the first run was. That 13-percent cache gap is the whole story behind the 5-to-7-percent decode gap above; it is just a much less dramatic story than the 30-percent gap and stall warning I originally wrote down here.
 
