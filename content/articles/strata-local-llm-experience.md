@@ -63,45 +63,49 @@ Strata can optionally load an image encoder so the model reads pictures as well 
 python setup.py --setup --vision yes --model IQ3_S
 ```
 
-That downloaded a 0.91GB vision encoder and wired it into the existing config. It did come with a real trade-off I want to be honest about: on a 16GB card, running vision plus a 128K context at the same time leaves very little VRAM to spare. Strata's own startup log told me so directly:
+That downloaded a 0.91GB vision encoder and wired it into the existing config. The first time I measured it, it came with a real trade-off: on a 16GB card, running vision plus a 128K context left very little VRAM to spare, and Strata's own startup log said so directly:
 
 ```
 strata serve: 194 MiB of VRAM free with everything loaded - LOW: requests may stall;
 add --vram-reserve-mib 1018 to the config's args (or lower --max-context)
 ```
 
-The expert cache shrank from 3,775 resident experts (text-only, 64K context) to 3,145 (vision on, 128K context) to make room. That shows up directly in decode speed, which I measured below. If you only need vision occasionally, it is worth weighing against just keeping a second, text-only config around and switching between them, which is exactly what the install does by default: `run-iq3_s.bat` and a vision-enabled variant can coexist as separate configs on the same model files.
+That number turned out to be measuring my monitor cable as much as it was measuring Strata. More on that below.
+
+The expert cache shrank from 3,775 resident experts (text-only, 64K context) to 3,145 (vision on, 128K context, before the correction below) to make room. If you only need vision occasionally, it is worth weighing against just keeping a second, text-only config around and switching between them, which is exactly what the install does by default: `run-iq3_s.bat` and a vision-enabled variant can coexist as separate configs on the same model files.
 
 ## Benchmark numbers
 
 I did not want to leave the vision cost as a vague impression, so I ran a controlled A/B on my own machine: the exact same config, the exact same five prompt sizes, with vision on and then with vision off, both at 128K context. Then I added Strata's own published numbers and real coding-agent sessions as outside reference points.
 
+**A correction after the first run:** my first pass at this A/B had the monitor plugged into the RTX 5080 itself, so Windows' desktop compositor was sitting on a slice of that card's VRAM the whole time, VRAM the benchmark never actually got to use. I moved the display cable to the motherboard's onboard graphics output so the 5080 is dedicated entirely to Strata, and reran both configs from a cold start. The numbers below are that corrected run; I am calling out the difference because it was not small.
+
 ### Vision on vs off, same machine, same context, same prompts
 
-Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens.
+Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens, with the monitor moved to onboard graphics so the 5080 had nothing else on it.
 
 | Prompt tokens | Output, vision off | Output, vision on | Output difference | Cache hit, vision off | Cache hit, vision on |
-| ------------: | -----------------: | ----------------: | ----------------: | --------------------: | -------------------: |
-|           259 |         25.2 tok/s |        30.0 tok/s |            noise¹ |                 60.2% |                43.7% |
-|         1,058 |         39.6 tok/s |        36.9 tok/s |       6.8% slower |                 75.1% |                65.7% |
-|         4,157 |         47.1 tok/s |        39.6 tok/s |      15.9% slower |                 81.5% |                72.6% |
-|        15,231 |         58.5 tok/s |        40.7 tok/s |      30.4% slower |                 85.6% |                81.0% |
-|        30,593 |         79.0 tok/s |        55.3 tok/s |      30.0% slower |                 90.5% |                86.1% |
+| ------------: | ------------------: | ------------------: | ------------------: | ----------------------: | ----------------------: |
+|           259 |          39.0 tok/s |          38.1 tok/s |       2.3% slower |                   63.9% |                   60.2% |
+|         1,058 |          49.5 tok/s |          47.0 tok/s |       5.1% slower |                   77.5% |                   75.0% |
+|         4,157 |          54.8 tok/s |          51.0 tok/s |       6.9% slower |                   83.4% |                   81.6% |
+|        15,231 |          70.4 tok/s |          65.5 tok/s |       7.0% slower |                   88.7% |                   87.2% |
+|        30,593 |          84.9 tok/s |          86.1 tok/s |      1.4% faster¹ |                   91.7% |                   90.4% |
 
-¹ The 259-token row is the first request right after each cold start, before either run had warmed its expert cache; I would not read anything into vision coming out faster there.
+¹ The only row where vision comes out ahead. Both configs are deep into their cache-warmed regime by 30K tokens (90%+ hit rate either way), and at that point the gap is noise, not a real effect.
 
-Prompt processing speed was effectively identical between the two runs (within 1 to 3 percent at every size), so raw GPU throughput is not what vision costs you. What it costs you is expert cache room, and the gap grows with the prompt: by 15K to 30K tokens, vision-on decode is running about 30 percent slower, with a cache hit rate consistently 4 to 9 points lower at every size.
+Prompt processing speed was effectively identical between the two runs (within 1 to 4 percent at every size), so raw GPU throughput is still not what vision costs you. With the extra VRAM headroom freed up by moving the monitor off this card, what it costs you is much smaller than I first measured: a consistent but modest 5 to 7 percent decode penalty across most prompt sizes, with cache hit rates only 1 to 4 points apart instead of the 4 to 9 points I measured before the correction.
 
-The reason is VRAM, not compute. Same 128K context, same card, two different expert cache sizes at startup:
+The reason is still VRAM, not compute, just a smaller amount of it now that the card is not also driving a monitor. Same 128K context, same card, two different expert cache sizes at startup:
 
-| Config           | Expert cache | VRAM used | VRAM free at load | Startup warning           |
-| ---------------- | -----------: | --------: | ----------------: | ------------------------- |
-| Vision off, 128K |  3,674 slots |  7.03 GiB |           529 MiB | none                      |
-| Vision on, 128K  |  3,145 slots |  6.02 GiB |           194 MiB | "LOW: requests may stall" |
+| Config           | Expert cache | VRAM used | VRAM free at load | Startup warning |
+| ---------------- | -----------: | --------: | -----------------: | ---------------- |
+| Vision off, 128K |  4,208 slots |  8.03 GiB |            403 MiB | none             |
+| Vision on, 128K  |  3,673 slots |  7.02 GiB |            269 MiB | none             |
 
-Loading the image encoder on top of a 128K context leaves the expert cache 529 slots smaller, about 14 percent, on a 16GB card. That is the entire story behind the decode gap above.
+Both configs picked up more than 500 extra expert-cache slots compared to my first run (3,674 to 4,208 for vision-off, 3,145 to 3,673 for vision-on), and the "LOW: requests may stall" warning is gone entirely. Vision still costs about 535 slots either way, roughly 13 percent, but neither config is now scraping the bottom of the card the way the first run was. That 13-percent cache gap is the whole story behind the 5-to-7-percent decode gap above; it is just a much less dramatic story than the 30-percent gap and stall warning I originally wrote down here.
 
-One more thing worth noting: output speed climbed with prompt size in both runs (25 to 79 tok/s for vision-off, 30 to 55 tok/s for vision-on), which is the opposite of what I expected going in. The expert cache hit rate climbed right alongside it, from 60 percent up to 90 percent for vision-off. My read is that a longer prompt touches more of the model's experts during the prompt-processing pass, which pre-warms the cache for whatever the model then uses while generating, so the shortest prompt is actually the worst case for decode speed, not the longest one.
+One more thing worth noting, which held up in both the original and the corrected run: output speed climbed with prompt size in both runs (39 to 85 tok/s for vision-off, 38 to 86 tok/s for vision-on), which is the opposite of what I expected going in. The expert cache hit rate climbed right alongside it, from the low 60s up into the low 90s percent. My read is still that a longer prompt touches more of the model's experts during the prompt-processing pass, which pre-warms the cache for whatever the model then uses while generating, so the shortest prompt is actually the worst case for decode speed, not the longest one.
 
 ### Strata's published benchmark, for outside reference
 
