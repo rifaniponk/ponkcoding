@@ -13,6 +13,7 @@ tags:
   - self-hosted-ai
 status: 'published'
 author: 'Rifan Fauzi'
+cover: '/images/articles/strata-local-llm-experience/cover.jpg'
 ---
 
 I have tried a fair number of local LLM setups on this PC: different quantizations, different runtimes, different coding-agent harnesses. [Strata](https://github.com/Niko1221/Strata) is the first one I have kept running for daily work instead of going back to a cloud model out of impatience. This is a note on what running it actually looked like, including the benchmark numbers, not just the pitch.
