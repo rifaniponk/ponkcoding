@@ -176,8 +176,8 @@ export function Article() {
           </div>
         </div>
 
-        <div className="art-head__cover">
-          {meta.cover ? (
+        {meta.cover && (
+          <div className="art-head__cover">
             <img
               className="art-head__cover-image"
               src={meta.cover}
@@ -185,19 +185,9 @@ export function Article() {
               width="1672"
               height="941"
             />
-          ) : (
-            <div className="art-signal" aria-hidden="true">
-              <span className="art-signal__ring art-signal__ring--outer" />
-              <span className="art-signal__ring art-signal__ring--inner" />
-              <span className="art-signal__line art-signal__line--one" />
-              <span className="art-signal__line art-signal__line--two" />
-              <span className="art-signal__node art-signal__node--md">MD</span>
-              <span className="art-signal__node art-signal__node--react">REACT</span>
-              <span className="art-signal__node art-signal__node--html">HTML</span>
-            </div>
-          )}
-          <span className="art-head__cover-label">{meta.category.toUpperCase()}</span>
-        </div>
+            <span className="art-head__cover-label">{meta.category.toUpperCase()}</span>
+          </div>
+        )}
       </section>
 
       {/* ---------- Body + TOC ---------- */}
