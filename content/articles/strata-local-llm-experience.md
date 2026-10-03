@@ -1,7 +1,7 @@
 ---
 title: 'Running Qwen3.8-Flash-Next locally with Strata: 128K context, vision, and real benchmark numbers'
 slug: 'strata-local-llm-experience'
-description: 'Notes from running Strata on my own workstation: updating the engine, pushing context to 128K, turning on vision, and the real throughput numbers I measured on an RTX 5080.'
+description: 'Notes from running Strata on my own workstation: pushing context to 128K, turning on vision, and the real throughput numbers I measured on an RTX 5080.'
 date: '2026-10-03'
 category: 'AI Engineering'
 tags:
@@ -37,18 +37,6 @@ Strata is a local serving engine for **Qwen3.8-Flash-Next**, a 125-billion-param
 
 I run the **IQ3_S** quantization: a 3.5-bit i-quant that the project describes as matching the full model's published benchmarks, at the cost of being the slowest of the supported sizes. On this PC it uses about 50GB of RAM for the experts.
 
-## Updating the engine
-
-Before I did any of the tuning below, I pulled whatever had landed upstream since I first installed it. My copy was 96 commits behind, spanning four engine releases (0.1.34 to 0.1.38). The part worth flagging is that this was not just performance tuning: the update included a Host-header check against DNS rebinding and a rule that refuses cross-site browser requests when no API key is set. I run this server with `host: 0.0.0.0` so I can reach it from other devices on my network, so those two fixes mattered to me specifically, not just as changelog noise.
-
-The update itself is one command once the repo is pulled:
-
-```bash
-python setup.py --update
-```
-
-It re-checked Python packages, downloaded the newer ready-made engine build, and left the model files and my existing configs alone. No re-download of the 84GB model, no re-answering the setup wizard.
-
 ## Pushing context to 128K
 
 The default the installer picked for me was 65,536 tokens. With 128GB of RAM sitting mostly idle, there was no real reason to stay there. Strata streams the KV cache: above 64K context, the attention window lives in VRAM while the bulk of the cache lives in pinned system RAM, so a longer context is mostly a RAM cost, not a VRAM one. Going to 131,072 tokens (128K) added about 1.7GB of RAM on top of what 64K already used. Changing `--max-context` in the model's config and restarting was the whole change.
@@ -63,26 +51,17 @@ Strata can optionally load an image encoder so the model reads pictures as well 
 python setup.py --setup --vision yes --model IQ3_S
 ```
 
-That downloaded a 0.91GB vision encoder and wired it into the existing config. The first time I measured it, it came with a real trade-off: on a 16GB card, running vision plus a 128K context left very little VRAM to spare, and Strata's own startup log said so directly:
+That downloaded a 0.91GB vision encoder and wired it into the existing config. It does come with a real trade-off: on a 16GB card, running vision alongside a 128K context leaves noticeably less VRAM for the expert cache than running text-only.
 
-```
-strata serve: 194 MiB of VRAM free with everything loaded - LOW: requests may stall;
-add --vram-reserve-mib 1018 to the config's args (or lower --max-context)
-```
-
-That number turned out to be measuring my monitor cable as much as it was measuring Strata. More on that below.
-
-The expert cache shrank from 3,775 resident experts (text-only, 64K context) to 3,145 (vision on, 128K context, before the correction below) to make room. If you only need vision occasionally, it is worth weighing against just keeping a second, text-only config around and switching between them, which is exactly what the install does by default: `run-iq3_s.bat` and a vision-enabled variant can coexist as separate configs on the same model files.
+The expert cache shrank from 3,775 resident experts (text-only, 64K context) to 3,673 (vision on, 128K context) to make room. If you only need vision occasionally, it is worth weighing against just keeping a second, text-only config around and switching between them, which is exactly what the install does by default: `run-iq3_s.bat` and a vision-enabled variant can coexist as separate configs on the same model files.
 
 ## Benchmark numbers
 
 I did not want to leave the vision cost as a vague impression, so I ran a controlled A/B on my own machine: the exact same config, the exact same five prompt sizes, with vision on and then with vision off, both at 128K context. Then I added Strata's own published numbers and real coding-agent sessions as outside reference points.
 
-**A correction after the first run:** my first pass at this A/B had the monitor plugged into the RTX 5080 itself, so Windows' desktop compositor was sitting on a slice of that card's VRAM the whole time, VRAM the benchmark never actually got to use. I moved the display cable to the motherboard's onboard graphics output so the 5080 is dedicated entirely to Strata, and reran both configs from a cold start. The numbers below are that corrected run; I am calling out the difference because it was not small.
-
 ### Vision on vs off, same machine, same context, same prompts
 
-Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens, with the monitor moved to onboard graphics so the 5080 had nothing else on it.
+Both runs used engine 0.1.38, 131,072-token context, identical randomly generated prompts (so nothing was cached from a previous run), capped at 64 completion tokens.
 
 | Prompt tokens | Output, vision off | Output, vision on | Output difference | Cache hit, vision off | Cache hit, vision on |
 | ------------: | -----------------: | ----------------: | ----------------: | --------------------: | -------------------: |
@@ -94,18 +73,18 @@ Both runs used engine 0.1.38, 131,072-token context, identical randomly generate
 
 ¹ The only row where vision comes out ahead. Both configs are deep into their cache-warmed regime by 30K tokens (90%+ hit rate either way), and at that point the gap is noise, not a real effect.
 
-Prompt processing speed was effectively identical between the two runs (within 1 to 4 percent at every size), so raw GPU throughput is still not what vision costs you. With the extra VRAM headroom freed up by moving the monitor off this card, what it costs you is much smaller than I first measured: a consistent but modest 5 to 7 percent decode penalty across most prompt sizes, with cache hit rates only 1 to 4 points apart instead of the 4 to 9 points I measured before the correction.
+Prompt processing speed was effectively identical between the two runs (within 1 to 4 percent at every size), so raw GPU throughput is not what vision costs you. What it costs you is a consistent but modest 5 to 7 percent decode penalty across most prompt sizes, with cache hit rates only 1 to 4 points apart at every size.
 
-The reason is still VRAM, not compute, just a smaller amount of it now that the card is not also driving a monitor. Same 128K context, same card, two different expert cache sizes at startup:
+The reason is VRAM, not compute. Same 128K context, same card, two different expert cache sizes at startup:
 
 | Config           | Expert cache | VRAM used | VRAM free at load | Startup warning |
 | ---------------- | -----------: | --------: | ----------------: | --------------- |
 | Vision off, 128K |  4,208 slots |  8.03 GiB |           403 MiB | none            |
 | Vision on, 128K  |  3,673 slots |  7.02 GiB |           269 MiB | none            |
 
-Both configs picked up more than 500 extra expert-cache slots compared to my first run (3,674 to 4,208 for vision-off, 3,145 to 3,673 for vision-on), and the "LOW: requests may stall" warning is gone entirely. Vision still costs about 535 slots either way, roughly 13 percent, but neither config is now scraping the bottom of the card the way the first run was. That 13-percent cache gap is the whole story behind the 5-to-7-percent decode gap above; it is just a much less dramatic story than the 30-percent gap and stall warning I originally wrote down here.
+Loading the image encoder on top of a 128K context leaves the expert cache 535 slots smaller, about 13 percent, on a 16GB card. That is the entire story behind the decode gap above.
 
-One more thing worth noting, which held up in both the original and the corrected run: output speed climbed with prompt size in both runs (39 to 85 tok/s for vision-off, 38 to 86 tok/s for vision-on), which is the opposite of what I expected going in. The expert cache hit rate climbed right alongside it, from the low 60s up into the low 90s percent. My read is still that a longer prompt touches more of the model's experts during the prompt-processing pass, which pre-warms the cache for whatever the model then uses while generating, so the shortest prompt is actually the worst case for decode speed, not the longest one.
+One more thing worth noting: output speed climbed with prompt size in both runs (39 to 85 tok/s for vision-off, 38 to 86 tok/s for vision-on), which is the opposite of what I expected going in. The expert cache hit rate climbed right alongside it, from the low 60s up into the low 90s percent. My read is that a longer prompt touches more of the model's experts during the prompt-processing pass, which pre-warms the cache for whatever the model then uses while generating, so the shortest prompt is actually the worst case for decode speed, not the longest one.
 
 ### Strata's published benchmark, for outside reference
 
@@ -123,15 +102,15 @@ My vision-off numbers above land in the same range as these despite a different 
 
 ### Real coding-agent sessions
 
-The synthetic A/B above used fresh, uncached prompts on purpose, to isolate vision cleanly. A real coding session looks different because most of the context is reused turn to turn. These are from actual sessions before I turned vision on (text-only, 65,536 context, engine 0.1.34):
+The synthetic A/B above used fresh, uncached prompts on purpose, to isolate vision cleanly. A real coding session looks different because most of the context is reused turn to turn. These are from an actual coding-agent session on this server while I was writing this article (vision on, 131,072 context, engine 0.1.38):
 
-| Prompt size (reused + new)                | Prompt processing (new tokens) |     Output | Expert cache hit rate |
-| ----------------------------------------- | -----------------------------: | ---------: | --------------------: |
-| 47,011 tokens (44,666 reused + 2,345 new) |                    900.1 tok/s | 35.7 tok/s |                 57.8% |
-| 48,134 tokens (47,006 reused + 1,128 new) |                    456.9 tok/s | 40.0 tok/s |                 58.9% |
-| 49,363 tokens (48,129 reused + 1,234 new) |                    501.8 tok/s | 34.9 tok/s |                 63.8% |
+| Prompt size (reused + new)              | Prompt processing (new tokens) |     Output | Expert cache hit rate |
+| --------------------------------------- | -----------------------------: | ---------: | --------------------: |
+| 47,978 tokens (47,811 reused + 167 new) |                    128.1 tok/s | 40.6 tok/s |                 76.2% |
+| 48,202 tokens (48,114 reused + 88 new)  |                    122.9 tok/s | 46.4 tok/s |                 78.7% |
+| 48,570 tokens (48,481 reused + 89 new)  |                    108.9 tok/s | 50.4 tok/s |                 83.0% |
 
-A 49K-token session only had to freshly read 1,234 tokens because the rest stayed cached from the previous turn. That reuse is where a long-context local server actually earns its keep in a coding agent loop: the expensive part of a growing conversation only happens once.
+A 48,570-token turn only had to freshly read 89 tokens because the rest stayed cached from the previous turn. That reuse is where a long-context local server actually earns its keep in a coding agent loop: the expensive part of a growing conversation only happens once.
 
 ## Using it with coding agents
 
@@ -139,6 +118,6 @@ The reason I care about any of this is daily use, not a synthetic benchmark. I p
 
 ## Where this leaves me
 
-I am not going to pretend a 3.5-bit quantized 125B model on a single 16GB card matches a frontier API model on hard reasoning. It does not, and that is not the comparison I am making. The comparison is against every other local setup I have run on this exact PC, and on that measure Strata is the first one I have trusted enough to leave running as a default rather than a demo. It survived an engine update without drama, it took a 128K context change and a vision toggle without reinstalling anything, it told me honestly when I pushed the VRAM too far instead of silently stalling, and it held up under two different coding agents without modification.
+I am not going to pretend a 3.5-bit quantized 125B model on a single 16GB card matches a frontier API model on hard reasoning. It does not, and that is not the comparison I am making. The comparison is against every other local setup I have run on this exact PC, and on that measure Strata is the first one I have trusted enough to leave running as a default rather than a demo. It took a 128K context change and a vision toggle without reinstalling anything, and it held up under two different coding agents without modification.
 
 That combination, not any single benchmark number, is why it is staying on.
