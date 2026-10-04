@@ -4,3 +4,4 @@ src/generated
 *.tsbuildinfo
 *.local
 .DS_Store
+config.bat
