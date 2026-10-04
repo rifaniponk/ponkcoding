@@ -109,6 +109,21 @@ function useReveal() {
 
 export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
   const revealRef = useReveal()
+  const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    if (!navOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setNavOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [navOpen])
 
   return (
     <div className="page home-page" style={{ ['--accent' as string]: accent }} ref={revealRef}>
@@ -149,8 +164,61 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
               LocalAI ↗
             </a>
           </nav>
+          <button
+            type="button"
+            className="home-nav-trigger"
+            aria-expanded={navOpen}
+            aria-controls="home-mobile-navigation"
+            aria-label="Open navigation"
+            onClick={() => setNavOpen((open) => !open)}
+          >
+            <span className="home-nav-trigger__lines" aria-hidden="true" />
+            <span>Menu</span>
+          </button>
         </div>
       </header>
+
+      <div
+        className={`home-nav-overlay${navOpen ? ' home-nav-overlay--open' : ''}`}
+        onClick={() => setNavOpen(false)}
+        aria-hidden="true"
+      />
+      <aside
+        id="home-mobile-navigation"
+        className={`home-nav-drawer${navOpen ? ' home-nav-drawer--open' : ''}`}
+        aria-label="Mobile navigation"
+      >
+        <div className="home-nav-drawer__bar">
+          <p className="home-nav-drawer__label">Navigate</p>
+          <button
+            type="button"
+            className="home-nav-drawer__close"
+            aria-label="Close navigation"
+            onClick={() => setNavOpen(false)}
+          >
+            ×
+          </button>
+        </div>
+        <nav className="home-nav-drawer__nav" aria-label="Mobile primary navigation">
+          <a href="#notes" onClick={() => setNavOpen(false)}>
+            Notes
+          </a>
+          <a href="#topics" onClick={() => setNavOpen(false)}>
+            Index
+          </a>
+          <a href="#about" onClick={() => setNavOpen(false)}>
+            About
+          </a>
+          <a
+            href="https://localai.ponkcoding.com/"
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setNavOpen(false)}
+          >
+            LocalAI ↗
+          </a>
+        </nav>
+      </aside>
 
       <main id="top">
         <section className="hero">
