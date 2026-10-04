@@ -140,6 +140,14 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <a href="#about" className="nav__link">
               About
             </a>
+            <a
+              href="https://localai.ponkcoding.com/"
+              className="nav__link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LocalAI ↗
+            </a>
           </nav>
         </div>
       </header>
