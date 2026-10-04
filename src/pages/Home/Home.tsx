@@ -445,6 +445,9 @@ export function Home({ accent = '#5F6FBA', showHeroIndex = true }: HomeProps) {
             <a href="#topics">Field index</a>
             {/*<a href="#lab">The lab</a>*/}
             <Link to={DESIGN_SYSTEM}>Design system</Link>
+            <a href="https://localai.ponkcoding.com/" target="_blank" rel="noreferrer">
+              LocalAI ↗
+            </a>
           </div>
           <div className="home-footer__fine">
             <span>© 2026 Rifan Fauzi</span>
