@@ -56,6 +56,12 @@ A few rules I set before looking at results:
 
 ## Results
 
+![Terminal-Bench 2.0 score per agent: Claude Code 77.9%, Qwen 69.8%, Antigravity 58.1% (80.2% before the leak check), Codex 41.9%](/images/articles/coding-agent-benchmark-terminal-bench/overall-score.png)
+
+In the tables, scores are colored by level: green is 70% or more, amber is 50 to 69%, red is below 50%.
+
+<!-- score-table columns=2 -->
+
 | Agent           | Score     | Before leak check | Tasks solved |
 | --------------- | --------- | ----------------- | ------------ |
 | Claude Code     | **77.9%** | 79.1%             | 67 / 86      |
@@ -67,13 +73,21 @@ A few rules I set before looking at results:
 
 By difficulty:
 
+![Score by difficulty for each agent. On hard tasks: Claude Code 72%, Qwen 66%, Antigravity 45%, Codex 14%](/images/articles/coding-agent-benchmark-terminal-bench/score-by-difficulty.png)
+
+<!-- score-table -->
+
 | Difficulty  | Claude Code | Qwen | Antigravity | Codex |
 | ----------- | ----------- | ---- | ----------- | ----- |
 | Easy (4)    | 100%        | 100% | 100%        | 50%   |
 | Medium (53) | 79%         | 70%  | 62%         | 57%   |
 | Hard (29)   | 72%         | 66%  | 45%         | 14%   |
 
-By category (categories with at least four tasks):
+By category (categories with at least four tasks). Claude Code is best or tied for best in 8 of the 10 categories, Qwen in 5, Antigravity in 3 and Codex in none:
+
+![Heatmap of score by category and agent, with the best agent in each category outlined](/images/articles/coding-agent-benchmark-terminal-bench/score-by-category.png)
+
+<!-- score-table -->
 
 | Category                  | Claude Code | Qwen | Antigravity | Codex |
 | ------------------------- | ----------- | ---- | ----------- | ----- |
@@ -88,7 +102,11 @@ By category (categories with at least four tasks):
 | Mathematics (4)           | 100%        | 100% | 25%         | 50%   |
 | Model training (4)        | 50%         | 75%  | 75%         | 50%   |
 
-Head to head, counting tasks the row agent solved and the column agent did not:
+Head to head, counting the tasks one agent solved and the other did not. The ranking holds in every pairing, and the margins are wide except between Claude Code and Qwen:
+
+![Head-to-head bars for each pair of agents, showing tasks only one of the two solved](/images/articles/coding-agent-benchmark-terminal-bench/head-to-head.png)
+
+In table form, each cell counts tasks the row agent solved and the column agent did not:
 
 |             | Claude Code | Qwen | Antigravity | Codex |
 | ----------- | ----------- | ---- | ----------- | ----- |
@@ -102,6 +120,8 @@ Twelve tasks beat every agent, including `caffe-cifar-10`, `chess-best-move`, `i
 ## How they work
 
 The scores only tell half the story. The trajectories show four very different working styles.
+
+![Median time per task against score: Claude Code is fast and accurate, Qwen and Antigravity are slow, Codex is fast but scores lowest](/images/articles/coding-agent-benchmark-terminal-bench/speed-vs-score.png)
 
 | Agent           | Median time per task | Median tool calls | Median tokens in | Median tokens out | Timeouts |
 | --------------- | -------------------- | ----------------- | ---------------- | ----------------- | -------- |

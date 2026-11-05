@@ -241,6 +241,11 @@ sanitize before rendering.
 `status` (`draft` | `published`), `author`; optional `updated` (ISO),
 `cover` (absolute `/…` path), `featured` (bool · picks the Home hero).
 
+**Score tables.** Put `<!-- score-table -->` on the line before a GFM table to color
+its percentage cells by threshold (green >= 70%, amber >= 50%, red below), or
+`<!-- score-table columns=2,3 -->` to limit it to some columns (1-based). The
+comment is not rendered; the classes are `markdown__score--good|fair|poor`.
+
 To add an article: drop a `.md` file in `content/articles/`, then run
 `npm run generate:content` (or `npm run dev` which does it automatically) and
 **`npm run format` before committing.** Home listings, topic counts, related
