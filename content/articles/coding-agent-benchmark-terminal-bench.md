@@ -62,12 +62,12 @@ In the tables, scores are colored by level: green is 70% or more, amber is 50 to
 
 <!-- score-table columns=2 -->
 
-| Agent           | Score     | Before leak check | Tasks solved |
-| --------------- | --------- | ----------------- | ------------ |
-| Claude Code     | **77.9%** | 79.1%             | 67 / 86      |
-| Qwen (local)    | **69.8%** | 69.8%             | 60 / 86      |
-| Antigravity CLI | **58.1%** | 80.2%             | 50 / 86      |
-| Codex           | **41.9%** | 44.2%             | 36 / 86      |
+| Agent                                 | Score     | Before leak check | Tasks solved |
+| ------------------------------------- | --------- | ----------------- | ------------ |
+| Claude Code (Sonnet 5.5)              | **77.9%** | 79.1%             | 67 / 86      |
+| Qwen Code (Qwen3.8-Flash-Next, local) | **69.8%** | 69.8%             | 60 / 86      |
+| Antigravity (Gemini 3.8 Flash)        | **58.1%** | 80.2%             | 50 / 86      |
+| Codex (GPT-6 Luna)                    | **41.9%** | 44.2%             | 36 / 86      |
 
 "Before leak check" is the raw pass rate. The main score removes passes from runs where the agent saw the benchmark's own answers, which I explain below. It is the reason Antigravity drops from first place to third.
 
@@ -77,11 +77,11 @@ By difficulty:
 
 <!-- score-table -->
 
-| Difficulty  | Claude Code | Qwen | Antigravity | Codex |
-| ----------- | ----------- | ---- | ----------- | ----- |
-| Easy (4)    | 100%        | 100% | 100%        | 50%   |
-| Medium (53) | 79%         | 70%  | 62%         | 57%   |
-| Hard (29)   | 72%         | 66%  | 45%         | 14%   |
+| Difficulty  | Claude Code (Sonnet 5.5) | Qwen Code (Qwen3.8-Flash-Next, local) | Antigravity (Gemini 3.8 Flash) | Codex (GPT-6 Luna) |
+| ----------- | ------------------------ | ------------------------------------- | ------------------------------ | ------------------ |
+| Easy (4)    | 100%                     | 100%                                  | 100%                           | 50%                |
+| Medium (53) | 79%                      | 70%                                   | 62%                            | 57%                |
+| Hard (29)   | 72%                      | 66%                                   | 45%                            | 14%                |
 
 By category (categories with at least four tasks). Claude Code is best or tied for best in 8 of the 10 categories, Qwen in 5, Antigravity in 3 and Codex in none:
 
@@ -89,18 +89,18 @@ By category (categories with at least four tasks). Claude Code is best or tied f
 
 <!-- score-table -->
 
-| Category                  | Claude Code | Qwen | Antigravity | Codex |
-| ------------------------- | ----------- | ---- | ----------- | ----- |
-| Software engineering (26) | 85%         | 73%  | 65%         | 27%   |
-| Scientific computing (8)  | 75%         | 50%  | 38%         | 38%   |
-| Security (8)              | 75%         | 75%  | 50%         | 50%   |
-| Data science (7)          | 43%         | 57%  | 57%         | 43%   |
-| System administration (7) | 71%         | 57%  | 57%         | 57%   |
-| Debugging (5)             | 100%        | 80%  | 100%        | 60%   |
-| File operations (5)       | 80%         | 40%  | 60%         | 20%   |
-| Data processing (4)       | 100%        | 100% | 50%         | 75%   |
-| Mathematics (4)           | 100%        | 100% | 25%         | 50%   |
-| Model training (4)        | 50%         | 75%  | 75%         | 50%   |
+| Category                  | Claude Code (Sonnet 5.5) | Qwen Code (Qwen3.8-Flash-Next, local) | Antigravity (Gemini 3.8 Flash) | Codex (GPT-6 Luna) |
+| ------------------------- | ------------------------ | ------------------------------------- | ------------------------------ | ------------------ |
+| Software engineering (26) | 85%                      | 73%                                   | 65%                            | 27%                |
+| Scientific computing (8)  | 75%                      | 50%                                   | 38%                            | 38%                |
+| Security (8)              | 75%                      | 75%                                   | 50%                            | 50%                |
+| Data science (7)          | 43%                      | 57%                                   | 57%                            | 43%                |
+| System administration (7) | 71%                      | 57%                                   | 57%                            | 57%                |
+| Debugging (5)             | 100%                     | 80%                                   | 100%                           | 60%                |
+| File operations (5)       | 80%                      | 40%                                   | 60%                            | 20%                |
+| Data processing (4)       | 100%                     | 100%                                  | 50%                            | 75%                |
+| Mathematics (4)           | 100%                     | 100%                                  | 25%                            | 50%                |
+| Model training (4)        | 50%                      | 75%                                   | 75%                            | 50%                |
 
 Head to head, counting the tasks one agent solved and the other did not. The ranking holds in every pairing, and the margins are wide except between Claude Code and Qwen:
 
@@ -108,12 +108,12 @@ Head to head, counting the tasks one agent solved and the other did not. The ran
 
 In table form, each cell counts tasks the row agent solved and the column agent did not:
 
-|             | Claude Code | Qwen | Antigravity | Codex |
-| ----------- | ----------- | ---- | ----------- | ----- |
-| Claude Code | -           | 12   | 23          | 32    |
-| Qwen        | 5           | -    | 21          | 28    |
-| Antigravity | 6           | 11   | -           | 24    |
-| Codex       | 1           | 4    | 10          | -     |
+|                                       | Claude Code (Sonnet 5.5) | Qwen Code (Qwen3.8-Flash-Next, local) | Antigravity (Gemini 3.8 Flash) | Codex (GPT-6 Luna) |
+| ------------------------------------- | ------------------------ | ------------------------------------- | ------------------------------ | ------------------ |
+| Claude Code (Sonnet 5.5)              | -                        | 12                                    | 23                             | 32                 |
+| Qwen Code (Qwen3.8-Flash-Next, local) | 5                        | -                                     | 21                             | 28                 |
+| Antigravity (Gemini 3.8 Flash)        | 6                        | 11                                    | -                              | 24                 |
+| Codex (GPT-6 Luna)                    | 1                        | 4                                     | 10                             | -                  |
 
 Twelve tasks beat every agent, including `caffe-cifar-10`, `chess-best-move`, `install-windows-3.11`, `make-doom-for-mips` and both polyglot tasks. Twenty-two were solved by all four.
 
@@ -123,12 +123,12 @@ The scores only tell half the story. The trajectories show four very different w
 
 ![Median time per task against score: Claude Code is fast and accurate, Qwen and Antigravity are slow, Codex is fast but scores lowest](/images/articles/coding-agent-benchmark-terminal-bench/speed-vs-score.png)
 
-| Agent           | Median time per task | Median tool calls | Median tokens in | Median tokens out | Timeouts |
-| --------------- | -------------------- | ----------------- | ---------------- | ----------------- | -------- |
-| Claude Code     | 0.9 min              | 5                 | 124K             | 3.4K              | 5        |
-| Codex           | 1.1 min              | 8                 | 145K             | 2.4K              | 0        |
-| Qwen            | 6.2 min              | 34                | 1.33M            | 30K               | 14       |
-| Antigravity CLI | 9.9 min              | 63                | 2.98M            | 34K               | 7        |
+| Agent                                 | Median time per task | Median tool calls | Median tokens in | Median tokens out | Timeouts |
+| ------------------------------------- | -------------------- | ----------------- | ---------------- | ----------------- | -------- |
+| Claude Code (Sonnet 5.5)              | 0.9 min              | 5                 | 124K             | 3.4K              | 5        |
+| Codex (GPT-6 Luna)                    | 1.1 min              | 8                 | 145K             | 2.4K              | 0        |
+| Qwen Code (Qwen3.8-Flash-Next, local) | 6.2 min              | 34                | 1.33M            | 30K               | 14       |
+| Antigravity (Gemini 3.8 Flash)        | 9.9 min              | 63                | 2.98M            | 34K               | 7        |
 
 Input tokens include cached prompt tokens for every agent, so they are comparable. Qwen's times come from my own GPU, so read them as "how long this setup takes", not as a model speed comparison.
 
