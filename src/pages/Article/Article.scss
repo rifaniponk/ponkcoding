@@ -370,6 +370,27 @@
     border-bottom: 0;
   }
 
+  /* Score tables (`<!-- score-table -->` before a table): percentage cells by threshold */
+  .markdown__score {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+
+    &--good {
+      color: #136c2e;
+      background: #e6f4ea;
+    }
+
+    &--fair {
+      color: #8a4b00;
+      background: #fdf1dc;
+    }
+
+    &--poor {
+      color: #b42318;
+      background: #fdecea;
+    }
+  }
+
   /* Rendered-Markdown output (autolinked headings, code blocks, lists) */
   h2 a,
   h3 a {

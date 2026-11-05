@@ -165,13 +165,90 @@ function wrapExpandableCodeBlocks() {
   }
 }
 
+/**
+ * Score tables: a GFM table directly preceded by `<!-- score-table -->` gets its
+ * percentage cells colored by threshold (good >= 70%, fair >= 50%, poor below).
+ * Limit it to some columns with `<!-- score-table columns=2,3 -->` (1-based).
+ * The comment itself never reaches the HTML (raw HTML is not rendered).
+ */
+const SCORE_TABLE_MARKER = /^<!--\s*score-table(?:\s+columns=([\d,\s]+))?\s*-->$/
+
+function markScoreTables() {
+  return (tree: unknown) => {
+    visit(tree as never, 'html', (node: any, index: number | undefined, parent: any) => {
+      const match = String(node.value ?? '')
+        .trim()
+        .match(SCORE_TABLE_MARKER)
+      if (!match || !parent || index === undefined) return
+
+      const table = parent.children[index + 1]
+      if (table?.type !== 'table') return
+
+      table.data = {
+        ...table.data,
+        hProperties: {
+          ...table.data?.hProperties,
+          className: ['markdown__score-table'],
+          dataScoreColumns: match[1]?.replace(/\s/g, '') ?? '',
+        },
+      }
+    })
+  }
+}
+
+function scoreLevel(value: number): 'good' | 'fair' | 'poor' {
+  if (value >= 70) return 'good'
+  if (value >= 50) return 'fair'
+  return 'poor'
+}
+
+function colorScoreCells() {
+  return (tree: unknown) => {
+    visit(tree as never, 'element', (table: any) => {
+      if (table.tagName !== 'table') return
+      const classes = Array.isArray(table.properties?.className) ? table.properties.className : []
+      if (!classes.includes('markdown__score-table')) return
+
+      const columns = String(table.properties.dataScoreColumns ?? '')
+        .split(',')
+        .filter(Boolean)
+        .map(Number)
+      delete table.properties.dataScoreColumns
+
+      visit(table, 'element', (row: any) => {
+        if (row.tagName !== 'tr') return
+        const cells = row.children.filter((child: any) => child.tagName === 'td')
+        cells.forEach((cell: any, i: number) => {
+          if (columns.length && !columns.includes(i + 1)) return
+          const percent = hastToString(cell)
+            .trim()
+            .match(/^(\d+(?:\.\d+)?)%$/)
+          if (!percent) return
+          const cellClasses = Array.isArray(cell.properties?.className)
+            ? cell.properties.className
+            : []
+          cell.properties = {
+            ...cell.properties,
+            className: cellClasses.concat(
+              'markdown__score',
+              `markdown__score--${scoreLevel(Number(percent[1]))}`,
+            ),
+          }
+        })
+      })
+    })
+  }
+}
+
 async function markdownToHtml(md: string, headings: Heading[]): Promise<string> {
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(markExpandableCodeBlocks)
+    .use(markScoreTables)
     .use(remarkRehype)
     .use(wrapExpandableCodeBlocks)
+    .use(colorScoreCells)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
     .use(rehypeHighlight, { plainText: ['text'] })
