@@ -99,6 +99,8 @@ When nothing went wrong, the pages were close. Here is the hotel booking task, w
 
 All four are reasonable booking pages with live prices. IQ3_S wrote its page in Chinese, although the request was in English. The judge did not mark it down for that, and the checklist does not ask about language, but I would have.
 
+The [appendix](#appendix-every-page) has the same view of every page from all 20 tasks and all eight builds.
+
 ## Where the points went
 
 ![Share of each checklist area's points per build: Claude Code leads every area, most clearly visual design (76%) and features (67%)](/images/articles/local-qwen-builds-web-ui/ui-areas.png)
@@ -171,6 +173,180 @@ scripts/rerun_ui_timeouts.sh
 
 # charts
 .venv/bin/python scripts/make_charts_ui.py reports/ui-quick OUT_DIR reports/aider-quick
+
+# appendix: first screen of every page as WebP, plus the gallery Markdown
+.venv/bin/python scripts/make_ui_appendix.py OUT_DIR /images/articles/local-qwen-builds-web-ui/appendix > appendix.md
 ```
 
 If you run local models on UI tasks, read the end of a few failed sessions before you read the scores. Here, a missing page usually meant the agent hit its output limit, not that the model could not build it.
+
+## Appendix: every page
+
+Here is the top of every page that rendered, 123 of the 160 trials, as the verifier's headless Chromium saw it: the first 1280 by 720 pixels. Click a screenshot to see it larger. Builds are in the order of the results table, each with its judge score (the average of the two passes). "No page" means the session ended without a usable `index.html`, usually at dsh's output limit. "Blank page" means the page loaded but drew nothing; in all seven cases, the scripts it loads were never written.
+
+**Heatmap from a large scatter dataset** (ab-0334, hard). Turn a large `[x, y, value]` dataset into a heatmap with d3.js. No page: Unsloth UD-IQ4_XS.
+
+|                                                                                                             |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 71](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-claude-code.webp) | ![Gyro-S, judge score 58](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 54](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 70](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 68](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-qwen-iq3-s.webp)   | ![Gyro-M, judge score 58](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-gyro-m.webp)           |
+| ![Coder IQ1_M, judge score 24](/images/articles/local-qwen-builds-web-ui/appendix/ab-0334-coder-iq1-m.webp) |                                                                                                             |
+
+**Word-cloud dashboard** (ab-0416, medium). A visualization dashboard built around a word cloud. No page: Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-claude-code.webp) | ![Gyro-S, judge score 60](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 67](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-qwen-iq3-s.webp)   | ![Gyro-M, judge score 60](/images/articles/local-qwen-builds-web-ui/appendix/ab-0416-gyro-m.webp)           |
+
+**Vocabulary flashcards** (ab-0439, easy). Read words from a file, sort them, add translations and example sentences, and quiz them as flashcards. No page: Gyro-M.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 74](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-claude-code.webp) | ![Gyro-S, judge score 55](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-gyro-s.webp)                       |
+| ![Qwen Q2_0, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 76](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-swift-iq3-s.webp)             |
+| ![Qwen IQ3_S, judge score 68](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-qwen-iq3-s.webp)   | ![Unsloth UD-IQ4_XS, judge score 70](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 52](/images/articles/local-qwen-builds-web-ui/appendix/ab-0439-coder-iq1-m.webp) |                                                                                                                         |
+
+**Food recommendation page** (ab-0472, easy). Food cards from an API with ratings and addresses, a details view with comments, and filters. No page: Qwen Q2_0, Swift IQ3_S, Qwen IQ3_S, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-0472-claude-code.webp) | ![Gyro-S, judge score 69](/images/articles/local-qwen-builds-web-ui/appendix/ab-0472-gyro-s.webp)                       |
+| ![Gyro-M, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-0472-gyro-m.webp)           | ![Unsloth UD-IQ4_XS, judge score 66](/images/articles/local-qwen-builds-web-ui/appendix/ab-0472-unsloth-ud-iq4-xs.webp) |
+
+**Inventory management system** (ab-0480, medium). Add, edit and delete items, low-stock warnings, reports and barcode scanning. No page: Gyro-M, Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 71](/images/articles/local-qwen-builds-web-ui/appendix/ab-0480-claude-code.webp) | ![Gyro-S, judge score 57](/images/articles/local-qwen-builds-web-ui/appendix/ab-0480-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0480-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 30](/images/articles/local-qwen-builds-web-ui/appendix/ab-0480-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 34](/images/articles/local-qwen-builds-web-ui/appendix/ab-0480-qwen-iq3-s.webp)   |                                                                                                             |
+
+**Hotel room booking** (ab-0510, medium). Pick check-in and check-out dates and see room types with live prices, then book.
+
+|                                                                                                                         |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 76](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-claude-code.webp)             | ![Gyro-S, judge score 72](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-qwen-q2-0.webp)                 | ![Swift IQ3_S, judge score 73](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 73](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-qwen-iq3-s.webp)               | ![Gyro-M, judge score 77](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-gyro-m.webp)           |
+| ![Unsloth UD-IQ4_XS, judge score 74](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-unsloth-ud-iq4-xs.webp) | ![Coder IQ1_M, judge score 18](/images/articles/local-qwen-builds-web-ui/appendix/ab-0510-coder-iq1-m.webp) |
+
+**Furniture shop with room planner** (ab-0519, hard). Browse furniture by category and drag pieces into a virtual room, then save the layout. No page: Swift IQ3_S, Qwen IQ3_S, Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0519-claude-code.webp) | ![Gyro-S, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-0519-gyro-s.webp) |
+| ![Qwen Q2_0, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-0519-qwen-q2-0.webp)     | ![Gyro-M, judge score 56](/images/articles/local-qwen-builds-web-ui/appendix/ab-0519-gyro-m.webp) |
+
+**Music theory course** (ab-0521, hard). Lessons on scales and chords with audio examples and simple practice exercises. No page: Swift IQ3_S, Qwen IQ3_S, Gyro-M, Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 74](/images/articles/local-qwen-builds-web-ui/appendix/ab-0521-claude-code.webp) | ![Gyro-S, judge score 50](/images/articles/local-qwen-builds-web-ui/appendix/ab-0521-gyro-s.webp) |
+| ![Qwen Q2_0, judge score 52](/images/articles/local-qwen-builds-web-ui/appendix/ab-0521-qwen-q2-0.webp)     |                                                                                                   |
+
+**Blog community with topic circles** (ab-0539, medium). Join topic circles, publish articles in them, vote and comment. No page: Swift IQ3_S, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 58](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-claude-code.webp) | ![Gyro-S, judge score 56](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-gyro-s.webp)                                  |
+| ![Qwen Q2_0, judge score 52](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-qwen-q2-0.webp)     | ![Qwen IQ3_S, judge score 26](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-qwen-iq3-s.webp)                          |
+| ![Gyro-M, judge score 54](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-gyro-m.webp)           | ![Unsloth UD-IQ4_XS, judge score 8, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0539-unsloth-ud-iq4-xs.webp) |
+
+**Knowledge base management** (ab-0628, hard). Upload Markdown and HTML articles, tag and categorize them, with an administrator login. No page: Gyro-M.
+
+|                                                                                                             |                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 59](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-claude-code.webp) | ![Gyro-S, judge score 50](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-gyro-s.webp)                                  |
+| ![Qwen Q2_0, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 33, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-swift-iq3-s.webp)            |
+| ![Qwen IQ3_S, judge score 31](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-qwen-iq3-s.webp)   | ![Unsloth UD-IQ4_XS, judge score 6, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 30](/images/articles/local-qwen-builds-web-ui/appendix/ab-0628-coder-iq1-m.webp) |                                                                                                                                    |
+
+**Legal document management** (ab-0660, hard). Upload, categorize and search legal documents, generate templates and extract key clauses.
+
+|                                                                                                                                     |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-claude-code.webp)                         | ![Gyro-S, judge score 14](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-gyro-s.webp)                       |
+| ![Qwen Q2_0, judge score 28](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-qwen-q2-0.webp)                             | ![Swift IQ3_S, judge score 12, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 30, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-qwen-iq3-s.webp)               | ![Gyro-M, judge score 46](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-gyro-m.webp)                       |
+| ![Unsloth UD-IQ4_XS, judge score 10, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-unsloth-ud-iq4-xs.webp) | ![Coder IQ1_M, judge score 10, blank page](/images/articles/local-qwen-builds-web-ui/appendix/ab-0660-coder-iq1-m.webp) |
+
+**Login window** (ab-0713, easy). A user login window, nothing more specified.
+
+|                                                                                                                         |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 60](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-claude-code.webp)             | ![Gyro-S, judge score 32](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 63](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-qwen-q2-0.webp)                 | ![Swift IQ3_S, judge score 66](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 67](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-qwen-iq3-s.webp)               | ![Gyro-M, judge score 57](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-gyro-m.webp)           |
+| ![Unsloth UD-IQ4_XS, judge score 65](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-unsloth-ud-iq4-xs.webp) | ![Coder IQ1_M, judge score 36](/images/articles/local-qwen-builds-web-ui/appendix/ab-0713-coder-iq1-m.webp) |
+
+**Split-screen login page** (ab-0771, easy). An image on the left, the login form on the right, responsive. No page: Qwen IQ3_S.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 70](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-claude-code.webp) | ![Gyro-S, judge score 76](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-gyro-s.webp)                       |
+| ![Qwen Q2_0, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 80](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-swift-iq3-s.webp)             |
+| ![Gyro-M, judge score 72](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-gyro-m.webp)           | ![Unsloth UD-IQ4_XS, judge score 78](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-0771-coder-iq1-m.webp) |                                                                                                                         |
+
+**Panoramic VR viewer** (ab-1102, hard). A panoramic VR view without any library. No page: Qwen Q2_0, Gyro-M, Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 76](/images/articles/local-qwen-builds-web-ui/appendix/ab-1102-claude-code.webp) | ![Gyro-S, judge score 58](/images/articles/local-qwen-builds-web-ui/appendix/ab-1102-gyro-s.webp)         |
+| ![Swift IQ3_S, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-1102-swift-iq3-s.webp) | ![Qwen IQ3_S, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-1102-qwen-iq3-s.webp) |
+
+**Shopping price comparison** (ab-1107, easy). A small program that compares prices across shops. No page: Gyro-S.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 61](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-claude-code.webp) | ![Qwen Q2_0, judge score 56](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-qwen-q2-0.webp)                 |
+| ![Swift IQ3_S, judge score 60](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-swift-iq3-s.webp) | ![Qwen IQ3_S, judge score 54](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-qwen-iq3-s.webp)               |
+| ![Gyro-M, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-gyro-m.webp)           | ![Unsloth UD-IQ4_XS, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-1107-coder-iq1-m.webp) |                                                                                                                         |
+
+**Horror game website** (ab-1162, easy). An official site for a horror game: collapsible support panel, downloads, intro, gallery, scary background. No page: Gyro-S, Swift IQ3_S, Qwen IQ3_S, Unsloth UD-IQ4_XS, Coder IQ1_M.
+
+|                                                                                                             |                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 72](/images/articles/local-qwen-builds-web-ui/appendix/ab-1162-claude-code.webp) | ![Qwen Q2_0, judge score 56](/images/articles/local-qwen-builds-web-ui/appendix/ab-1162-qwen-q2-0.webp) |
+| ![Gyro-M, judge score 18](/images/articles/local-qwen-builds-web-ui/appendix/ab-1162-gyro-m.webp)           |                                                                                                         |
+
+**Analog clock** (ab-1396, medium). A simulated clock in HTML, CSS and JavaScript. No page: Gyro-M.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 70](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-claude-code.webp) | ![Gyro-S, judge score 54](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-gyro-s.webp)                       |
+| ![Qwen Q2_0, judge score 60](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 69](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-swift-iq3-s.webp)             |
+| ![Qwen IQ3_S, judge score 69](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-qwen-iq3-s.webp)   | ![Unsloth UD-IQ4_XS, judge score 73](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 16](/images/articles/local-qwen-builds-web-ui/appendix/ab-1396-coder-iq1-m.webp) |                                                                                                                         |
+
+**Web photo album** (ab-1545, medium). A photo album in JavaScript. No page: Unsloth UD-IQ4_XS.
+
+|                                                                                                             |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 54](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-claude-code.webp) | ![Gyro-S, judge score 32](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 48](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 12](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 56](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-qwen-iq3-s.webp)   | ![Gyro-M, judge score 18](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-gyro-m.webp)           |
+| ![Coder IQ1_M, judge score 18](/images/articles/local-qwen-builds-web-ui/appendix/ab-1545-coder-iq1-m.webp) |                                                                                                             |
+
+**Web chat with rooms** (ab-1663, medium). A chat tool whose homepage has "Create Room" and "Join Room" buttons. No page: Qwen IQ3_S.
+
+|                                                                                                             |                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-claude-code.webp) | ![Gyro-S, judge score 50](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-gyro-s.webp)                       |
+| ![Qwen Q2_0, judge score 52](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-qwen-q2-0.webp)     | ![Swift IQ3_S, judge score 19](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-swift-iq3-s.webp)             |
+| ![Gyro-M, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-gyro-m.webp)           | ![Unsloth UD-IQ4_XS, judge score 52](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-unsloth-ud-iq4-xs.webp) |
+| ![Coder IQ1_M, judge score 6](/images/articles/local-qwen-builds-web-ui/appendix/ab-1663-coder-iq1-m.webp)  |                                                                                                                         |
+
+**Real estate rose chart** (ab-1767, easy). A rose chart of house prices in 100 Chinese cities.
+
+|                                                                                                                         |                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Claude Code, judge score 68](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-claude-code.webp)             | ![Gyro-S, judge score 49](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-gyro-s.webp)           |
+| ![Qwen Q2_0, judge score 49](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-qwen-q2-0.webp)                 | ![Swift IQ3_S, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-swift-iq3-s.webp) |
+| ![Qwen IQ3_S, judge score 62](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-qwen-iq3-s.webp)               | ![Gyro-M, judge score 64](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-gyro-m.webp)           |
+| ![Unsloth UD-IQ4_XS, judge score 59](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-unsloth-ud-iq4-xs.webp) | ![Coder IQ1_M, judge score 37](/images/articles/local-qwen-builds-web-ui/appendix/ab-1767-coder-iq1-m.webp) |
